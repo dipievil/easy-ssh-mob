@@ -1,0 +1,24 @@
+name: easyssh
+description: A cross-platform SSH file manager with intuitive button-based navigation
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  dartssh2: ^2.9.0
+  provider: ^6.0.5
+  flutter_secure_storage: ^9.0.0
+  font_awesome_flutter: ^10.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
