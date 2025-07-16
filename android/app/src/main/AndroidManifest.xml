@@ -1,0 +1,21 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.easyssh">
+    <application
+        android:label="EasySSH"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher">
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/LaunchTheme"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:excludeFromRecents="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+    </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+</manifest>
