@@ -29,11 +29,19 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
     
     // Try to get home directory, fallback to root
-    final homeResult = await sshProvider.executeCommand('pwd');
-    if (homeResult != null && homeResult.trim().isNotEmpty) {
-      setState(() {
-        _currentPath = homeResult.trim();
-      });
+    try {
+      final homeResult = await sshProvider.executeCommand('pwd');
+      if (homeResult != null && homeResult.trim().isNotEmpty) {
+        setState(() {
+          _currentPath = homeResult.trim();
+        });
+      }
+    } catch (e) {
+      // Log the error and show feedback to the user
+      print('Error executing SSH command: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to load initial directory.')),
+      );
     }
     
     setState(() {
