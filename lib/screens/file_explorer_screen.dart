@@ -297,11 +297,9 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
                 if (_navigationHistory.isNotEmpty)
                   ElevatedButton.icon(
                     onPressed: () {
-                      if (_navigationHistory.isNotEmpty) {
-                        setState(() {
-                          _currentPath = _navigationHistory.removeLast();
-                        });
-                      }
+                      setState(() {
+                        _currentPath = _navigationHistory.removeLast();
+                      });
                     },
                     icon: const Icon(Icons.arrow_back),
                     label: const Text('Voltar'),
