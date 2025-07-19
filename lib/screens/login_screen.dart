@@ -89,17 +89,40 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
     } else if (mounted && sshProvider.errorMessage != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erro de conexão: ${sshProvider.errorMessage}'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
+      setState(() {
+        _connectionError = 'Erro de conexão: ${sshProvider.errorMessage}';
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Login'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            if (_connectionError != null)
+              Container(
+                padding: const EdgeInsets.all(8.0),
+                margin: const EdgeInsets.only(bottom: 16.0),
+                color: Theme.of(context).colorScheme.error.withOpacity(0.1),
+                child: Row(
+                  children: [
+                    Icon(Icons.error, color: Theme.of(context).colorScheme.error),
+                    const SizedBox(width: 8.0),
+                    Expanded(
+                      child: Text(
+                        _connectionError!,
+                        style: TextStyle(color: Theme.of(context).colorScheme.error),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
     return Scaffold(
       body: SafeArea(
         child: Padding(
