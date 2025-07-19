@@ -182,5 +182,62 @@ void main() {
       expect(find.byType(Transform), findsOneWidget);
       expect(find.byType(AnimatedBuilder), findsOneWidget);
     });
+
+    testWidgets('should handle long press', (WidgetTester tester) async {
+      final file = SshFile(
+        name: 'test_file',
+        fullPath: '/home/test_file',
+        type: FileType.regular,
+        displayName: 'test_file',
+      );
+
+      bool longPressed = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SshFileListTile(
+              file: file,
+              onTap: () {},
+              onLongPress: () => longPressed = true,
+            ),
+          ),
+        ),
+      );
+
+      // Test long press functionality
+      await tester.longPress(find.byType(SshFileListTile));
+      await tester.pumpAndSettle();
+      expect(longPressed, isTrue);
+    });
+
+    testWidgets('should disable long press when loading', (WidgetTester tester) async {
+      final file = SshFile(
+        name: 'test_file',
+        fullPath: '/home/test_file',
+        type: FileType.regular,
+        displayName: 'test_file',
+      );
+
+      bool longPressed = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SshFileListTile(
+              file: file,
+              onTap: () {},
+              onLongPress: () => longPressed = true,
+              isLoading: true,
+            ),
+          ),
+        ),
+      );
+
+      // Try to long press - should not work when loading
+      await tester.longPress(find.byType(SshFileListTile));
+      await tester.pumpAndSettle();
+      expect(longPressed, isFalse);
+    });
   });
 }

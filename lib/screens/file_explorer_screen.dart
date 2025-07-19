@@ -121,6 +121,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
               file: file,
               isLoading: _loadingFilePath == file.fullPath,
               onTap: () => _handleFileTap(file),
+              onLongPress: () => _showFileOptions(context, file),
             ),
           );
         },
@@ -399,6 +400,121 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
         ],
       ),
     );
+  }
+
+  /// Show file options context menu
+  void _showFileOptions(BuildContext context, SshFile file) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                file.displayName,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Tipo: ${file.typeDescription}',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                'Caminho: ${file.fullPath}',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 14,
+                ),
+              ),
+              const Divider(height: 24),
+              // Directory options
+              if (file.isDirectory) ...[
+                ListTile(
+                  leading: const Icon(Icons.folder_open),
+                  title: const Text('Abrir'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _handleFileTap(file);
+                  },
+                ),
+              ],
+              // Executable options
+              if (file.isExecutable) ...[
+                ListTile(
+                  leading: const Icon(Icons.play_arrow, color: Colors.green),
+                  title: const Text('Executar'),
+                  subtitle: const Text('(Disponível na Fase 3)'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showMessage('Execução será implementada na Fase 3');
+                  },
+                ),
+              ],
+              // Regular file options
+              if (file.isRegularFile) ...[
+                ListTile(
+                  leading: const Icon(Icons.visibility),
+                  title: const Text('Visualizar'),
+                  subtitle: const Text('(Disponível na Fase 3)'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showMessage('Visualização será implementada na Fase 3');
+                  },
+                ),
+                if (_isScript(file)) ...[
+                  ListTile(
+                    leading: const Icon(Icons.code, color: Colors.orange),
+                    title: const Text('Executar Script'),
+                    subtitle: const Text('(Disponível na Fase 3)'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _showMessage('Execução de scripts será implementada na Fase 3');
+                    },
+                  ),
+                ],
+              ],
+              // Symlink options
+              if (file.isSymlink) ...[
+                ListTile(
+                  leading: const Icon(Icons.link, color: Colors.purple),
+                  title: const Text('Seguir Link'),
+                  subtitle: const Text('(Disponível na Fase 3)'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showMessage('Seguir links será implementado na Fase 3');
+                  },
+                ),
+              ],
+              // Common options for all files
+              ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: const Text('Propriedades'),
+                subtitle: const Text('(Disponível na Fase 3)'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showMessage('Propriedades serão implementadas na Fase 3');
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// Check if file is a script
+  bool _isScript(SshFile file) {
+    final scriptExtensions = ['.sh', '.py', '.js', '.rb', '.pl', '.php'];
+    return scriptExtensions.any((ext) => file.name.toLowerCase().endsWith(ext));
   }
 
   void _showMessage(String message) {

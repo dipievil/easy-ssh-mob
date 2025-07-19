@@ -6,12 +6,14 @@ import '../models/ssh_file.dart';
 class SshFileListTile extends StatefulWidget {
   final SshFile file;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
   final bool isLoading;
 
   const SshFileListTile({
     super.key,
     required this.file,
     required this.onTap,
+    this.onLongPress,
     this.isLoading = false,
   });
 
@@ -140,6 +142,7 @@ class _SshFileListTileState extends State<SshFileListTile>
             onTapUp: _handleTapUp,
             onTapCancel: _handleTapCancel,
             onTap: widget.isLoading ? null : widget.onTap,
+            onLongPress: widget.isLoading ? null : widget.onLongPress,
             child: ListTile(
               leading: Icon(
                 _getEnhancedIcon(),
