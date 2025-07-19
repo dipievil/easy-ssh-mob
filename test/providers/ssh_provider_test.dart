@@ -30,8 +30,8 @@ void main() {
       expect(sshProvider.errorMessage, 'Not connected to SSH server');
     });
 
-    test('executeCommandDetailed should fail when not connected', () async {
-      final result = await sshProvider.executeCommandDetailed('ls');
+    test('executeCommandWithResult should fail when not connected', () async {
+      final result = await sshProvider.executeCommandWithResult('ls');
       
       expect(result, null);
       expect(sshProvider.connectionState, SshConnectionState.error);
