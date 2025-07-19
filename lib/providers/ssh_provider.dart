@@ -140,7 +140,7 @@ class SshProvider extends ChangeNotifier {
     }
   }
 
-  void disconnect() async {
+  Future<void> disconnect() async {
     await _cleanup();
     _connectionState = SshConnectionState.disconnected;
     _errorMessage = null;
