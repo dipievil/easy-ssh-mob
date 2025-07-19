@@ -36,11 +36,7 @@ Future<bool> connect({
 #### 2. Execução de Comandos
 ```dart
 Future<String?> executeCommand(String command)
-Future<Map<String, String>?> executeCommandDetailed(String command)
-```
-
-- Executa comandos no servidor SSH conectado
-- Versão detalhada retorna stdout e stderr separados
+Future<String?> executeCommandWithResult(String command)
 - Verificação automática do estado de conexão
 - Tratamento de erros durante execução
 
