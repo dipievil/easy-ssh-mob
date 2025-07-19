@@ -32,6 +32,7 @@ void main() {
 
       // Test tap functionality
       await tester.tap(find.byType(SshFileListTile));
+      await tester.pumpAndSettle();
       expect(tapped, isTrue);
     });
 
@@ -154,7 +155,32 @@ void main() {
 
       // Try to tap - should not work when loading
       await tester.tap(find.byType(SshFileListTile));
+      await tester.pumpAndSettle();
       expect(tapped, isFalse);
+    });
+
+    testWidgets('should show scale animation on tap', (WidgetTester tester) async {
+      final file = SshFile(
+        name: 'test_dir',
+        fullPath: '/home/test_dir',
+        type: FileType.directory,
+        displayName: 'test_dir/',
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SshFileListTile(
+              file: file,
+              onTap: () {},
+            ),
+          ),
+        ),
+      );
+
+      // Test the presence of Transform.scale widget for animation
+      expect(find.byType(Transform), findsOneWidget);
+      expect(find.byType(AnimatedBuilder), findsOneWidget);
     });
   });
 }

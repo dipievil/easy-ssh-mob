@@ -332,6 +332,75 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     }
   }
 
+  /// Build breadcrumb navigation for the AppBar
+  Widget _buildBreadcrumb(String currentPath) {
+    if (currentPath.isEmpty) {
+      return const Text('Easy SSH');
+    }
+
+    // Split path into components
+    final components = currentPath.split('/').where((c) => c.isNotEmpty).toList();
+    
+    if (components.isEmpty) {
+      return GestureDetector(
+        onTap: () => _navigateToDirectory('/'),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.home, size: 18),
+            SizedBox(width: 4),
+            Text('/', style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          // Root directory
+          GestureDetector(
+            onTap: () => _navigateToDirectory('/'),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.home, size: 16),
+                SizedBox(width: 2),
+                Text('/', style: TextStyle(fontWeight: FontWeight.w500)),
+              ],
+            ),
+          ),
+          // Path components
+          ...List.generate(components.length, (index) {
+            final component = components[index];
+            final path = '/${components.take(index + 1).join('/')}';
+            final isLast = index == components.length - 1;
+            
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.arrow_forward_ios, size: 12),
+                const SizedBox(width: 4),
+                GestureDetector(
+                  onTap: isLast ? null : () => _navigateToDirectory(path),
+                  child: Text(
+                    component,
+                    style: TextStyle(
+                      fontWeight: isLast ? FontWeight.bold : FontWeight.w500,
+                      color: isLast ? null : Colors.blue.shade700,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
   void _showMessage(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -346,9 +415,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
       appBar: AppBar(
         title: Consumer<SshProvider>(
           builder: (context, sshProvider, child) {
-            return Text(sshProvider.currentPath.isNotEmpty 
-                ? sshProvider.currentPath 
-                : 'Easy SSH');
+            return _buildBreadcrumb(sshProvider.currentPath);
           },
         ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
