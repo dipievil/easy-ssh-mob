@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/ssh_provider.dart';
+import '../models/ssh_file.dart';
 import 'login_screen.dart';
 
 class FileExplorerScreen extends StatefulWidget {
@@ -11,9 +12,7 @@ class FileExplorerScreen extends StatefulWidget {
 }
 
 class _FileExplorerScreenState extends State<FileExplorerScreen> {
-  String _currentPath = '/';
   bool _isLoading = false;
-  List<String> _navigationHistory = [];
 
   @override
   void initState() {
@@ -28,25 +27,21 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
     
-    // Try to get home directory, fallback to root
     try {
-      final homeResult = await sshProvider.executeCommand('pwd');
-      if (homeResult != null && homeResult.trim().isNotEmpty) {
-        setState(() {
-          _currentPath = homeResult.trim();
-        });
+      // Use the new navigation system - home directory is loaded automatically after connection
+      if (sshProvider.currentPath.isEmpty) {
+        await sshProvider.navigateToHome();
+      } else {
+        await sshProvider.refreshCurrentDirectory();
       }
     } catch (e) {
-      // Log the error and show feedback to the user
-      print('Error executing SSH command: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to load initial directory.')),
-      );
+      // Error handling is done by the provider
+      print('Error loading directory: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
-    
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   void _goHome() async {
@@ -57,16 +52,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
     
     try {
-      // Get home directory
-      final homeResult = await sshProvider.executeCommand('cd && pwd');
-      if (homeResult != null && homeResult.trim().isNotEmpty) {
-        _navigationHistory.add(_currentPath);
-        setState(() {
-          _currentPath = homeResult.trim();
-        });
-      } else {
-        _showErrorMessage('Failed to retrieve home directory.');
-      }
+      await sshProvider.navigateToHome();
     } catch (e) {
       _showErrorMessage('An error occurred: $e');
     } finally {
@@ -152,13 +138,69 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     }
   }
 
+  void _showErrorMessage(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_currentPath),
+        title: Consumer<SshProvider>(
+          builder: (context, sshProvider, child) {
+            return Text(sshProvider.currentPath.isNotEmpty 
+                ? sshProvider.currentPath 
+                : 'Easy SSH');
+          },
+        ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
+          // Back navigation button
+          Consumer<SshProvider>(
+            builder: (context, sshProvider, child) {
+              if (sshProvider.navigationHistory.isNotEmpty) {
+                return IconButton(
+                  onPressed: () async {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    await sshProvider.navigateBack();
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  },
+                  icon: const Icon(Icons.arrow_back),
+                  tooltip: 'Voltar',
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+          // Parent directory button
+          Consumer<SshProvider>(
+            builder: (context, sshProvider, child) {
+              if (sshProvider.currentPath.isNotEmpty && sshProvider.currentPath != '/') {
+                return IconButton(
+                  onPressed: () async {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    await sshProvider.navigateToParent();
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  },
+                  icon: const Icon(Icons.arrow_upward),
+                  tooltip: 'Diretório pai',
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
           IconButton(
             onPressed: _goHome,
             icon: const Icon(Icons.home),
@@ -272,7 +314,39 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
             );
           }
 
-          // Main content - placeholder for file list (to be implemented in next phase)
+          // Main content - show files list
+          if (sshProvider.currentFiles.isNotEmpty) {
+            return ListView.builder(
+              itemCount: sshProvider.currentFiles.length,
+              padding: const EdgeInsets.all(8),
+              itemBuilder: (context, index) {
+                final file = sshProvider.currentFiles[index];
+                return Card(
+                  child: ListTile(
+                    leading: Icon(file.icon),
+                    title: Text(file.name),
+                    subtitle: Text(file.typeDescription),
+                    trailing: file.isDirectory 
+                        ? const Icon(Icons.arrow_forward_ios) 
+                        : null,
+                    onTap: file.isDirectory 
+                        ? () async {
+                            setState(() {
+                              _isLoading = true;
+                            });
+                            await sshProvider.navigateToDirectory(file.fullPath);
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          }
+                        : null,
+                  ),
+                );
+              },
+            );
+          }
+
+          // Empty directory
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -283,34 +357,57 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
                   color: Colors.grey,
                 ),
                 const SizedBox(height: 16),
-                Text(
-                  'Diretório: $_currentPath',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Consumer<SshProvider>(
+                  builder: (context, sshProvider, child) {
+                    return Text(
+                      'Diretório: ${sshProvider.currentPath}',
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    );
+                  },
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'A lista de ficheiros será implementada na próxima fase.',
+                  'Diretório vazio',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey),
                 ),
                 const SizedBox(height: 16),
-                if (_navigationHistory.isNotEmpty)
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        _currentPath = _navigationHistory.removeLast();
-                      });
-                    },
-                    icon: const Icon(Icons.arrow_back),
-                    label: const Text('Voltar'),
-                  ),
+                Consumer<SshProvider>(
+                  builder: (context, sshProvider, child) {
+                    if (sshProvider.navigationHistory.isNotEmpty) {
+                      return ElevatedButton.icon(
+                        onPressed: () async {
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          await sshProvider.navigateBack();
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        },
+                        icon: const Icon(Icons.arrow_back),
+                        label: const Text('Voltar'),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
               ],
             ),
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _loadInitialDirectory,
+        onPressed: () async {
+          setState(() {
+            _isLoading = true;
+          });
+          final sshProvider = Provider.of<SshProvider>(context, listen: false);
+          await sshProvider.refreshCurrentDirectory();
+          setState(() {
+            _isLoading = false;
+          });
+        },
         tooltip: 'Atualizar',
         child: const Icon(Icons.refresh),
       ),
