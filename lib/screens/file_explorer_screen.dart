@@ -48,18 +48,24 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
     
-    // Get home directory
-    final homeResult = await sshProvider.executeCommand('cd && pwd');
-    if (homeResult != null && homeResult.trim().isNotEmpty) {
-      _navigationHistory.add(_currentPath);
+    try {
+      // Get home directory
+      final homeResult = await sshProvider.executeCommand('cd && pwd');
+      if (homeResult != null && homeResult.trim().isNotEmpty) {
+        _navigationHistory.add(_currentPath);
+        setState(() {
+          _currentPath = homeResult.trim();
+        });
+      } else {
+        _showErrorMessage('Failed to retrieve home directory.');
+      }
+    } catch (e) {
+      _showErrorMessage('An error occurred: $e');
+    } finally {
       setState(() {
-        _currentPath = homeResult.trim();
+        _isLoading = false;
       });
     }
-    
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   void _showTools() {
