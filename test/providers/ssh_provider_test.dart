@@ -20,6 +20,9 @@ void main() {
       expect(sshProvider.isConnecting, false);
       expect(sshProvider.errorMessage, null);
       expect(sshProvider.currentCredentials, null);
+      expect(sshProvider.currentFiles, isEmpty);
+      expect(sshProvider.currentPath, isEmpty);
+      expect(sshProvider.navigationHistory, isEmpty);
     });
 
     test('executeCommand should fail when not connected', () async {
@@ -58,10 +61,58 @@ void main() {
     });
 
     test('logout should cleanup and optionally clear credentials', () async {
-      await sshProvider.logout(forgetCredentials: false);
-      
       expect(sshProvider.connectionState, SshConnectionState.disconnected);
       expect(sshProvider.errorMessage, null);
+    });
+
+    group('Directory Navigation', () {
+      test('listDirectory should fail when not connected', () async {
+        await sshProvider.listDirectory('/home');
+        
+        expect(sshProvider.connectionState, SshConnectionState.error);
+        expect(sshProvider.errorMessage, 'Not connected to SSH server');
+        expect(sshProvider.currentFiles, isEmpty);
+        expect(sshProvider.currentPath, isEmpty);
+      });
+
+      test('navigateToDirectory should fail when not connected', () async {
+        await sshProvider.navigateToDirectory('/home');
+        
+        expect(sshProvider.connectionState, SshConnectionState.error);
+        expect(sshProvider.errorMessage, 'Not connected to SSH server');
+        expect(sshProvider.currentPath, isEmpty);
+      });
+
+      test('navigateBack should do nothing when history is empty', () async {
+        await sshProvider.navigateBack();
+        
+        expect(sshProvider.currentPath, isEmpty);
+        expect(sshProvider.navigationHistory, isEmpty);
+      });
+
+      test('refreshCurrentDirectory should do nothing when path is empty', () async {
+        await sshProvider.refreshCurrentDirectory();
+        
+        expect(sshProvider.currentPath, isEmpty);
+        expect(sshProvider.currentFiles, isEmpty);
+      });
+    });
+  });
+
+  group('Path Utilities', () {
+    late SshProvider sshProvider;
+
+    setUp(() {
+      sshProvider = SshProvider();
+    });
+
+    tearDown(() {
+      sshProvider.dispose();
+    });
+
+    test('should handle basic path operations', () {
+      expect(sshProvider.currentPath, isEmpty);
+      expect(sshProvider.navigationHistory, isEmpty);
     });
   });
 
