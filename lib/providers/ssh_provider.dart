@@ -21,7 +21,7 @@ class SshProvider extends ChangeNotifier {
 
     try {
       // Simulate connection delay
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(Duration(seconds: connectionDelay));
       
       // For now, simulate a successful connection
       _isConnected = true;
