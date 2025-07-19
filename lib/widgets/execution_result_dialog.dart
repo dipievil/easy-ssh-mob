@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/execution_result.dart';
+import '../screens/terminal_screen.dart';
 
 /// Dialog widget to display the results of file execution
 class ExecutionResultDialog extends StatelessWidget {
@@ -109,6 +110,11 @@ class ExecutionResultDialog extends StatelessWidget {
             icon: const Icon(Icons.copy),
             label: const Text('Copiar'),
           ),
+          TextButton.icon(
+            onPressed: () => _openInTerminal(context),
+            icon: const Icon(Icons.terminal),
+            label: const Text('Terminal'),
+          ),
         ],
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -149,6 +155,18 @@ class ExecutionResultDialog extends StatelessWidget {
       const SnackBar(
         content: Text('Copiado para a área de transferência'),
         duration: Duration(seconds: 2),
+      ),
+    );
+  }
+  
+  void _openInTerminal(BuildContext context) {
+    Navigator.of(context).pop(); // Close current dialog
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => TerminalScreen(
+          initialResult: result,
+          initialCommand: 'Execução de $fileName',
+        ),
       ),
     );
   }

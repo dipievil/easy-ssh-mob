@@ -4,6 +4,8 @@ import '../providers/ssh_provider.dart';
 import '../models/ssh_file.dart';
 import '../models/execution_result.dart';
 import '../widgets/execution_result_dialog.dart';
+import '../widgets/file_type_indicator.dart';
+import '../screens/terminal_screen.dart';
 import 'login_screen.dart';
 
 class FileExplorerScreen extends StatefulWidget {
@@ -87,11 +89,15 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.refresh),
-              title: const Text('Atualizar'),
+              leading: const Icon(Icons.terminal),
+              title: const Text('Terminal'),
               onTap: () {
                 Navigator.pop(context);
-                _loadInitialDirectory();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const TerminalScreen(),
+                  ),
+                );
               },
             ),
           ],
@@ -373,12 +379,19 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
                             height: 24,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : Icon(file.icon),
+                        : FileTypeIndicator(
+                            file: file,
+                            showExecutionHint: true,
+                          ),
                     title: Text(file.name),
-                    subtitle: Text(file.typeDescription),
+                    subtitle: Text(
+                      file.isExecutable || file.mightBeExecutable
+                          ? '${file.typeDescription} • ${file.executionHint}'
+                          : file.typeDescription,
+                    ),
                     trailing: file.isDirectory 
                         ? const Icon(Icons.arrow_forward_ios)
-                        : file.isExecutable
+                        : (file.isExecutable || file.mightBeExecutable)
                             ? Icon(
                                 Icons.play_arrow,
                                 color: isExecuting ? Colors.grey : Colors.green,
@@ -396,7 +409,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
                                   _isLoading = false;
                                 });
                               }
-                            : file.isExecutable
+                            : (file.isExecutable || file.mightBeExecutable)
                                 ? () => _executeFile(file)
                                 : null,
                   ),
