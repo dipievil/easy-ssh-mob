@@ -14,7 +14,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => SshProvider()),
+        ChangeNotifierProvider(
+          create: (context) {
+            final provider = SshProvider();
+            // Initialize the provider to load saved credentials
+            provider.initialize();
+            return provider;
+          },
+        ),
       ],
       child: MaterialApp(
         title: 'EasySSH',

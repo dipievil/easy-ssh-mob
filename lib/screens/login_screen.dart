@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../providers/ssh_provider.dart';
+import '../models/ssh_credentials.dart';
 import 'file_explorer_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -20,6 +21,15 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
 
   bool _obscurePassword = true;
+  bool _rememberCredentials = false;
+  bool _isLoading = false;
+  String? _connectionError;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials();
+  }
 
   @override
   void dispose() {
@@ -28,6 +38,30 @@ class _LoginScreenState extends State<LoginScreen> {
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  /// Load saved credentials if available
+  Future<void> _loadSavedCredentials() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final sshProvider = Provider.of<SshProvider>(context, listen: false);
+    final credentials = sshProvider.currentCredentials;
+
+    if (credentials != null && credentials.isValid()) {
+      _hostController.text = credentials.host;
+      _portController.text = credentials.port.toString();
+      _usernameController.text = credentials.username;
+      _passwordController.text = credentials.password;
+      setState(() {
+        _rememberCredentials = true;
+      });
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   String? _validateHost(String? value) {
@@ -80,6 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
       port: int.parse(_portController.text.trim()),
       username: _usernameController.text.trim(),
       password: _passwordController.text,
+      saveCredentials: _rememberCredentials,
     );
 
     if (success && mounted) {
@@ -95,44 +130,91 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  /// Clear saved credentials
+  Future<void> _handleForgetCredentials() async {
+    final sshProvider = Provider.of<SshProvider>(context, listen: false);
+    await sshProvider.clearSavedCredentials();
+    
+    setState(() {
+      _rememberCredentials = false;
+      _hostController.clear();
+      _portController.text = '22';
+      _usernameController.clear();
+      _passwordController.clear();
+    });
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Credenciais removidas com sucesso'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            if (_connectionError != null)
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                margin: const EdgeInsets.only(bottom: 16.0),
-                color: Theme.of(context).colorScheme.error.withOpacity(0.1),
-                child: Row(
+      body: SafeArea(
+        child: _isLoading
+            ? const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error, color: Theme.of(context).colorScheme.error),
-                    const SizedBox(width: 8.0),
-                    Expanded(
-                      child: Text(
-                        _connectionError!,
-                        style: TextStyle(color: Theme.of(context).colorScheme.error),
-                      ),
-                    ),
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text('Carregando credenciais...'),
                   ],
                 ),
-              ),
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
+              )
+            : Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                // Error display
+                if (_connectionError != null)
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.errorContainer,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          color: Theme.of(context).colorScheme.onErrorContainer,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _connectionError!,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onErrorContainer,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _connectionError = null;
+                            });
+                          },
+                          icon: Icon(
+                            Icons.close,
+                            color: Theme.of(context).colorScheme.onErrorContainer,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
                 // Logo section
                 const Icon(
                   FontAwesomeIcons.terminal,
@@ -229,7 +311,45 @@ class _LoginScreenState extends State<LoginScreen> {
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => _handleConnect(),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 16),
+
+                // Remember credentials checkbox
+                Row(
+                  children: [
+                    Checkbox(
+                      value: _rememberCredentials,
+                      onChanged: (value) {
+                        setState(() {
+                          _rememberCredentials = value ?? false;
+                        });
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Lembrar credenciais',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                    // Forget credentials button (show only if has saved credentials)
+                    Consumer<SshProvider>(
+                      builder: (context, sshProvider, child) {
+                        if (sshProvider.currentCredentials != null) {
+                          return TextButton.icon(
+                            onPressed: _handleForgetCredentials,
+                            icon: const Icon(Icons.delete_outline, size: 16),
+                            label: const Text('Esquecer'),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Theme.of(context).colorScheme.error,
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
 
                 // Connect button
                 Consumer<SshProvider>(
