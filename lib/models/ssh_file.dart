@@ -73,7 +73,7 @@ class SshFile {
       case FileType.symlink:
         return FontAwesomeIcons.link;
       case FileType.fifo:
-        return FontAwesomeIcons.exchangeAlt;
+        return FontAwesomeIcons.arrowsAltH;
       case FileType.socket:
         return FontAwesomeIcons.plug;
       case FileType.regular:
