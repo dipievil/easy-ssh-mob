@@ -9,7 +9,6 @@ class SshProvider extends ChangeNotifier {
   String? _errorMessage;
   SSHCredentials? _currentCredentials;
   SSHClient? _sshClient;
-  SSHSession? _sshSession;
 
   SshConnectionState get connectionState => _connectionState;
   String? get errorMessage => _errorMessage;
@@ -44,18 +43,15 @@ class SshProvider extends ChangeNotifier {
       // Create SSH socket connection
       final socket = await SSHSocket.connect(host, port);
       
-      // Create SSH client
+      // Create SSH client with password authentication
       _sshClient = SSHClient(
         socket,
         username: username,
         onPasswordRequest: () => password,
       );
 
-      // Wait for connection to be established
+      // Wait for authentication to complete
       await _sshClient!.authenticated;
-      
-      // Create SSH session for command execution
-      _sshSession = await _sshClient!.shell();
       
       _connectionState = SshConnectionState.connected;
       
@@ -115,8 +111,8 @@ class SshProvider extends ChangeNotifier {
     }
   }
 
-  /// Execute a command and return both stdout and stderr
-  Future<Map<String, String>?> executeCommandDetailed(String command) async {
+  /// Execute a command and return the result as a stream
+  Future<String?> executeCommandWithResult(String command) async {
     if (!_connectionState.isConnected || _sshClient == null) {
       _errorMessage = 'Not connected to SSH server';
       _connectionState = SshConnectionState.error;
@@ -125,8 +121,8 @@ class SshProvider extends ChangeNotifier {
     }
 
     try {
-      // Create a new session for this command
-      final session = await _sshClient!.execute(command);
+      // Execute command and get result
+      final result = await _sshClient!.execute(command);
       
       // Clear any previous errors on successful execution
       if (_connectionState.hasError) {
@@ -135,10 +131,7 @@ class SshProvider extends ChangeNotifier {
         notifyListeners();
       }
       
-      return {
-        'stdout': session,
-        'stderr': '', // dartssh2 combines stdout and stderr
-      };
+      return result;
     } catch (e) {
       _errorMessage = _formatError(e);
       _connectionState = SshConnectionState.error;
@@ -193,9 +186,6 @@ class SshProvider extends ChangeNotifier {
   /// Cleanup SSH connections
   Future<void> _cleanup() async {
     try {
-      await _sshSession?.close();
-      _sshSession = null;
-      
       _sshClient?.close();
       _sshClient = null;
     } catch (e) {
@@ -206,35 +196,26 @@ class SshProvider extends ChangeNotifier {
 
   /// Format error messages for better user experience
   String _formatError(dynamic error) {
-    if (error is SSHException) {
-      switch (error.type) {
-        case SSHExceptionType.hostUnreachable:
-          return 'Host unreachable. Check the server address and port.';
-        case SSHExceptionType.authenticationFailed:
-          return 'Authentication failed. Check your username and password.';
-        case SSHExceptionType.connectionTimeout:
-          return 'Connection timeout. The server may be down or unreachable.';
-        case SSHExceptionType.keyExchangeFailed:
-          return 'Key exchange failed. The server may not support this client.';
-        default:
-          return 'SSH Error: ${error.message}';
-      }
-    }
-    
-    final errorString = error.toString();
+    final errorString = error.toString().toLowerCase();
     
     // Common SSH connection errors
-    if (errorString.contains('Connection refused')) {
+    if (errorString.contains('connection refused') || errorString.contains('connection denied')) {
       return 'Connection refused. Check if SSH service is running on the server.';
-    } else if (errorString.contains('No route to host')) {
-      return 'No route to host. Check the server address and network connection.';
-    } else if (errorString.contains('Authentication failed')) {
+    } else if (errorString.contains('no route to host') || errorString.contains('unreachable')) {
+      return 'Host unreachable. Check the server address and network connection.';
+    } else if (errorString.contains('authentication failed') || errorString.contains('access denied')) {
       return 'Authentication failed. Check your username and password.';
-    } else if (errorString.contains('timeout')) {
+    } else if (errorString.contains('timeout') || errorString.contains('timed out')) {
       return 'Connection timeout. The server may be down or unreachable.';
+    } else if (errorString.contains('key exchange') || errorString.contains('handshake')) {
+      return 'Key exchange failed. The server may not support this client.';
+    } else if (errorString.contains('host key verification')) {
+      return 'Host key verification failed. The server identity could not be verified.';
+    } else if (errorString.contains('network')) {
+      return 'Network error. Check your internet connection.';
     }
     
-    return 'Connection error: $errorString';
+    return 'Connection error: ${error.toString()}';
   }
 
   @override
