@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/ssh_provider.dart';
 import '../models/ssh_file.dart';
+import '../models/execution_result.dart';
+import '../widgets/execution_result_dialog.dart';
 import 'login_screen.dart';
 
 class FileExplorerScreen extends StatefulWidget {
@@ -13,6 +15,7 @@ class FileExplorerScreen extends StatefulWidget {
 
 class _FileExplorerScreenState extends State<FileExplorerScreen> {
   bool _isLoading = false;
+  final Map<String, bool> _executingFiles = {};
 
   @override
   void initState() {
@@ -138,6 +141,48 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     }
   }
 
+  Future<void> _executeFile(SshFile file) async {
+    final sshProvider = Provider.of<SshProvider>(context, listen: false);
+    
+    // Mark file as executing
+    setState(() {
+      _executingFiles[file.fullPath] = true;
+    });
+    
+    try {
+      // Show immediate feedback
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Executando ${file.name}...'),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+      
+      // Execute the file
+      final result = await sshProvider.executeFile(file);
+      
+      // Show results in dialog
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => ExecutionResultDialog(
+            result: result,
+            fileName: file.name,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorMessage('Erro ao executar ${file.name}: $e');
+      }
+    } finally {
+      // Remove from executing list
+      setState(() {
+        _executingFiles.remove(file.fullPath);
+      });
+    }
+  }
+
   void _showErrorMessage(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -145,9 +190,6 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
       );
     }
   }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Consumer<SshProvider>(
@@ -321,25 +363,42 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
               padding: const EdgeInsets.all(8),
               itemBuilder: (context, index) {
                 final file = sshProvider.currentFiles[index];
+                final isExecuting = _executingFiles[file.fullPath] == true;
+                
                 return Card(
                   child: ListTile(
-                    leading: Icon(file.icon),
+                    leading: isExecuting
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Icon(file.icon),
                     title: Text(file.name),
                     subtitle: Text(file.typeDescription),
                     trailing: file.isDirectory 
-                        ? const Icon(Icons.arrow_forward_ios) 
-                        : null,
-                    onTap: file.isDirectory 
-                        ? () async {
-                            setState(() {
-                              _isLoading = true;
-                            });
-                            await sshProvider.navigateToDirectory(file.fullPath);
-                            setState(() {
-                              _isLoading = false;
-                            });
-                          }
-                        : null,
+                        ? const Icon(Icons.arrow_forward_ios)
+                        : file.isExecutable
+                            ? Icon(
+                                Icons.play_arrow,
+                                color: isExecuting ? Colors.grey : Colors.green,
+                              )
+                            : null,
+                    onTap: isExecuting
+                        ? null // Disable tap while executing
+                        : file.isDirectory 
+                            ? () async {
+                                setState(() {
+                                  _isLoading = true;
+                                });
+                                await sshProvider.navigateToDirectory(file.fullPath);
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              }
+                            : file.isExecutable
+                                ? () => _executeFile(file)
+                                : null,
                   ),
                 );
               },
