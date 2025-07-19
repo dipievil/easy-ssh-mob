@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/ssh_provider.dart';
 import '../models/ssh_file.dart';
+import '../widgets/ssh_file_list_tile.dart';
 import 'login_screen.dart';
 
 class FileExplorerScreen extends StatefulWidget {
@@ -13,6 +14,7 @@ class FileExplorerScreen extends StatefulWidget {
 
 class _FileExplorerScreenState extends State<FileExplorerScreen> {
   bool _isLoading = false;
+  String _loadingFilePath = '';
 
   @override
   void initState() {
@@ -37,6 +39,187 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     } catch (e) {
       // Error handling is done by the provider
       print('Error loading directory: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// Build the file list with RefreshIndicator
+  Widget _buildFileList() {
+    final sshProvider = Provider.of<SshProvider>(context);
+    
+    if (_isLoading) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('Carregando diretório...'),
+          ],
+        ),
+      );
+    }
+    
+    if (sshProvider.currentFiles.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.folder_open,
+              size: 64,
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Diretório: ${sshProvider.currentPath}',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Diretório vazio',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            if (sshProvider.navigationHistory.isNotEmpty)
+              ElevatedButton.icon(
+                onPressed: () => _navigateBack(sshProvider),
+                icon: const Icon(Icons.arrow_back),
+                label: const Text('Voltar'),
+              ),
+          ],
+        ),
+      );
+    }
+
+    // Calculate total items: files + back button (if not root)
+    final hasBackButton = sshProvider.currentPath != '/' && sshProvider.currentPath.isNotEmpty;
+    final totalItems = sshProvider.currentFiles.length + (hasBackButton ? 1 : 0);
+
+    return RefreshIndicator(
+      onRefresh: () => sshProvider.refreshCurrentDirectory(),
+      child: ListView.builder(
+        itemCount: totalItems,
+        padding: const EdgeInsets.all(8),
+        itemBuilder: (context, index) {
+          // Show back button as first item if not at root
+          if (hasBackButton && index == 0) {
+            return _buildBackButton();
+          }
+          
+          // Calculate file index
+          final fileIndex = hasBackButton ? index - 1 : index;
+          final file = sshProvider.currentFiles[fileIndex];
+          
+          return Card(
+            margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+            child: SshFileListTile(
+              file: file,
+              isLoading: _loadingFilePath == file.fullPath,
+              onTap: () => _handleFileTap(file),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  /// Build the back button as a list item
+  Widget _buildBackButton() {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+      child: ListTile(
+        leading: const Icon(
+          Icons.arrow_back,
+          color: Colors.blue,
+          size: 20,
+        ),
+        title: const Text(
+          '..',
+          style: TextStyle(fontWeight: FontWeight.w500),
+        ),
+        subtitle: Text(
+          'Diretório pai',
+          style: TextStyle(
+            color: Colors.grey.shade600,
+            fontSize: 12,
+          ),
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: Colors.grey.shade400,
+        ),
+        onTap: () => _navigateToParent(),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        dense: true,
+      ),
+    );
+  }
+
+  /// Handle file/directory tap
+  Future<void> _handleFileTap(SshFile file) async {
+    if (file.isDirectory) {
+      await _navigateToDirectory(file.fullPath);
+    } else {
+      // For now, just show a message for non-directory files
+      // This will be expanded in Phase 3
+      _showMessage('Arquivo: ${file.name} (${file.typeDescription})');
+    }
+  }
+
+  /// Navigate to directory with loading state
+  Future<void> _navigateToDirectory(String path) async {
+    setState(() {
+      _loadingFilePath = path;
+    });
+    
+    final sshProvider = Provider.of<SshProvider>(context, listen: false);
+    
+    try {
+      await sshProvider.navigateToDirectory(path);
+    } catch (e) {
+      _showErrorMessage('Erro ao navegar: $e');
+    } finally {
+      setState(() {
+        _loadingFilePath = '';
+      });
+    }
+  }
+
+  /// Navigate to parent directory
+  Future<void> _navigateToParent() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    final sshProvider = Provider.of<SshProvider>(context, listen: false);
+    
+    try {
+      await sshProvider.navigateToParent();
+    } catch (e) {
+      _showErrorMessage('Erro ao navegar: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// Navigate back in history
+  Future<void> _navigateBack(SshProvider sshProvider) async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      await sshProvider.navigateBack();
+    } catch (e) {
+      _showErrorMessage('Erro ao voltar: $e');
     } finally {
       setState(() {
         _isLoading = false;
@@ -139,6 +322,17 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
   }
 
   void _showErrorMessage(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _showMessage(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
@@ -315,86 +509,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
           }
 
           // Main content - show files list
-          if (sshProvider.currentFiles.isNotEmpty) {
-            return ListView.builder(
-              itemCount: sshProvider.currentFiles.length,
-              padding: const EdgeInsets.all(8),
-              itemBuilder: (context, index) {
-                final file = sshProvider.currentFiles[index];
-                return Card(
-                  child: ListTile(
-                    leading: Icon(file.icon),
-                    title: Text(file.name),
-                    subtitle: Text(file.typeDescription),
-                    trailing: file.isDirectory 
-                        ? const Icon(Icons.arrow_forward_ios) 
-                        : null,
-                    onTap: file.isDirectory 
-                        ? () async {
-                            setState(() {
-                              _isLoading = true;
-                            });
-                            await sshProvider.navigateToDirectory(file.fullPath);
-                            setState(() {
-                              _isLoading = false;
-                            });
-                          }
-                        : null,
-                  ),
-                );
-              },
-            );
-          }
-
-          // Empty directory
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.folder_open,
-                  size: 64,
-                  color: Colors.grey,
-                ),
-                const SizedBox(height: 16),
-                Consumer<SshProvider>(
-                  builder: (context, sshProvider, child) {
-                    return Text(
-                      'Diretório: ${sshProvider.currentPath}',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    );
-                  },
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Diretório vazio',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey),
-                ),
-                const SizedBox(height: 16),
-                Consumer<SshProvider>(
-                  builder: (context, sshProvider, child) {
-                    if (sshProvider.navigationHistory.isNotEmpty) {
-                      return ElevatedButton.icon(
-                        onPressed: () async {
-                          setState(() {
-                            _isLoading = true;
-                          });
-                          await sshProvider.navigateBack();
-                          setState(() {
-                            _isLoading = false;
-                          });
-                        },
-                        icon: const Icon(Icons.arrow_back),
-                        label: const Text('Voltar'),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
-              ],
-            ),
-          );
+          return _buildFileList();
         },
       ),
       floatingActionButton: FloatingActionButton(

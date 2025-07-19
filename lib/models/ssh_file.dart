@@ -69,7 +69,7 @@ class SshFile {
       case FileType.directory:
         return FontAwesomeIcons.folder;
       case FileType.executable:
-        return FontAwesomeIcons.play;
+        return FontAwesomeIcons.terminal;
       case FileType.symlink:
         return FontAwesomeIcons.link;
       case FileType.fifo:
