@@ -1,11 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:dartssh2/dartssh2.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'dart:convert';
 import '../models/ssh_credentials.dart';
 import '../models/ssh_connection_state.dart';
 import '../models/ssh_file.dart';
 import '../models/execution_result.dart';
 import '../models/file_content.dart';
 import '../services/secure_storage_service.dart';
+import '../services/error_handler.dart';
 
 class SshProvider extends ChangeNotifier {
   SshConnectionState _connectionState = SshConnectionState.disconnected;
@@ -17,6 +20,11 @@ class SshProvider extends ChangeNotifier {
   List<SshFile> _currentFiles = [];
   String _currentPath = '';
   List<String> _navigationHistory = [];
+  
+  // Error handling properties
+  SshError? _lastError;
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  bool _shouldPlayErrorSound = true;
 
   SshConnectionState get connectionState => _connectionState;
   String? get errorMessage => _errorMessage;
@@ -24,6 +32,8 @@ class SshProvider extends ChangeNotifier {
   List<SshFile> get currentFiles => _currentFiles;
   String get currentPath => _currentPath;
   List<String> get navigationHistory => List.unmodifiable(_navigationHistory);
+  SshError? get lastError => _lastError;
+  bool get shouldPlayErrorSound => _shouldPlayErrorSound;
   
   // Backward compatibility getters
   bool get isConnecting => _connectionState.isConnecting;
@@ -104,9 +114,13 @@ class SshProvider extends ChangeNotifier {
   /// List contents of a directory
   Future<void> listDirectory(String path) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      _errorMessage = 'Not connected to SSH server';
-      _connectionState = SshConnectionState.error;
-      notifyListeners();
+      final error = SshError(
+        type: ErrorType.connectionLost,
+        originalMessage: 'Not connected to SSH server',
+        userFriendlyMessage: 'Não conectado ao servidor SSH',
+        severity: ErrorSeverity.critical,
+      );
+      _handleSshError(error);
       return;
     }
 
@@ -114,19 +128,37 @@ class SshProvider extends ChangeNotifier {
       // Normalize the path
       final normalizedPath = _normalizePath(path);
       
-      // Execute ls -F command
-      final output = await _sshClient!.execute('ls -F "$normalizedPath"');
+      // Execute ls -F command using session for proper error capture
+      final session = await _sshClient!.execute('ls -F "$normalizedPath"');
+      final stdout = await session.stdout.transform(utf8.decoder).join();
+      final stderr = await session.stderr.transform(utf8.decoder).join();
       
-      if (output == null) {
-        _errorMessage = 'Failed to list directory contents';
-        _connectionState = SshConnectionState.error;
+      // Check for errors in stderr
+      if (stderr.isNotEmpty) {
+        final error = ErrorHandler.analyzeError(stderr, 'ls -F "$normalizedPath"');
+        _handleSshError(error);
+        return;
+      }
+      
+      if (stdout.isEmpty) {
+        // Empty directory is valid
+        _currentPath = normalizedPath;
+        _currentFiles = [];
+        
+        // Clear any previous errors on successful listing
+        if (_connectionState.hasError) {
+          _connectionState = SshConnectionState.connected;
+          _errorMessage = null;
+          _lastError = null;
+        }
+        
         notifyListeners();
         return;
       }
 
       // Parse the output
       final files = <SshFile>[];
-      final lines = output.split('\n');
+      final lines = stdout.split('\n');
       
       for (String line in lines) {
         final trimmedLine = line.trim();
@@ -154,13 +186,19 @@ class SshProvider extends ChangeNotifier {
       if (_connectionState.hasError) {
         _connectionState = SshConnectionState.connected;
         _errorMessage = null;
+        _lastError = null;
       }
       
       notifyListeners();
     } catch (e) {
-      _errorMessage = _formatDirectoryError(e);
-      _connectionState = SshConnectionState.error;
-      notifyListeners();
+      final error = SshError(
+        type: ErrorType.unknown,
+        originalMessage: e.toString(),
+        userFriendlyMessage: 'Erro ao listar diretório',
+        suggestion: 'Verifique as permissões e conexão',
+        severity: ErrorSeverity.error,
+      );
+      _handleSshError(error);
     }
   }
 
@@ -381,45 +419,47 @@ class SshProvider extends ChangeNotifier {
   /// Execute command with timeout and separate stdout/stderr capture
   Future<Map<String, dynamic>> _executeCommandWithTimeout(String command, Duration timeout) async {
     try {
-      // For better error separation, wrap command to capture exit code and stderr
-      final wrappedCommand = '''
-        $command 2>&1; echo "EXIT_CODE:\$?"
-      ''';
+      // Create SSH session for proper stderr capture
+      final session = await _sshClient!.execute(command);
       
-      final result = await _sshClient!.execute(wrappedCommand).timeout(timeout);
+      // Set up timeout and capture streams
+      final Future<String> stdoutFuture = session.stdout.transform(utf8.decoder).join();
+      final Future<String> stderrFuture = session.stderr.transform(utf8.decoder).join();
+      final Future<int?> exitCodeFuture = session.exitCode;
       
-      if (result == null) {
-        return {
-          'stdout': '',
-          'stderr': 'Command returned null result',
-          'exitCode': -1,
-        };
-      }
+      // Wait for all with timeout
+      final results = await Future.wait([
+        stdoutFuture.timeout(timeout),
+        stderrFuture.timeout(timeout),
+        exitCodeFuture.timeout(timeout),
+      ]);
       
-      // Parse exit code from output
-      final lines = result.split('\n');
-      int? exitCode;
-      String output = result;
+      final stdout = results[0] as String;
+      final stderr = results[1] as String;
+      final exitCode = results[2] as int?;
       
-      // Look for EXIT_CODE marker in last few lines
-      for (int i = lines.length - 1; i >= 0 && i >= lines.length - 3; i--) {
-        if (lines[i].startsWith('EXIT_CODE:')) {
-          final exitCodeStr = lines[i].substring('EXIT_CODE:'.length);
-          exitCode = int.tryParse(exitCodeStr);
-          // Remove the exit code line from output
-          lines.removeAt(i);
-          output = lines.join('\n');
-          break;
-        }
+      // If there's stderr, analyze it for errors
+      if (stderr.isNotEmpty) {
+        final error = ErrorHandler.analyzeError(stderr, command);
+        _handleSshError(error);
       }
       
       return {
-        'stdout': output,
-        'stderr': '', // For now, stderr is mixed with stdout
+        'stdout': stdout,
+        'stderr': stderr,
         'exitCode': exitCode ?? 0,
       };
     } catch (e) {
       if (e.toString().contains('TimeoutException')) {
+        final timeoutError = SshError(
+          type: ErrorType.timeout,
+          originalMessage: 'Command timed out after ${timeout.inSeconds} seconds',
+          userFriendlyMessage: 'Comando demorou muito tempo para executar',
+          suggestion: 'Tente usar um timeout maior ou simplificar o comando',
+          severity: ErrorSeverity.warning,
+        );
+        _handleSshError(timeoutError);
+        
         return {
           'stdout': '',
           'stderr': 'Command timed out after ${timeout.inSeconds} seconds',
@@ -429,6 +469,9 @@ class SshProvider extends ChangeNotifier {
       rethrow;
     }
   }
+  
+  /// Execute a SSH command and return output
+  Future<String?> executeCommand(String command) async {
     if (!_connectionState.isConnected || _sshClient == null) {
       _errorMessage = 'Not connected to SSH server';
       _connectionState = SshConnectionState.error;
@@ -437,50 +480,138 @@ class SshProvider extends ChangeNotifier {
     }
 
     try {
-      // Execute command using SSH client
-      final result = await _sshClient!.execute(command);
+      // Execute command using SSH client with session for stderr capture
+      final session = await _sshClient!.execute(command);
+      
+      // Wait for command completion and capture both stdout and stderr
+      final stdout = await session.stdout.transform(utf8.decoder).join();
+      final stderr = await session.stderr.transform(utf8.decoder).join();
+      
+      // Check if there were errors in stderr
+      if (stderr.isNotEmpty) {
+        final error = ErrorHandler.analyzeError(stderr, command);
+        _handleSshError(error);
+      }
       
       // Clear any previous errors on successful execution
-      if (_connectionState.hasError) {
+      if (_connectionState.hasError && stderr.isEmpty) {
         _connectionState = SshConnectionState.connected;
         _errorMessage = null;
         notifyListeners();
       }
       
-      return result;
+      return stdout;
     } catch (e) {
-      _errorMessage = _formatError(e);
-      _connectionState = SshConnectionState.error;
-      notifyListeners();
+      final error = SshError(
+        type: ErrorType.unknown,
+        originalMessage: e.toString(),
+        userFriendlyMessage: 'Erro de conexão SSH',
+        severity: ErrorSeverity.critical,
+      );
+      _handleSshError(error);
       return null;
     }
+  }
+
+  /// Handle SSH errors with notification and sound
+  void _handleSshError(SshError error) {
+    _lastError = error;
+    _errorMessage = error.userFriendlyMessage;
+    _connectionState = SshConnectionState.error;
+    notifyListeners();
+    
+    // Log for debug
+    debugPrint('SSH Error: ${error.type} - ${error.originalMessage}');
+    
+    // Play error sound if configured
+    if (_shouldPlayErrorSound && _shouldPlaySoundForSeverity(error.severity)) {
+      _playErrorSound();
+    }
+  }
+  
+  /// Determine if sound should be played for given severity
+  bool _shouldPlaySoundForSeverity(ErrorSeverity severity) {
+    switch (severity) {
+      case ErrorSeverity.info:
+        return false;
+      case ErrorSeverity.warning:
+      case ErrorSeverity.error:
+      case ErrorSeverity.critical:
+        return true;
+    }
+  }
+  
+  /// Play error sound
+  void _playErrorSound() {
+    try {
+      // Try to play a simple system beep sound
+      // Note: For a real implementation, you'd add actual sound files
+      // For now, we'll use a simple notification approach
+      _audioPlayer.play(AssetSource('sounds/error_beep.wav')).catchError((e) {
+        // Fallback: log that sound would play
+        debugPrint('Error sound notification (no audio file): $e');
+      });
+    } catch (e) {
+      debugPrint('Could not play error sound: $e');
+    }
+  }
+  
+  /// Toggle error sound setting
+  void setErrorSoundEnabled(bool enabled) {
+    _shouldPlayErrorSound = enabled;
+    notifyListeners();
+  }
+  
+  /// Test error sound (for debugging)
+  void testErrorSound() {
+    _playErrorSound();
   }
 
   /// Execute a command and return the result as a stream
   Future<String?> executeCommandWithResult(String command) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      _errorMessage = 'Not connected to SSH server';
-      _connectionState = SshConnectionState.error;
-      notifyListeners();
+      final error = SshError(
+        type: ErrorType.connectionLost,
+        originalMessage: 'Not connected to SSH server',
+        userFriendlyMessage: 'Não conectado ao servidor SSH',
+        severity: ErrorSeverity.critical,
+      );
+      _handleSshError(error);
       return null;
     }
 
     try {
-      // Execute command and get result
-      final result = await _sshClient!.execute(command);
+      // Execute command using SSH client with session for stderr capture
+      final session = await _sshClient!.execute(command);
+      
+      // Wait for command completion and capture both stdout and stderr
+      final stdout = await session.stdout.transform(utf8.decoder).join();
+      final stderr = await session.stderr.transform(utf8.decoder).join();
+      
+      // Check if there were errors in stderr
+      if (stderr.isNotEmpty) {
+        final error = ErrorHandler.analyzeError(stderr, command);
+        _handleSshError(error);
+        return stdout; // Return stdout even if there are warnings in stderr
+      }
       
       // Clear any previous errors on successful execution
       if (_connectionState.hasError) {
         _connectionState = SshConnectionState.connected;
         _errorMessage = null;
+        _lastError = null;
         notifyListeners();
       }
       
-      return result;
+      return stdout;
     } catch (e) {
-      _errorMessage = _formatError(e);
-      _connectionState = SshConnectionState.error;
-      notifyListeners();
+      final error = SshError(
+        type: ErrorType.unknown,
+        originalMessage: e.toString(),
+        userFriendlyMessage: 'Erro de execução de comando',
+        severity: ErrorSeverity.error,
+      );
+      _handleSshError(error);
       return null;
     }
   }
@@ -622,6 +753,7 @@ class SshProvider extends ChangeNotifier {
           : SshConnectionState.disconnected;
     }
     _errorMessage = null;
+    _lastError = null;
     notifyListeners();
   }
 
@@ -680,6 +812,7 @@ class SshProvider extends ChangeNotifier {
   @override
   void dispose() {
     _cleanup();
+    _audioPlayer.dispose();
     super.dispose();
   }
 }
