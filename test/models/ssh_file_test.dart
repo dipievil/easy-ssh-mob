@@ -157,5 +157,70 @@ void main() {
         expect(copy.displayName, equals(original.displayName));
       });
     });
+
+    group('text file detection', () {
+      test('should detect text files by extension', () {
+        const testCases = [
+          'readme.txt',
+          'config.conf',
+          'data.json',
+          'script.sh',
+          'style.css',
+          'page.html',
+          'query.sql',
+          'doc.md',
+          'settings.yml',
+          'values.yaml',
+          'app.py',
+          'main.js',
+          'data.log',
+          'settings.ini',
+          'config.cfg',
+          'data.xml',
+          'app.properties',
+          '.env',
+          '.gitignore',
+          'Dockerfile',
+          'Makefile',
+        ];
+
+        for (final fileName in testCases) {
+          final file = SshFile.fromLsLine(fileName, '/test');
+          expect(file.isTextFile, true, reason: '$fileName should be detected as text file');
+        }
+      });
+
+      test('should detect text files by name without extension', () {
+        const textFiles = [
+          'readme',
+          'license',
+          'changelog',
+          'makefile',
+          'dockerfile',
+        ];
+
+        for (final fileName in textFiles) {
+          final file = SshFile.fromLsLine(fileName, '/test');
+          expect(file.isTextFile, true, reason: '$fileName should be detected as text file');
+        }
+      });
+
+      test('should not detect binary files as text', () {
+        const binaryFiles = [
+          'image.jpg',
+          'video.mp4',
+          'archive.zip',
+          'program.exe',
+          'library.so',
+          'data.bin',
+          'font.ttf',
+        ];
+
+        for (final fileName in binaryFiles) {
+          final file = SshFile.fromLsLine(fileName, '/test');
+          expect(file.isTextFile, false, reason: '$fileName should not be detected as text file');
+        }
+      });
+    });
   });
 }

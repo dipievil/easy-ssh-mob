@@ -94,6 +94,33 @@ class SshFile {
 
   /// Check if this is a regular file
   bool get isRegularFile => type == FileType.regular;
+  
+  /// Check if this file can be viewed as text
+  bool get isTextFile {
+    // Known text file extensions
+    final textExtensions = [
+      '.txt', '.log', '.conf', '.cfg', '.ini', '.json', '.xml', '.yml', '.yaml',
+      '.md', '.sh', '.py', '.js', '.css', '.html', '.sql', '.properties',
+      '.env', '.gitignore', '.dockerfile', '.makefile', '.readme'
+    ];
+    
+    final lowerName = name.toLowerCase();
+    
+    // Check extension
+    for (String ext in textExtensions) {
+      if (lowerName.endsWith(ext)) {
+        return true;
+      }
+    }
+    
+    // Files without extension that are typically text
+    final textFiles = ['readme', 'license', 'changelog', 'makefile', 'dockerfile'];
+    if (textFiles.contains(lowerName)) {
+      return true;
+    }
+    
+    return false;
+  }
 
   /// Get human-readable type description
   String get typeDescription {

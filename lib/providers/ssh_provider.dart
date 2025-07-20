@@ -4,6 +4,7 @@ import '../models/ssh_credentials.dart';
 import '../models/ssh_connection_state.dart';
 import '../models/ssh_file.dart';
 import '../models/execution_result.dart';
+import '../models/file_content.dart';
 import '../services/secure_storage_service.dart';
 
 class SshProvider extends ChangeNotifier {
@@ -481,6 +482,115 @@ class SshProvider extends ChangeNotifier {
       _connectionState = SshConnectionState.error;
       notifyListeners();
       return null;
+    }
+  }
+
+  /// Read content of a text file
+  Future<FileContent> readFile(SshFile file) async {
+    if (!_connectionState.isConnected || _sshClient == null) {
+      throw Exception('Not connected to SSH server');
+    }
+
+    if (!file.isTextFile && file.type != FileType.regular) {
+      throw Exception('File is not a text file');
+    }
+
+    try {
+      // First check file size
+      final sizeOutput = await _sshClient!.execute('stat -f%z "${file.fullPath}" 2>/dev/null || stat -c%s "${file.fullPath}"');
+      final fileSize = int.tryParse(sizeOutput?.trim() ?? '') ?? 0;
+      
+      // File size limit: 1MB
+      const maxSize = 1024 * 1024;
+      
+      if (fileSize > maxSize) {
+        // Large file - show only part
+        return _readFilePart(file, FileViewMode.head, fileSize);
+      } else {
+        // Small file - read complete
+        final content = await _sshClient!.execute('cat "${file.fullPath}"');
+        
+        if (content == null) {
+          throw Exception('Failed to read file content');
+        }
+        
+        final lines = content.split('\n');
+        
+        return FileContent(
+          content: content,
+          isTruncated: false,
+          totalLines: lines.length,
+          displayedLines: lines.length,
+          mode: FileViewMode.full,
+          fileSize: fileSize,
+        );
+      }
+    } catch (e) {
+      throw Exception('Error reading file: $e');
+    }
+  }
+  
+  /// Read part of a file (head or tail)
+  Future<FileContent> _readFilePart(SshFile file, FileViewMode mode, int fileSize) async {
+    const linesCount = 100; // Read 100 lines by default
+    
+    String command;
+    switch (mode) {
+      case FileViewMode.head:
+        command = 'head -$linesCount "${file.fullPath}"';
+        break;
+      case FileViewMode.tail:
+        command = 'tail -$linesCount "${file.fullPath}"';
+        break;
+      default:
+        throw Exception('Invalid mode for partial reading: $mode');
+    }
+    
+    final content = await _sshClient!.execute(command);
+    
+    if (content == null) {
+      throw Exception('Failed to read file part');
+    }
+    
+    // Get total line count
+    final lineCountOutput = await _sshClient!.execute('wc -l "${file.fullPath}"');
+    final totalLines = int.tryParse(lineCountOutput?.split(' ').first ?? '') ?? 0;
+    
+    final lines = content.split('\n');
+    final displayedLines = lines.where((line) => line.isNotEmpty).length;
+    
+    return FileContent(
+      content: content,
+      isTruncated: true,
+      totalLines: totalLines,
+      displayedLines: displayedLines,
+      mode: mode,
+      fileSize: fileSize,
+    );
+  }
+  
+  /// Read file with specific mode
+  Future<FileContent> readFileWithMode(SshFile file, FileViewMode mode) async {
+    if (!_connectionState.isConnected || _sshClient == null) {
+      throw Exception('Not connected to SSH server');
+    }
+
+    try {
+      // Get file size first
+      final sizeOutput = await _sshClient!.execute('stat -f%z "${file.fullPath}" 2>/dev/null || stat -c%s "${file.fullPath}"');
+      final fileSize = int.tryParse(sizeOutput?.trim() ?? '') ?? 0;
+      
+      switch (mode) {
+        case FileViewMode.full:
+          return readFile(file);
+        case FileViewMode.head:
+        case FileViewMode.tail:
+          return _readFilePart(file, mode, fileSize);
+        default:
+          throw Exception('Unsupported read mode: $mode');
+      }
+    } catch (e) {
+      throw Exception('Error reading file with mode $mode: $e');
     }
   }
 
