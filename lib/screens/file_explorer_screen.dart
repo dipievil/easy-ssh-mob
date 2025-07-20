@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../providers/ssh_provider.dart';
 import '../models/ssh_file.dart';
 import '../widgets/ssh_file_list_tile.dart';
@@ -7,6 +8,7 @@ import '../models/execution_result.dart';
 import '../widgets/execution_result_dialog.dart';
 import '../widgets/file_type_indicator.dart';
 import '../widgets/error_widgets.dart';
+import '../widgets/tools_drawer.dart';
 import '../screens/terminal_screen.dart';
 import '../screens/file_viewer_screen.dart';
 import 'login_screen.dart';
@@ -275,7 +277,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     try {
       await sshProvider.navigateToHome();
     } catch (e) {
-      _showErrorMessage('An error occurred: $e');
+      _showErrorMessage('Erro ao navegar para home: $e');
     } finally {
       setState(() {
         _isLoading = false;
@@ -283,43 +285,27 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     }
   }
 
+  bool _isAtHome() {
+    final sshProvider = Provider.of<SshProvider>(context, listen: false);
+    final currentPath = sshProvider.currentPath;
+    final username = sshProvider.currentCredentials?.username;
+    
+    // Check if we're at root home directories
+    if (currentPath == '/' || currentPath == '/home' || currentPath == '/root') {
+      return true;
+    }
+    
+    // Check if we're at user home directory
+    if (username != null && currentPath == '/home/$username') {
+      return true;
+    }
+    
+    return false;
+  }
+
   void _showTools() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Ferramentas',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
-              onTap: () {
-                Navigator.pop(context);
-                _showLogoutDialog(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.terminal),
-              title: const Text('Terminal'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const TerminalScreen(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+    // Open the drawer instead of showing a modal bottom sheet
+    Scaffold.of(context).openEndDrawer();
   }
 
   Future<void> _showLogoutDialog(BuildContext context) async {
@@ -721,15 +707,27 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
               return const SizedBox.shrink();
             },
           ),
-          IconButton(
-            onPressed: _goHome,
-            icon: const Icon(Icons.home),
-            tooltip: 'Home',
+          // Home button with improved styling
+          Consumer<SshProvider>(
+            builder: (context, sshProvider, child) {
+              final isAtHome = _isAtHome();
+              return IconButton(
+                onPressed: isAtHome ? null : _goHome,
+                icon: Icon(
+                  FontAwesomeIcons.home,
+                  color: isAtHome ? Colors.grey : null,
+                ),
+                tooltip: isAtHome ? 'Já está no diretório home' : 'Ir para Home',
+              );
+            },
           ),
-          IconButton(
-            onPressed: _showTools,
-            icon: const Icon(Icons.settings),
-            tooltip: 'Ferramentas',
+          // Tools drawer button
+          Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(FontAwesomeIcons.tools),
+              tooltip: 'Ferramentas',
+              onPressed: () => Scaffold.of(context).openEndDrawer(),
+            ),
           ),
           // Connection status indicator
           Consumer<SshProvider>(
@@ -756,6 +754,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
           const SizedBox(width: 8),
         ],
       ),
+      endDrawer: const ToolsDrawer(),
       body: Consumer<SshProvider>(
         builder: (context, sshProvider, child) {
           // Handle connection errors
