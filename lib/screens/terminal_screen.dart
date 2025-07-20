@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/ssh_provider.dart';
 import '../models/execution_result.dart';
 import '../models/ssh_file.dart';
+import '../widgets/error_widgets.dart';
 
 /// Terminal-like screen for advanced command execution and output viewing
 class TerminalScreen extends StatefulWidget {
@@ -24,6 +25,7 @@ class _TerminalScreenState extends State<TerminalScreen> {
   final ScrollController _scrollController = ScrollController();
   final List<TerminalEntry> _history = [];
   bool _isExecuting = false;
+  SshProvider? _lastSshProvider;
 
   @override
   void initState() {
@@ -40,9 +42,33 @@ class _TerminalScreenState extends State<TerminalScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _setupErrorListener();
+  }
+  
+  void _setupErrorListener() {
+    final sshProvider = Provider.of<SshProvider>(context, listen: false);
+    if (_lastSshProvider != sshProvider) {
+      _lastSshProvider = sshProvider;
+      // Listen for errors and show them
+      sshProvider.addListener(_handleProviderChange);
+    }
+  }
+  
+  void _handleProviderChange() {
+    final sshProvider = _lastSshProvider;
+    if (sshProvider?.lastError != null && mounted) {
+      // Show error notification
+      ErrorSnackBar.show(context, sshProvider!.lastError!);
+    }
+  }
+
+  @override
   void dispose() {
     _commandController.dispose();
     _scrollController.dispose();
+    _lastSshProvider?.removeListener(_handleProviderChange);
     super.dispose();
   }
 
