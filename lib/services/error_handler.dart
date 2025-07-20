@@ -34,15 +34,24 @@ class SshError {
 /// Service for analyzing and handling SSH errors
 class ErrorHandler {
   /// Pattern matching for common SSH errors
+  static const RegExp _permissionDeniedPattern = RegExp(r'Permission denied', caseSensitive: false);
+  static const RegExp _fileNotFoundPattern = RegExp(r'No such file or directory', caseSensitive: false);
+  static const RegExp _operationNotPermittedPattern = RegExp(r'Operation not permitted', caseSensitive: false);
+  static const RegExp _accessDeniedPattern = RegExp(r'Access denied', caseSensitive: false);
+  static const RegExp _connectionLostPattern = RegExp(r'Connection.*(lost|closed|refused)', caseSensitive: false);
+  static const RegExp _timeoutPattern = RegExp(r'Timeout|timed out', caseSensitive: false);
+  static const RegExp _commandNotFoundPattern = RegExp(r'command not found', caseSensitive: false);
+  static const RegExp _diskFullPattern = RegExp(r'No space left on device', caseSensitive: false);
+
   static final Map<RegExp, ErrorType> _errorPatterns = {
-    RegExp(r'Permission denied', caseSensitive: false): ErrorType.permissionDenied,
-    RegExp(r'No such file or directory', caseSensitive: false): ErrorType.fileNotFound,
-    RegExp(r'Operation not permitted', caseSensitive: false): ErrorType.operationNotPermitted,
-    RegExp(r'Access denied', caseSensitive: false): ErrorType.accessDenied,
-    RegExp(r'Connection.*(lost|closed|refused)', caseSensitive: false): ErrorType.connectionLost,
-    RegExp(r'Timeout|timed out', caseSensitive: false): ErrorType.timeout,
-    RegExp(r'command not found', caseSensitive: false): ErrorType.commandNotFound,
-    RegExp(r'No space left on device', caseSensitive: false): ErrorType.diskFull,
+    _permissionDeniedPattern: ErrorType.permissionDenied,
+    _fileNotFoundPattern: ErrorType.fileNotFound,
+    _operationNotPermittedPattern: ErrorType.operationNotPermitted,
+    _accessDeniedPattern: ErrorType.accessDenied,
+    _connectionLostPattern: ErrorType.connectionLost,
+    _timeoutPattern: ErrorType.timeout,
+    _commandNotFoundPattern: ErrorType.commandNotFound,
+    _diskFullPattern: ErrorType.diskFull,
   };
   
   /// Analyze stderr output and return structured error information
