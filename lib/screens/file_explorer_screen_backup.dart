@@ -273,6 +273,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // The main app bar of the screen, displaying the current path or a default title.
       appBar: AppBar(
         title: Consumer<SshProvider>(
           builder: (context, sshProvider, child) {
