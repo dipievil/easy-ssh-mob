@@ -12,7 +12,7 @@ import '../services/error_handler.dart';
 
 class SshProvider extends ChangeNotifier {
   // Constants
-  static const String _errorSoundPath = 'sounds/error_beep.txt';
+  static const String _errorSoundPath = 'sounds/error_beep.wav';
   
   SshConnectionState _connectionState = SshConnectionState.disconnected;
   String? _errorMessage;
