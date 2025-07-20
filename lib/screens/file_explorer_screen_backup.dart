@@ -251,6 +251,20 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
   }
 
 // Removed redundant and incomplete _executeFile method.
+
+  void _showErrorMessage(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Consumer<SshProvider>(
