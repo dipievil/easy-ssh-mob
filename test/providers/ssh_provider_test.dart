@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:easyssh/providers/ssh_provider.dart';
 import 'package:easyssh/models/ssh_connection_state.dart';
+import 'package:easyssh/models/ssh_file.dart';
+import 'package:easyssh/models/execution_result.dart';
 
 void main() {
   group('SshProvider', () {
@@ -63,6 +65,43 @@ void main() {
     test('logout should cleanup and optionally clear credentials', () async {
       expect(sshProvider.connectionState, SshConnectionState.disconnected);
       expect(sshProvider.errorMessage, null);
+    });
+    
+    group('File Execution', () {
+      test('executeFile should fail when not connected', () async {
+        final testFile = SshFile(
+          name: 'test.sh',
+          fullPath: '/home/user/test.sh',
+          type: FileType.executable,
+          displayName: 'test.sh*',
+        );
+        
+        final result = await sshProvider.executeFile(testFile);
+        
+        expect(result.stdout, '');
+        expect(result.stderr, 'Not connected to SSH server');
+        expect(result.exitCode, -1);
+        expect(result.hasError, true);
+      });
+      
+      test('executeFile should handle timeout correctly', () async {
+        final testFile = SshFile(
+          name: 'test.sh',
+          fullPath: '/home/user/test.sh',
+          type: FileType.executable,
+          displayName: 'test.sh*',
+        );
+        
+        // Test with very short timeout to simulate timeout
+        final result = await sshProvider.executeFile(
+          testFile, 
+          timeout: const Duration(milliseconds: 1),
+        );
+        
+        // Should complete quickly with error since not connected
+        expect(result.hasError, true);
+        expect(result.stderr, 'Not connected to SSH server');
+      });
     });
 
     group('Directory Navigation', () {

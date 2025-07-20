@@ -3,6 +3,7 @@ import 'package:dartssh2/dartssh2.dart';
 import '../models/ssh_credentials.dart';
 import '../models/ssh_connection_state.dart';
 import '../models/ssh_file.dart';
+import '../models/execution_result.dart';
 import '../services/secure_storage_service.dart';
 
 class SshProvider extends ChangeNotifier {
@@ -293,8 +294,140 @@ class SshProvider extends ChangeNotifier {
     return 'Error accessing directory: ${error.toString()}';
   }
 
-  /// Execute a command on the SSH server
-  Future<String?> executeCommand(String command) async {
+  /// Execute a file on the SSH server
+  Future<ExecutionResult> executeFile(SshFile file, {Duration timeout = const Duration(seconds: 30)}) async {
+    final startTime = DateTime.now();
+    
+    if (!_connectionState.isConnected || _sshClient == null) {
+      return ExecutionResult(
+        stdout: '',
+        stderr: 'Not connected to SSH server',
+        exitCode: -1,
+        duration: DateTime.now().difference(startTime),
+        timestamp: startTime,
+      );
+    }
+
+    try {
+      String command;
+      
+      if (file.type == FileType.executable) {
+        // For executables, run directly with proper escaping
+        command = '"${file.fullPath}"';
+      } else {
+        // For other files, try to detect script type and use appropriate interpreter
+        command = await _buildScriptCommand(file);
+      }
+      
+      debugPrint('Executing command: $command');
+      
+      // Execute with timeout handling
+      final result = await _executeCommandWithTimeout(command, timeout);
+      
+      return ExecutionResult(
+        stdout: result['stdout'] ?? '',
+        stderr: result['stderr'] ?? '',
+        exitCode: result['exitCode'],
+        duration: DateTime.now().difference(startTime),
+        timestamp: startTime,
+      );
+    } catch (e) {
+      return ExecutionResult(
+        stdout: '',
+        stderr: 'Execution error: ${e.toString()}',
+        exitCode: -1,
+        duration: DateTime.now().difference(startTime),
+        timestamp: startTime,
+      );
+    }
+  }
+  
+  /// Build command for executing script files based on file extension or shebang
+  Future<String> _buildScriptCommand(SshFile file) async {
+    final filePath = file.fullPath;
+    final fileName = file.name.toLowerCase();
+    
+    // Check for common script extensions
+    if (fileName.endsWith('.sh')) {
+      return 'bash "$filePath"';
+    } else if (fileName.endsWith('.py')) {
+      return 'python3 "$filePath"';
+    } else if (fileName.endsWith('.pl')) {
+      return 'perl "$filePath"';
+    } else if (fileName.endsWith('.rb')) {
+      return 'ruby "$filePath"';
+    } else if (fileName.endsWith('.js')) {
+      return 'node "$filePath"';
+    }
+    
+    // For files without clear extension, try to read shebang
+    try {
+      final headResult = await _sshClient!.execute('head -1 "$filePath"');
+      if (headResult != null && headResult.startsWith('#!')) {
+        // Extract interpreter from shebang
+        final shebang = headResult.trim();
+        final interpreter = shebang.substring(2).split(' ').first;
+        return '$interpreter "$filePath"';
+      }
+    } catch (e) {
+      debugPrint('Could not read shebang: $e');
+    }
+    
+    // Default: try to execute directly
+    return '"$filePath"';
+  }
+  
+  /// Execute command with timeout and separate stdout/stderr capture
+  Future<Map<String, dynamic>> _executeCommandWithTimeout(String command, Duration timeout) async {
+    try {
+      // For better error separation, wrap command to capture exit code and stderr
+      final wrappedCommand = '''
+        $command 2>&1; echo "EXIT_CODE:\$?"
+      ''';
+      
+      final result = await _sshClient!.execute(wrappedCommand).timeout(timeout);
+      
+      if (result == null) {
+        return {
+          'stdout': '',
+          'stderr': 'Command returned null result',
+          'exitCode': -1,
+        };
+      }
+      
+      // Parse exit code from output
+      final lines = result.split('\n');
+      int? exitCode;
+      String output = result;
+      
+      // Look for EXIT_CODE marker in last few lines
+      for (int i = lines.length - 1; i >= 0 && i >= lines.length - 3; i--) {
+        if (lines[i].startsWith('EXIT_CODE:')) {
+          final exitCodeStr = lines[i].substring('EXIT_CODE:'.length);
+          exitCode = int.tryParse(exitCodeStr);
+          // Remove the exit code line from output
+          lines.removeAt(i);
+          output = lines.join('\n');
+          break;
+        }
+      }
+      
+      return {
+        'stdout': output,
+        'stderr': '', // For now, stderr is mixed with stdout
+        'exitCode': exitCode ?? 0,
+      };
+    } catch (e) {
+      if (e.toString().contains('TimeoutException')) {
+        return {
+          'stdout': '',
+          'stderr': 'Command timed out after ${timeout.inSeconds} seconds',
+          'exitCode': -1,
+        };
+      }
+      rethrow;
+    }
+  }
     if (!_connectionState.isConnected || _sshClient == null) {
       _errorMessage = 'Not connected to SSH server';
       _connectionState = SshConnectionState.error;
