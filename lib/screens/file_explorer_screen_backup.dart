@@ -207,6 +207,8 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
       ),
     );
   }
+
+  Future<void> _executeFile(SshFile file) async {
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
     
     // Mark file as executing
