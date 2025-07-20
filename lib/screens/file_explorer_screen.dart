@@ -6,9 +6,9 @@ import '../widgets/ssh_file_list_tile.dart';
 import '../models/execution_result.dart';
 import '../widgets/execution_result_dialog.dart';
 import '../widgets/file_type_indicator.dart';
+import '../widgets/error_widgets.dart';
 import '../screens/terminal_screen.dart';
 import '../screens/file_viewer_screen.dart';
-
 import 'login_screen.dart';
 
 class FileExplorerScreen extends StatefulWidget {
@@ -22,11 +22,41 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
   bool _isLoading = false;
   String _loadingFilePath = '';
   final Map<String, bool> _executingFiles = {};
+  SshProvider? _lastSshProvider;
 
   @override
   void initState() {
     super.initState();
     _loadInitialDirectory();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _setupErrorListener();
+  }
+  
+  void _setupErrorListener() {
+    final sshProvider = Provider.of<SshProvider>(context, listen: false);
+    if (_lastSshProvider != sshProvider) {
+      _lastSshProvider?.removeListener(_handleProviderChange);
+      _lastSshProvider = sshProvider;
+      sshProvider.addListener(_handleProviderChange);
+    }
+  }
+  
+  void _handleProviderChange() {
+    final sshProvider = _lastSshProvider;
+    if (sshProvider?.lastError != null && mounted) {
+      // Show error notification
+      ErrorSnackBar.show(context, sshProvider!.lastError!);
+    }
+  }
+
+  @override
+  void dispose() {
+    _lastSshProvider?.removeListener(_handleProviderChange);
+    super.dispose();
   }
 
   Future<void> _loadInitialDirectory() async {
