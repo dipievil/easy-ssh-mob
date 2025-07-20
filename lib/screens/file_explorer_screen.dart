@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/ssh_provider.dart';
 import '../models/ssh_file.dart';
+import '../widgets/ssh_file_list_tile.dart';
 import '../models/execution_result.dart';
 import '../widgets/execution_result_dialog.dart';
 import '../widgets/file_type_indicator.dart';
 import '../screens/terminal_screen.dart';
 import '../screens/file_viewer_screen.dart';
+
 import 'login_screen.dart';
 
 class FileExplorerScreen extends StatefulWidget {
@@ -18,6 +20,7 @@ class FileExplorerScreen extends StatefulWidget {
 
 class _FileExplorerScreenState extends State<FileExplorerScreen> {
   bool _isLoading = false;
+  String _loadingFilePath = '';
   final Map<String, bool> _executingFiles = {};
 
   @override
@@ -43,6 +46,188 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     } catch (e) {
       // Error handling is done by the provider
       print('Error loading directory: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// Build the file list with RefreshIndicator
+  Widget _buildFileList() {
+    final sshProvider = Provider.of<SshProvider>(context);
+    
+    if (_isLoading) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('Carregando diretório...'),
+          ],
+        ),
+      );
+    }
+    
+    if (sshProvider.currentFiles.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.folder_open,
+              size: 64,
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Diretório: ${sshProvider.currentPath}',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Diretório vazio',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            if (sshProvider.navigationHistory.isNotEmpty)
+              ElevatedButton.icon(
+                onPressed: () => _navigateBack(sshProvider),
+                icon: const Icon(Icons.arrow_back),
+                label: const Text('Voltar'),
+              ),
+          ],
+        ),
+      );
+    }
+
+    // Calculate total items: files + back button (if not root)
+    final hasBackButton = sshProvider.currentPath != '/' && sshProvider.currentPath.isNotEmpty;
+    final totalItems = sshProvider.currentFiles.length + (hasBackButton ? 1 : 0);
+
+    return RefreshIndicator(
+      onRefresh: () => sshProvider.refreshCurrentDirectory(),
+      child: ListView.builder(
+        itemCount: totalItems,
+        padding: const EdgeInsets.all(8),
+        itemBuilder: (context, index) {
+          // Show back button as first item if not at root
+          if (hasBackButton && index == 0) {
+            return _buildBackButton();
+          }
+          
+          // Calculate file index
+          final fileIndex = hasBackButton ? index - 1 : index;
+          final file = sshProvider.currentFiles[fileIndex];
+          
+          return Card(
+            margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+            child: SshFileListTile(
+              file: file,
+              isLoading: _loadingFilePath == file.fullPath,
+              onTap: () => _handleFileTap(file),
+              onLongPress: () => _showFileOptions(context, file),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  /// Build the back button as a list item
+  Widget _buildBackButton() {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+      child: ListTile(
+        leading: const Icon(
+          Icons.arrow_back,
+          color: Colors.blue,
+          size: 20,
+        ),
+        title: const Text(
+          '..',
+          style: TextStyle(fontWeight: FontWeight.w500),
+        ),
+        subtitle: Text(
+          'Diretório pai',
+          style: TextStyle(
+            color: Colors.grey.shade600,
+            fontSize: 12,
+          ),
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: Colors.grey.shade400,
+        ),
+        onTap: () => _navigateToParent(),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        dense: true,
+      ),
+    );
+  }
+
+  /// Handle file/directory tap
+  Future<void> _handleFileTap(SshFile file) async {
+    if (file.isDirectory) {
+      await _navigateToDirectory(file.fullPath);
+    } else {
+      // For now, just show a message for non-directory files
+      // This will be expanded in Phase 3
+      _showMessage('Arquivo: ${file.name} (${file.typeDescription})');
+    }
+  }
+
+  /// Navigate to directory with loading state
+  Future<void> _navigateToDirectory(String path) async {
+    setState(() {
+      _loadingFilePath = path;
+    });
+    
+    final sshProvider = Provider.of<SshProvider>(context, listen: false);
+    
+    try {
+      await sshProvider.navigateToDirectory(path);
+    } catch (e) {
+      _showErrorMessage('Erro ao navegar: $e');
+    } finally {
+      setState(() {
+        _loadingFilePath = '';
+      });
+    }
+  }
+
+  /// Navigate to parent directory
+  Future<void> _navigateToParent() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    final sshProvider = Provider.of<SshProvider>(context, listen: false);
+    
+    try {
+      await sshProvider.navigateToParent();
+    } catch (e) {
+      _showErrorMessage('Erro ao navegar: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// Navigate back in history
+  Future<void> _navigateBack(SshProvider sshProvider) async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      await sshProvider.navigateBack();
+    } catch (e) {
+      _showErrorMessage('Erro ao voltar: $e');
     } finally {
       setState(() {
         _isLoading = false;
@@ -253,6 +438,201 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
   void _showErrorMessage(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  /// Build breadcrumb navigation for the AppBar
+  Widget _buildBreadcrumb(String currentPath) {
+    if (currentPath.isEmpty) {
+      return const Text('Easy SSH');
+    }
+
+    // Split path into components
+    final components = currentPath.split('/').where((c) => c.isNotEmpty).toList();
+    
+    if (components.isEmpty) {
+      return GestureDetector(
+        onTap: () => _navigateToDirectory('/'),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.home, size: 18),
+            SizedBox(width: 4),
+            Text('/', style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          // Root directory
+          GestureDetector(
+            onTap: () => _navigateToDirectory('/'),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.home, size: 16),
+                SizedBox(width: 2),
+                Text('/', style: TextStyle(fontWeight: FontWeight.w500)),
+              ],
+            ),
+          ),
+          // Path components
+          ...List.generate(components.length, (index) {
+            final component = components[index];
+            final path = '/${components.take(index + 1).join('/')}';
+            final isLast = index == components.length - 1;
+            
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.arrow_forward_ios, size: 12),
+                const SizedBox(width: 4),
+                GestureDetector(
+                  onTap: isLast ? null : () => _navigateToDirectory(path),
+                  child: Text(
+                    component,
+                    style: TextStyle(
+                      fontWeight: isLast ? FontWeight.bold : FontWeight.w500,
+                      color: isLast ? null : Colors.blue.shade700,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  /// Show file options context menu
+  void _showFileOptions(BuildContext context, SshFile file) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                file.displayName,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Tipo: ${file.typeDescription}',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                'Caminho: ${file.fullPath}',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 14,
+                ),
+              ),
+              const Divider(height: 24),
+              // Directory options
+              if (file.isDirectory) ...[
+                ListTile(
+                  leading: const Icon(Icons.folder_open),
+                  title: const Text('Abrir'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _handleFileTap(file);
+                  },
+                ),
+              ],
+              // Executable options
+              if (file.isExecutable) ...[
+                ListTile(
+                  leading: const Icon(Icons.play_arrow, color: Colors.green),
+                  title: const Text('Executar'),
+                  subtitle: const Text('(Disponível na Fase 3)'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showMessage('Execução será implementada na Fase 3');
+                  },
+                ),
+              ],
+              // Regular file options
+              if (file.isRegularFile) ...[
+                ListTile(
+                  leading: const Icon(Icons.visibility),
+                  title: const Text('Visualizar'),
+                  subtitle: const Text('(Disponível na Fase 3)'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showMessage('Visualização será implementada na Fase 3');
+                  },
+                ),
+                if (_isScript(file)) ...[
+                  ListTile(
+                    leading: const Icon(Icons.code, color: Colors.orange),
+                    title: const Text('Executar Script'),
+                    subtitle: const Text('(Disponível na Fase 3)'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _showMessage('Execução de scripts será implementada na Fase 3');
+                    },
+                  ),
+                ],
+              ],
+              // Symlink options
+              if (file.isSymlink) ...[
+                ListTile(
+                  leading: const Icon(Icons.link, color: Colors.purple),
+                  title: const Text('Seguir Link'),
+                  subtitle: const Text('(Disponível na Fase 3)'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showMessage('Seguir links será implementado na Fase 3');
+                  },
+                ),
+              ],
+              // Common options for all files
+              ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: const Text('Propriedades'),
+                subtitle: const Text('(Disponível na Fase 3)'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showMessage('Propriedades serão implementadas na Fase 3');
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// Check if file is a script
+  bool _isScript(SshFile file) {
+    final scriptExtensions = ['.sh', '.py', '.js', '.rb', '.pl', '.php'];
+    return scriptExtensions.any((ext) => file.name.toLowerCase().endsWith(ext));
+  }
+
+  void _showMessage(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
       );
     }
@@ -264,9 +644,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
       appBar: AppBar(
         title: Consumer<SshProvider>(
           builder: (context, sshProvider, child) {
-            return Text(sshProvider.currentPath.isNotEmpty 
-                ? sshProvider.currentPath 
-                : 'Easy SSH');
+            return _buildBreadcrumb(sshProvider.currentPath);
           },
         ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -426,7 +804,6 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
             );
           }
 
-          // Main content - show files list
           if (sshProvider.currentFiles.isNotEmpty) {
             return ListView.builder(
               itemCount: sshProvider.currentFiles.length,

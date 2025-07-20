@@ -8,7 +8,6 @@
 .history
 
 
-
 # Flutter repo-specific
 /bin/cache/
 /bin/internal/bootstrap.bat
@@ -109,6 +108,12 @@ coverage/
 
 # Symbols
 app.*.symbols
+
+# Temporary files and downloads
+*.tar.xz
+*.zip
+*.tar.gz
+flutter/
 
 # Exceptions to above rules.
 !**/ios/**/default.mode1v3
