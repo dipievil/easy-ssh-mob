@@ -66,6 +66,20 @@ void main() {
       expect(sshProvider.connectionState, SshConnectionState.disconnected);
       expect(sshProvider.errorMessage, null);
     });
+
+    test('error sound should be configurable', () {
+      expect(sshProvider.shouldPlayErrorSound, true);
+      
+      sshProvider.setErrorSoundEnabled(false);
+      expect(sshProvider.shouldPlayErrorSound, false);
+      
+      sshProvider.setErrorSoundEnabled(true);
+      expect(sshProvider.shouldPlayErrorSound, true);
+    });
+
+    test('test error sound should not throw exception', () {
+      expect(() => sshProvider.testErrorSound(), returnsNormally);
+    });
     
     group('File Execution', () {
       test('executeFile should fail when not connected', () async {
