@@ -11,6 +11,9 @@ import '../services/secure_storage_service.dart';
 import '../services/error_handler.dart';
 
 class SshProvider extends ChangeNotifier {
+  // Constants
+  static const String _errorSoundPath = 'sounds/error_beep.txt';
+  
   SshConnectionState _connectionState = SshConnectionState.disconnected;
   String? _errorMessage;
   SSHCredentials? _currentCredentials;
@@ -547,7 +550,7 @@ class SshProvider extends ChangeNotifier {
       // Try to play a simple system beep sound
       // Note: For a real implementation, you'd add actual sound files
       // For now, we'll use a simple notification approach
-      _audioPlayer.play(AssetSource('sounds/error_beep.wav')).catchError((e) {
+      _audioPlayer.play(AssetSource(_errorSoundPath)).catchError((e) {
         // Fallback: log that sound would play
         debugPrint('Error sound notification (no audio file): $e');
       });
