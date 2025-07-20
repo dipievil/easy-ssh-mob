@@ -250,13 +250,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     }
   }
 
-  Future<void> _executeFile(SshFile file) async {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
-    }
-  }
+// Removed redundant and incomplete _executeFile method.
     return Scaffold(
       appBar: AppBar(
         title: Consumer<SshProvider>(
