@@ -207,8 +207,6 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
       ),
     );
   }
-
-  Future<void> _executeFile(SshFile file) async {
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
     
     // Mark file as executing
@@ -250,16 +248,13 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     }
   }
 
-  void _showErrorMessage(String message) {
+  Future<void> _executeFile(SshFile file) async {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
       );
     }
   }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Consumer<SshProvider>(
