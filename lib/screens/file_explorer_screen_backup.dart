@@ -252,6 +252,13 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
 
 // Removed redundant and incomplete _executeFile method.
 
+  /// Displays an error message to the user using a `SnackBar`.
+  ///
+  /// This method is used to provide feedback to the user when an error occurs.
+  /// It ensures that the `SnackBar` is only shown if the widget is currently
+  /// mounted in the widget tree.
+  ///
+  /// [message] The error message to display in the `SnackBar`.
   void _showErrorMessage(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
