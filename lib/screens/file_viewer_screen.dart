@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/ssh_file.dart';
 import '../models/file_content.dart';
 import '../providers/ssh_provider.dart';
+import '../widgets/error_widgets.dart';
 
 class FileViewerScreen extends StatefulWidget {
   final SshFile file;
@@ -26,6 +27,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
   int _currentMatchIndex = -1;
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  SshProvider? _lastSshProvider;
 
   @override
   void initState() {
@@ -34,9 +36,33 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _setupErrorListener();
+  }
+  
+  void _setupErrorListener() {
+    final sshProvider = Provider.of<SshProvider>(context, listen: false);
+    if (_lastSshProvider != sshProvider) {
+      _lastSshProvider?.removeListener(_handleProviderChange);
+      _lastSshProvider = sshProvider;
+      sshProvider.addListener(_handleProviderChange);
+    }
+  }
+  
+  void _handleProviderChange() {
+    final sshProvider = _lastSshProvider;
+    if (sshProvider?.lastError != null && mounted) {
+      // Show error notification
+      ErrorSnackBar.show(context, sshProvider!.lastError!);
+    }
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     _scrollController.dispose();
+    _lastSshProvider?.removeListener(_handleProviderChange);
     super.dispose();
   }
 

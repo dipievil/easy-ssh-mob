@@ -561,6 +561,11 @@ class SshProvider extends ChangeNotifier {
     _shouldPlayErrorSound = enabled;
     notifyListeners();
   }
+  
+  /// Test error sound (for debugging)
+  void testErrorSound() {
+    _playErrorSound();
+  }
 
   /// Execute a command and return the result as a stream
   Future<String?> executeCommandWithResult(String command) async {
