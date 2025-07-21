@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/ssh_file.dart';
+import '../utils/file_icon_manager.dart';
 
 /// Utility widget to display file type specific icons and information
 class FileTypeIndicator extends StatelessWidget {
@@ -18,8 +19,8 @@ class FileTypeIndicator extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
-          file.icon,
-          color: _getIconColor(),
+          FileIconManager.getIconForFile(file),
+          color: FileIconManager.getColorForFile(file, context),
         ),
         if (showExecutionHint && file.isExecutable) ...[
           const SizedBox(width: 4),
@@ -33,52 +34,8 @@ class FileTypeIndicator extends StatelessWidget {
     );
   }
 
-  Color _getIconColor() {
-    switch (file.type) {
-      case FileType.directory:
-        return Colors.blue;
-      case FileType.executable:
-        return Colors.green;
-      case FileType.symlink:
-        return Colors.purple;
-      case FileType.regular:
-        return _getRegularFileColor();
-      default:
-        return Colors.grey;
-    }
-  }
-
-  Color _getRegularFileColor() {
-    final name = file.name.toLowerCase();
-    
-    // Script files that might be executable
-    if (name.endsWith('.sh') || 
-        name.endsWith('.py') || 
-        name.endsWith('.pl') || 
-        name.endsWith('.rb') || 
-        name.endsWith('.js')) {
-      return Colors.orange;
-    }
-    
-    // Text files
-    if (name.endsWith('.txt') || 
-        name.endsWith('.md') || 
-        name.endsWith('.log')) {
-      return Colors.grey[600]!;
-    }
-    
-    // Config files
-    if (name.endsWith('.conf') || 
-        name.endsWith('.cfg') || 
-        name.endsWith('.ini') ||
-        name.endsWith('.json') ||
-        name.endsWith('.yaml') ||
-        name.endsWith('.yml')) {
-      return Colors.teal;
-    }
-    
-    return Colors.grey;
-  }
+  // Removed _getIconColor method as it's now handled by FileIconManager
+  // Removed _getRegularFileColor method as it's now handled by FileIconManager
 }
 
 /// Extension methods for SshFile to check if it might be executable

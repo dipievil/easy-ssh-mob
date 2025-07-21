@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../providers/ssh_provider.dart';
 import '../models/ssh_credentials.dart';
+import '../widgets/custom_components.dart';
+import '../utils/custom_animations.dart';
+import '../utils/responsive_breakpoints.dart';
 import 'file_explorer_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -119,8 +122,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (success && mounted) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const FileExplorerScreen(),
+        SlideRoute(
+          page: const FileExplorerScreen(),
+          direction: AxisDirection.left,
         ),
       );
     } else if (mounted && sshProvider.errorMessage != null) {
@@ -158,23 +162,16 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SafeArea(
         child: _isLoading
-            ? const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 16),
-                    Text('Carregando credenciais...'),
-                  ],
-                ),
+            ? const SshLoadingIndicator(
+                message: 'Carregando credenciais...',
               )
-            : Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+            : ResponsiveContainer(
+                child: SlideInAnimation(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                 // Error display
                 if (_connectionError != null)
@@ -431,7 +428,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
           ),
-        ),
+                ),
+              ),
       ),
     );
   }
