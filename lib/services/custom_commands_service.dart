@@ -19,7 +19,7 @@ class CustomCommandsService {
       final List<dynamic> commandsList = jsonDecode(commandsJson);
       return commandsList.map((json) => CommandItem.fromJson(json)).toList();
     } catch (e) {
-      print('Error loading custom commands: $e');
+      log('Error loading custom commands: $e', error: e);
       return [];
     }
   }
