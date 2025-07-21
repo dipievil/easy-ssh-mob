@@ -9,6 +9,9 @@ import '../widgets/execution_result_dialog.dart';
 import '../widgets/file_type_indicator.dart';
 import '../widgets/error_widgets.dart';
 import '../widgets/tools_drawer.dart';
+import '../widgets/custom_components.dart';
+import '../utils/custom_animations.dart';
+import '../utils/responsive_breakpoints.dart';
 import '../screens/terminal_screen.dart';
 import '../screens/file_viewer_screen.dart';
 import 'login_screen.dart';
@@ -139,64 +142,67 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     final hasBackButton = sshProvider.currentPath != '/' && sshProvider.currentPath.isNotEmpty;
     final totalItems = sshProvider.currentFiles.length + (hasBackButton ? 1 : 0);
 
-    return RefreshIndicator(
-      onRefresh: () => sshProvider.refreshCurrentDirectory(),
-      child: ListView.builder(
-        itemCount: totalItems,
-        padding: const EdgeInsets.all(8),
-        itemBuilder: (context, index) {
-          // Show back button as first item if not at root
-          if (hasBackButton && index == 0) {
-            return _buildBackButton();
-          }
-          
-          // Calculate file index
-          final fileIndex = hasBackButton ? index - 1 : index;
-          final file = sshProvider.currentFiles[fileIndex];
-          
-          return Card(
-            margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-            child: SshFileListTile(
-              file: file,
-              isLoading: _loadingFilePath == file.fullPath,
-              onTap: () => _handleFileTap(file),
-              onLongPress: () => _showFileOptions(context, file),
-            ),
-          );
-        },
+    return ResponsiveContainer(
+      child: RefreshIndicator(
+        onRefresh: () => sshProvider.refreshCurrentDirectory(),
+        child: ListView.builder(
+          itemCount: totalItems,
+          padding: ResponsiveBreakpoints.getScreenPadding(context),
+          itemBuilder: (context, index) {
+            // Show back button as first item if not at root
+            if (hasBackButton && index == 0) {
+              return _buildBackButton();
+            }
+            
+            // Calculate file index
+            final fileIndex = hasBackButton ? index - 1 : index;
+            final file = sshProvider.currentFiles[fileIndex];
+            
+            return SlideInAnimation(
+              delay: Duration(milliseconds: index * 50),
+              child: SshCard(
+                padding: const EdgeInsets.all(0),
+                onTap: () => _handleFileTap(file),
+                child: SshFileListTile(
+                  file: file,
+                  isLoading: _loadingFilePath == file.fullPath,
+                  onTap: () => _handleFileTap(file),
+                  onLongPress: () => _showFileOptions(context, file),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 
   /// Build the back button as a list item
   Widget _buildBackButton() {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-      child: ListTile(
-        leading: const Icon(
-          Icons.arrow_back,
-          color: Colors.blue,
-          size: 20,
-        ),
-        title: const Text(
-          '..',
-          style: TextStyle(fontWeight: FontWeight.w500),
-        ),
-        subtitle: Text(
-          'Diretório pai',
-          style: TextStyle(
-            color: Colors.grey.shade600,
-            fontSize: 12,
-          ),
-        ),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          size: 16,
-          color: Colors.grey.shade400,
-        ),
+    return SlideInAnimation(
+      delay: Duration.zero,
+      child: SshCard(
+        padding: const EdgeInsets.all(0),
         onTap: () => _navigateToParent(),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        dense: true,
+        child: SshListTile(
+          leading: Icon(
+            FontAwesomeIcons.arrowLeft,
+            color: Theme.of(context).colorScheme.primary,
+            size: 20,
+          ),
+          title: const Text(
+            '..',
+            style: TextStyle(fontWeight: FontWeight.w500),
+          ),
+          subtitle: const Text('Voltar'),
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+          ),
+          onTap: () => _navigateToParent(),
+          dense: true,
+        ),
       ),
     );
   }
@@ -489,6 +495,60 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
+          // Home icon
+          GestureDetector(
+            onTap: () => _navigateToDirectory('/'),
+            child: const Icon(Icons.home, size: 18),
+          ),
+          
+          // Path components
+          for (int i = 0; i < components.length; i++) ...[
+            const Icon(Icons.chevron_right, size: 16),
+            GestureDetector(
+              onTap: () {
+                final targetPath = '/' + components.take(i + 1).join('/');
+                _navigateToDirectory(targetPath);
+              },
+              child: Text(
+                components[i],
+                style: TextStyle(
+                  fontWeight: i == components.length - 1 ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// Build simple breadcrumb text for the AppBar title
+  String _buildBreadcrumbText(String currentPath) {
+    if (currentPath.isEmpty || currentPath == '/') {
+      return 'EasySSH';
+    }
+
+    final components = currentPath.split('/').where((c) => c.isNotEmpty).toList();
+    if (components.isEmpty) {
+      return 'EasySSH';
+    }
+
+    // Show only the last two components to save space
+    if (components.length <= 2) {
+      return '/${components.join('/')}';
+    } else {
+      return '.../${components[components.length - 2]}/${components.last}';
+    }
+  }
+          ],
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
           // Root directory
           GestureDetector(
             onTap: () => _navigateToDirectory('/'),
@@ -657,19 +717,14 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Consumer<SshProvider>(
-          builder: (context, sshProvider, child) {
-            return _buildBreadcrumb(sshProvider.currentPath);
-          },
-        ),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        actions: [
-          // Back navigation button
-          Consumer<SshProvider>(
-            builder: (context, sshProvider, child) {
-              if (sshProvider.navigationHistory.isNotEmpty) {
-                return IconButton(
+      appBar: Consumer<SshProvider>(
+        builder: (context, sshProvider, child) {
+          return GradientAppBar(
+            title: _buildBreadcrumbText(sshProvider.currentPath),
+            actions: [
+              // Back navigation button
+              if (sshProvider.navigationHistory.isNotEmpty)
+                IconButton(
                   onPressed: () async {
                     setState(() {
                       _isLoading = true;
@@ -679,13 +734,53 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
                       _isLoading = false;
                     });
                   },
-                  icon: const Icon(Icons.arrow_back),
+                  icon: const Icon(FontAwesomeIcons.arrowLeft),
                   tooltip: 'Voltar',
-                );
-              }
-              return const SizedBox.shrink();
-            },
-          ),
+                ),
+              
+              // Refresh button
+              IconButton(
+                onPressed: _isLoading ? null : () async {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  await sshProvider.refreshCurrentDirectory();
+                  setState(() {
+                    _isLoading = false;
+                  });
+                },
+                icon: _isLoading 
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(FontAwesomeIcons.arrowsRotate),
+                tooltip: 'Atualizar',
+              ),
+              
+              // Terminal button
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    SlideRoute(
+                      page: const TerminalScreen(),
+                      direction: AxisDirection.left,
+                    ),
+                  );
+                },
+                icon: const Icon(FontAwesomeIcons.terminal),
+                tooltip: 'Terminal',
+              ),
+            ],
+          );
+        },
+      ),
+      endDrawer: const ToolsDrawer(),
           // Parent directory button
           Consumer<SshProvider>(
             builder: (context, sshProvider, child) {
@@ -821,14 +916,9 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
 
           // Loading state
           if (_isLoading) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Carregando diretório...'),
-                ],
+            return ResponsiveContainer(
+              child: const SshLoadingIndicator(
+                message: 'Carregando diretório...',
               ),
             );
           }
