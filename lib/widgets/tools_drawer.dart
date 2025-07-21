@@ -35,7 +35,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
         _customCommands = commands;
       });
     } catch (e) {
-      print('Error loading custom commands: $e');
+      debugPrint('Error loading custom commands: $e');
     } finally {
       setState(() {
         _isLoadingCustomCommands = false;
