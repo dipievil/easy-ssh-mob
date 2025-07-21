@@ -805,7 +805,7 @@ class SshProvider extends ChangeNotifier {
       _currentPath = '';
       _navigationHistory.clear();
       
-      // Clear file size cache
+      // Limpar o cache de tamanho de arquivo
       _fileSizeCache.clear();
     } catch (e) {
       // Log cleanup errors but don't throw
