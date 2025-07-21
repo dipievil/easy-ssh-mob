@@ -633,7 +633,7 @@ class SshProvider extends ChangeNotifier {
       return _fileSizeCache[cacheKey]!;
     }
     
-    // Execute stat command and cache result
+    // Executa o comando stat e armazena o resultado em cache
     final sizeOutput = await _sshClient!.execute('stat -f%z "${file.fullPath}" 2>/dev/null || stat -c%s "${file.fullPath}"');
     final fileSize = int.tryParse(sizeOutput?.trim() ?? '') ?? 0;
     
