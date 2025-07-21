@@ -40,7 +40,7 @@ class SoundManager {
       final player = AudioPlayer();
       await player.setVolume(0.5);
       // This will create a simple beep sound programmatically
-      await player.play(AssetSource('sounds/error_beep.txt'));
+      await player.play(AssetSource('sounds/error_beep.mp3'));
       player.dispose();
     } catch (e) {
       print('Fallback sound also failed: $e');
