@@ -637,7 +637,7 @@ class SshProvider extends ChangeNotifier {
     final sizeOutput = await _sshClient!.execute('stat -f%z "${file.fullPath}" 2>/dev/null || stat -c%s "${file.fullPath}"');
     final fileSize = int.tryParse(sizeOutput?.trim() ?? '') ?? 0;
     
-    // Cache the result
+    // Armazena o resultado em cache
     _fileSizeCache[cacheKey] = fileSize;
     
     return fileSize;
