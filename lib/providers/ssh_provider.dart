@@ -9,6 +9,7 @@ import '../models/execution_result.dart';
 import '../models/file_content.dart';
 import '../services/secure_storage_service.dart';
 import '../services/error_handler.dart';
+import '../services/notification_service.dart';
 
 class SshProvider extends ChangeNotifier {
   // Constants
@@ -28,6 +29,7 @@ class SshProvider extends ChangeNotifier {
   SshError? _lastError;
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _shouldPlayErrorSound = true;
+  final NotificationService _notificationService = NotificationService();
   
   // Cache de tamanho de arquivo para evitar comandos stat duplicados
   final Map<String, int> _fileSizeCache = {};
@@ -532,9 +534,31 @@ class SshProvider extends ChangeNotifier {
     // Log for debug
     debugPrint('SSH Error: ${error.type} - ${error.originalMessage}');
     
-    // Play error sound if configured
+    // Send notification using the new NotificationService
+    _notificationService.showNotification(
+      message: error.userFriendlyMessage,
+      type: _mapErrorToNotificationType(error.severity),
+      title: 'Erro SSH',
+      details: error.originalMessage,
+    );
+    
+    // Play error sound if configured (legacy support)
     if (_shouldPlayErrorSound && _shouldPlaySoundForSeverity(error.severity)) {
       _playErrorSound();
+    }
+  }
+  
+  /// Map error severity to notification type
+  NotificationType _mapErrorToNotificationType(ErrorSeverity severity) {
+    switch (severity) {
+      case ErrorSeverity.info:
+        return NotificationType.info;
+      case ErrorSeverity.warning:
+        return NotificationType.warning;
+      case ErrorSeverity.error:
+        return NotificationType.error;
+      case ErrorSeverity.critical:
+        return NotificationType.critical;
     }
   }
   

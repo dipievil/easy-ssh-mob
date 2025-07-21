@@ -419,3 +419,133 @@ class _ToastNotificationState extends State<ToastNotification>
     );
   }
 }
+
+/// Loading overlay for long operations
+class LoadingOverlay extends StatefulWidget {
+  final String message;
+  final bool isVisible;
+  final VoidCallback? onCancel;
+  
+  const LoadingOverlay({
+    super.key,
+    required this.message,
+    required this.isVisible,
+    this.onCancel,
+  });
+  
+  static OverlayEntry? _currentOverlay;
+  
+  static void show(
+    BuildContext context,
+    String message, {
+    VoidCallback? onCancel,
+  }) {
+    hide(); // Remove any existing overlay
+    
+    final overlay = Overlay.of(context);
+    _currentOverlay = OverlayEntry(
+      builder: (context) => LoadingOverlay(
+        message: message,
+        isVisible: true,
+        onCancel: onCancel,
+      ),
+    );
+    
+    overlay.insert(_currentOverlay!);
+  }
+  
+  static void hide() {
+    _currentOverlay?.remove();
+    _currentOverlay = null;
+  }
+
+  @override
+  State<LoadingOverlay> createState() => _LoadingOverlayState();
+}
+
+class _LoadingOverlayState extends State<LoadingOverlay>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    
+    _fadeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeIn,
+    ));
+    
+    if (widget.isVisible) {
+      _controller.forward();
+    }
+  }
+
+  @override
+  void didUpdateWidget(LoadingOverlay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isVisible != oldWidget.isVisible) {
+      if (widget.isVisible) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _fadeAnimation,
+      builder: (context, child) {
+        return Opacity(
+          opacity: _fadeAnimation.value,
+          child: Container(
+            color: Colors.black.withOpacity(0.7),
+            child: Center(
+              child: Card(
+                margin: const EdgeInsets.all(32),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const CircularProgressIndicator(),
+                      const SizedBox(height: 16),
+                      Text(
+                        widget.message,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                      if (widget.onCancel != null) ...[
+                        const SizedBox(height: 16),
+                        TextButton(
+                          onPressed: widget.onCancel,
+                          child: const Text('CANCELAR'),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
