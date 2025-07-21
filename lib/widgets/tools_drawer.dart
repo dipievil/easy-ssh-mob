@@ -5,6 +5,7 @@ import '../models/command_item.dart';
 import '../models/predefined_commands.dart';
 import '../providers/ssh_provider.dart';
 import '../services/custom_commands_service.dart';
+import '../screens/session_log_screen.dart';
 import 'add_custom_command_dialog.dart';
 
 class ToolsDrawer extends StatefulWidget {
@@ -58,6 +59,82 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
         );
       },
     );
+  }
+
+  Widget _buildSessionSection() {
+    return Consumer<SshProvider>(
+      builder: (context, sshProvider, child) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  border: Border(
+                    bottom: BorderSide(color: Colors.blue.shade200),
+                  ),
+                ),
+                child: const Text(
+                  'Sessão',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Colors.blue,
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(FontAwesomeIcons.history, size: 20, color: Colors.blue),
+                title: const Text('Histórico de Comandos'),
+                subtitle: Text(
+                  '${sshProvider.sessionLog.length} comandos registados',
+                  style: const TextStyle(fontSize: 12),
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 12),
+                dense: true,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                onTap: () {
+                  Navigator.of(context).pop(); // Close drawer
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const SessionLogScreen(),
+                    ),
+                  );
+                },
+              ),
+              if (sshProvider.sessionStartTime != null)
+                ListTile(
+                  leading: const Icon(FontAwesomeIcons.clock, size: 20, color: Colors.green),
+                  title: const Text('Tempo de Sessão'),
+                  subtitle: Text(
+                    _formatSessionDuration(DateTime.now().difference(sshProvider.sessionStartTime!)),
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  dense: true,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  String _formatSessionDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+    final seconds = duration.inSeconds % 60;
+    
+    if (hours > 0) {
+      return '${hours}h ${minutes}m';
+    } else if (minutes > 0) {
+      return '${minutes}m ${seconds}s';
+    } else {
+      return '${seconds}s';
+    }
   }
 
   Widget _buildCommandSection(String title, List<CommandItem> commands) {
@@ -456,6 +533,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
+                _buildSessionSection(),
                 _buildCommandSection('Informações', PredefinedCommands.getCommandsForCategory('Informações')),
                 _buildCommandSection('Sistema', PredefinedCommands.getCommandsForCategory('Sistema')),
                 _buildCommandSection('Rede', PredefinedCommands.getCommandsForCategory('Rede')),
