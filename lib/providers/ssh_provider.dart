@@ -29,7 +29,7 @@ class SshProvider extends ChangeNotifier {
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _shouldPlayErrorSound = true;
   
-  // File size cache to avoid duplicate stat commands
+  // Cache de tamanho de arquivo para evitar comandos stat duplicados
   final Map<String, int> _fileSizeCache = {};
 
   SshConnectionState get connectionState => _connectionState;
