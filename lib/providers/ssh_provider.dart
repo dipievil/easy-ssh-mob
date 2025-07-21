@@ -28,6 +28,9 @@ class SshProvider extends ChangeNotifier {
   SshError? _lastError;
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _shouldPlayErrorSound = true;
+  
+  // Cache de tamanho de arquivo para evitar comandos stat duplicados
+  final Map<String, int> _fileSizeCache = {};
 
   SshConnectionState get connectionState => _connectionState;
   String? get errorMessage => _errorMessage;
@@ -184,6 +187,9 @@ class SshProvider extends ChangeNotifier {
 
       _currentPath = normalizedPath;
       _currentFiles = files;
+      
+      // Clear file size cache when changing directories to ensure fresh data
+      _fileSizeCache.clear();
       
       // Clear any previous errors on successful listing
       if (_connectionState.hasError) {
@@ -619,6 +625,24 @@ class SshProvider extends ChangeNotifier {
     }
   }
 
+  /// Obtém o tamanho do arquivo com cache para evitar comandos stat duplicados
+  Future<int> _getFileSize(SshFile file) async {
+    // Verificar o cache primeiro
+    final cacheKey = file.fullPath;
+    if (_fileSizeCache.containsKey(cacheKey)) {
+      return _fileSizeCache[cacheKey]!;
+    }
+    
+    // Executa o comando stat e armazena o resultado em cache
+    final sizeOutput = await _sshClient!.execute('stat -f%z "${file.fullPath}" 2>/dev/null || stat -c%s "${file.fullPath}"');
+    final fileSize = int.tryParse(sizeOutput?.trim() ?? '') ?? 0;
+    
+    // Armazena o resultado em cache
+    _fileSizeCache[cacheKey] = fileSize;
+    
+    return fileSize;
+  }
+
   /// Read content of a text file
   Future<FileContent> readFile(SshFile file) async {
     if (!_connectionState.isConnected || _sshClient == null) {
@@ -631,8 +655,7 @@ class SshProvider extends ChangeNotifier {
 
     try {
       // First check file size
-      final sizeOutput = await _sshClient!.execute('stat -f%z "${file.fullPath}" 2>/dev/null || stat -c%s "${file.fullPath}"');
-      final fileSize = int.tryParse(sizeOutput?.trim() ?? '') ?? 0;
+      final fileSize = await _getFileSize(file);
       
       // File size limit: 1MB
       const maxSize = 1024 * 1024;
@@ -711,8 +734,7 @@ class SshProvider extends ChangeNotifier {
 
     try {
       // Get file size first
-      final sizeOutput = await _sshClient!.execute('stat -f%z "${file.fullPath}" 2>/dev/null || stat -c%s "${file.fullPath}"');
-      final fileSize = int.tryParse(sizeOutput?.trim() ?? '') ?? 0;
+      final fileSize = await _getFileSize(file);
       
       switch (mode) {
         case FileViewMode.full:
@@ -782,6 +804,9 @@ class SshProvider extends ChangeNotifier {
       _currentFiles.clear();
       _currentPath = '';
       _navigationHistory.clear();
+      
+      // Limpar o cache de tamanho de arquivo
+      _fileSizeCache.clear();
     } catch (e) {
       // Log cleanup errors but don't throw
       debugPrint('Error during SSH cleanup: $e');
