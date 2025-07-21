@@ -26,3 +26,8 @@ flutter:
   
   assets:
     - assets/sounds/
+    - assets/sounds/info.mp3
+    - assets/sounds/warning.mp3
+    - assets/sounds/error.mp3
+    - assets/sounds/success.mp3
+    - assets/sounds/critical.mp3
