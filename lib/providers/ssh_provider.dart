@@ -625,7 +625,7 @@ class SshProvider extends ChangeNotifier {
     }
   }
 
-  /// Get file size with caching to avoid duplicate stat commands
+  /// Obtém o tamanho do arquivo com cache para evitar comandos stat duplicados
   Future<int> _getFileSize(SshFile file) async {
     // Check cache first
     final cacheKey = file.fullPath;
