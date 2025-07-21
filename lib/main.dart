@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/login_screen.dart';
 import 'providers/ssh_provider.dart';
+import 'themes/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,10 +26,9 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'EasySSH',
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        ),
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.system, // Automatically switch based on system preference
         home: const LoginScreen(),
       ),
     );

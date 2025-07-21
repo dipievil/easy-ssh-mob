@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../utils/file_icon_manager.dart';
 
 /// Enum representing different file types based on ls -F output
 enum FileType {
@@ -63,25 +64,8 @@ class SshFile {
     );
   }
 
-  /// Get appropriate icon for file type
-  IconData get icon {
-    switch (type) {
-      case FileType.directory:
-        return FontAwesomeIcons.folder;
-      case FileType.executable:
-        return FontAwesomeIcons.terminal;
-      case FileType.symlink:
-        return FontAwesomeIcons.link;
-      case FileType.fifo:
-        return FontAwesomeIcons.arrowsAltH;
-      case FileType.socket:
-        return FontAwesomeIcons.plug;
-      case FileType.regular:
-        return FontAwesomeIcons.file;
-      case FileType.unknown:
-        return FontAwesomeIcons.question;
-    }
-  }
+  /// Get appropriate icon for file type using advanced icon manager
+  IconData get icon => FileIconManager.getIconForFile(this);
 
   /// Check if this is a directory
   bool get isDirectory => type == FileType.directory;
