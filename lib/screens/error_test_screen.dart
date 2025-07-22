@@ -37,8 +37,8 @@ class ErrorTestScreen extends StatelessWidget {
                   ),
                   _buildErrorTestCard(
                     context,
-                    'Ficheiro Não Encontrado',
-                    'Testa erro de ficheiro inexistente',
+                    'Arquivo Não Encontrado',
+                    'Testa erro de arquivo inexistente',
                     FontAwesomeIcons.fileCircleXmark,
                     () => _showTestError(context, ErrorType.fileNotFound),
                   ),

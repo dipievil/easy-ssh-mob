@@ -233,7 +233,7 @@ class SshProvider extends ChangeNotifier {
   /// Navigate to a directory and add to history
   Future<void> navigateToDirectory(String path) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      _errorMessage = 'Not connected to SSH server';
+      _errorMessage = 'Não conectado ao servidor SSH';
       _connectionState = SshConnectionState.error;
       notifyListeners();
       return;
@@ -368,7 +368,7 @@ class SshProvider extends ChangeNotifier {
     if (!_connectionState.isConnected || _sshClient == null) {
       return ExecutionResult(
         stdout: '',
-        stderr: 'Not connected to SSH server',
+        stderr: 'Não conectado ao servidor SSH',
         exitCode: -1,
         duration: DateTime.now().difference(startTime),
         timestamp: startTime,
@@ -512,7 +512,7 @@ class SshProvider extends ChangeNotifier {
           type: _detectCommandType(command),
           workingDirectory: _currentPath,
           stdout: '',
-          stderr: 'Not connected to SSH server',
+          stderr: 'Não conectado ao servidor SSH',
           exitCode: -1,
           duration: DateTime.now().difference(startTime),
           status: CommandStatus.error,
@@ -520,7 +520,7 @@ class SshProvider extends ChangeNotifier {
         _addLogEntry(errorEntry);
       }
       
-      _errorMessage = 'Not connected to SSH server';
+      _errorMessage = 'Não conectado ao servidor SSH';
       _connectionState = SshConnectionState.error;
       notifyListeners();
       return null;
@@ -746,11 +746,11 @@ class SshProvider extends ChangeNotifier {
   /// Read content of a text file
   Future<FileContent> readFile(SshFile file) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      throw Exception('Not connected to SSH server');
+      throw Exception('Não conectado ao servidor SSH');
     }
 
     if (!file.isTextFile && file.type != FileType.regular) {
-      throw Exception('File is not a text file');
+      throw Exception('Arquivo não é um arquivo de texto');
     }
 
     try {
@@ -768,7 +768,7 @@ class SshProvider extends ChangeNotifier {
         final content = await _sshClient!.execute('cat "${file.fullPath}"');
         
         if (content == null) {
-          throw Exception('Failed to read file content');
+          throw Exception('Falha ao ler conteúdo do arquivo');
         }
         
         final lines = content.split('\n');
@@ -783,7 +783,7 @@ class SshProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      throw Exception('Error reading file: $e');
+      throw Exception('Erro ao ler arquivo: $e');
     }
   }
   
@@ -800,13 +800,13 @@ class SshProvider extends ChangeNotifier {
         command = 'tail -$linesCount "${file.fullPath}"';
         break;
       default:
-        throw Exception('Invalid mode for partial reading: $mode');
+        throw Exception('Modo inválido para leitura parcial: $mode');
     }
     
     final content = await _sshClient!.execute(command);
     
     if (content == null) {
-      throw Exception('Failed to read file part');
+      throw Exception('Falha ao ler parte do arquivo');
     }
     
     // Get total line count
@@ -829,7 +829,7 @@ class SshProvider extends ChangeNotifier {
   /// Read file with specific mode
   Future<FileContent> readFileWithMode(SshFile file, FileViewMode mode) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      throw Exception('Not connected to SSH server');
+      throw Exception('Não conectado ao servidor SSH');
     }
 
     try {
@@ -843,10 +843,10 @@ class SshProvider extends ChangeNotifier {
         case FileViewMode.tail:
           return _readFilePart(file, mode, fileSize);
         default:
-          throw Exception('Unsupported read mode: $mode');
+          throw Exception('Modo de leitura não suportado: $mode');
       }
     } catch (e) {
-      throw Exception('Error reading file with mode $mode: $e');
+      throw Exception('Erro ao ler arquivo com modo $mode: $e');
     }
   }
 

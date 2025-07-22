@@ -6,7 +6,7 @@ class PredefinedCommands {
   static final Map<String, List<CommandItem>> commands = {
     'Informações': [
       CommandItem('Sistema', 'uname -a', FontAwesomeIcons.desktop, 'Informações do sistema operacional'),
-      CommandItem('Utilizador', 'whoami', FontAwesomeIcons.user, 'Nome do usuário atual'),
+      CommandItem('Usuário', 'whoami', FontAwesomeIcons.user, 'Nome do usuário atual'),
       CommandItem('Diretório Atual', 'pwd', FontAwesomeIcons.folder, 'Caminho do diretório atual'),
       CommandItem('Data/Hora', 'date', FontAwesomeIcons.clock, 'Data e hora atual do sistema'),
       CommandItem('Uptime', 'uptime', FontAwesomeIcons.chartLine, 'Tempo de atividade do sistema'),

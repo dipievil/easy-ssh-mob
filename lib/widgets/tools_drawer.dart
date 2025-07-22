@@ -48,7 +48,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
     return Consumer<SshProvider>(
       builder: (context, sshProvider, child) {
         return UserAccountsDrawerHeader(
-          accountName: Text(sshProvider.currentCredentials?.username ?? 'Utilizador'),
+          accountName: Text(sshProvider.currentCredentials?.username ?? 'Usuário'),
           accountEmail: Text('${sshProvider.currentCredentials?.host ?? 'localhost'}:${sshProvider.currentCredentials?.port ?? 22}'),
           currentAccountPicture: const CircleAvatar(
             child: Icon(FontAwesomeIcons.server),
