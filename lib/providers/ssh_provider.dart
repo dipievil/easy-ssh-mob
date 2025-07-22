@@ -2,11 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:dartssh2/dartssh2.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:convert';
+import 'dart:math';
 import '../models/ssh_credentials.dart';
 import '../models/ssh_connection_state.dart';
 import '../models/ssh_file.dart';
 import '../models/execution_result.dart';
 import '../models/file_content.dart';
+import '../models/log_entry.dart';
 import '../services/secure_storage_service.dart';
 import '../services/error_handler.dart';
 import '../services/notification_service.dart';
@@ -33,6 +35,12 @@ class SshProvider extends ChangeNotifier {
   
   // Cache de tamanho de arquivo para evitar comandos stat duplicados
   final Map<String, int> _fileSizeCache = {};
+  
+  // Session logging properties
+  final List<LogEntry> _sessionLog = [];
+  bool _loggingEnabled = true;
+  int _maxLogEntries = 1000;
+  DateTime? _sessionStartTime;
 
   SshConnectionState get connectionState => _connectionState;
   String? get errorMessage => _errorMessage;
@@ -42,6 +50,12 @@ class SshProvider extends ChangeNotifier {
   List<String> get navigationHistory => List.unmodifiable(_navigationHistory);
   SshError? get lastError => _lastError;
   bool get shouldPlayErrorSound => _shouldPlayErrorSound;
+  
+  // Session logging getters
+  List<LogEntry> get sessionLog => List.unmodifiable(_sessionLog);
+  bool get loggingEnabled => _loggingEnabled;
+  int get maxLogEntries => _maxLogEntries;
+  DateTime? get sessionStartTime => _sessionStartTime;
   
   // Backward compatibility getters
   bool get isConnecting => _connectionState.isConnecting;
@@ -83,6 +97,9 @@ class SshProvider extends ChangeNotifier {
       await _sshClient!.authenticated;
       
       _connectionState = SshConnectionState.connected;
+      
+      // Initialize session logging
+      _sessionStartTime = DateTime.now();
       
       // Create credentials object
       final credentials = SSHCredentials(
@@ -483,7 +500,26 @@ class SshProvider extends ChangeNotifier {
   
   /// Execute a SSH command and return output
   Future<String?> executeCommand(String command) async {
+    final startTime = DateTime.now();
+    final logId = _generateLogId();
+    
     if (!_connectionState.isConnected || _sshClient == null) {
+      if (_loggingEnabled) {
+        final errorEntry = LogEntry(
+          id: logId,
+          timestamp: startTime,
+          command: command,
+          type: _detectCommandType(command),
+          workingDirectory: _currentPath,
+          stdout: '',
+          stderr: 'Not connected to SSH server',
+          exitCode: -1,
+          duration: DateTime.now().difference(startTime),
+          status: CommandStatus.error,
+        );
+        _addLogEntry(errorEntry);
+      }
+      
       _errorMessage = 'Not connected to SSH server';
       _connectionState = SshConnectionState.error;
       notifyListeners();
@@ -497,6 +533,27 @@ class SshProvider extends ChangeNotifier {
       // Wait for command completion and capture both stdout and stderr
       final stdout = await session.stdout.transform(utf8.decoder).join();
       final stderr = await session.stderr.transform(utf8.decoder).join();
+      final exitCode = await session.exitCode;
+      final duration = DateTime.now().difference(startTime);
+      
+      // Log the command execution
+      if (_loggingEnabled) {
+        final logEntry = LogEntry(
+          id: logId,
+          timestamp: startTime,
+          command: command,
+          type: _detectCommandType(command),
+          workingDirectory: _currentPath,
+          stdout: stdout,
+          stderr: stderr,
+          exitCode: exitCode,
+          duration: duration,
+          status: exitCode != 0
+              ? CommandStatus.error
+              : (stderr.isNotEmpty ? CommandStatus.partial : CommandStatus.success),
+        );
+        _addLogEntry(logEntry);
+      }
       
       // Check if there were errors in stderr
       if (stderr.isNotEmpty) {
@@ -513,6 +570,25 @@ class SshProvider extends ChangeNotifier {
       
       return stdout;
     } catch (e) {
+      final duration = DateTime.now().difference(startTime);
+      
+      // Log the error
+      if (_loggingEnabled) {
+        final errorEntry = LogEntry(
+          id: logId,
+          timestamp: startTime,
+          command: command,
+          type: _detectCommandType(command),
+          workingDirectory: _currentPath,
+          stdout: '',
+          stderr: e.toString(),
+          exitCode: -1,
+          duration: duration,
+          status: CommandStatus.error,
+        );
+        _addLogEntry(errorEntry);
+      }
+      
       final error = SshError(
         type: ErrorType.unknown,
         originalMessage: e.toString(),
@@ -859,6 +935,215 @@ class SshProvider extends ChangeNotifier {
     }
     
     return 'Connection error: ${error.toString()}';
+  }
+
+  /// Generate unique log ID
+  String _generateLogId() {
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final random = Random().nextInt(9999).toString().padLeft(4, '0');
+    return 'log_${timestamp}_$random';
+  }
+
+  /// Detect command type based on command string
+  CommandType _detectCommandType(String command) {
+    final cmd = command.trim().split(' ').first.toLowerCase();
+    
+    const Map<String, CommandType> commandMap = {
+      'ls': CommandType.navigation,
+      'cd': CommandType.navigation,
+      'pwd': CommandType.navigation,
+      'find': CommandType.navigation,
+      'tree': CommandType.navigation,
+      'cat': CommandType.fileView,
+      'tail': CommandType.fileView,
+      'head': CommandType.fileView,
+      'less': CommandType.fileView,
+      'more': CommandType.fileView,
+      'grep': CommandType.fileView,
+      'awk': CommandType.fileView,
+      'sed': CommandType.fileView,
+      'ps': CommandType.system,
+      'top': CommandType.system,
+      'htop': CommandType.system,
+      'df': CommandType.system,
+      'du': CommandType.system,
+      'free': CommandType.system,
+      'uname': CommandType.system,
+      'whoami': CommandType.system,
+      'date': CommandType.system,
+      'uptime': CommandType.system,
+      'mount': CommandType.system,
+      'lsblk': CommandType.system,
+      'systemctl': CommandType.system,
+      'service': CommandType.system,
+    };
+    
+    // Check if it's a known command type
+    if (commandMap.containsKey(cmd)) {
+      return commandMap[cmd]!;
+    }
+    
+    // Check for script execution patterns
+    if (cmd.startsWith('./') || cmd.startsWith('/') || 
+        command.contains('bash') || command.contains('sh') ||
+        command.contains('python') || command.contains('perl') ||
+        command.contains('ruby') || command.contains('node')) {
+      return CommandType.execution;
+    }
+    
+    return CommandType.unknown;
+  }
+
+  /// Add log entry to session log
+  void _addLogEntry(LogEntry entry) {
+    _sessionLog.add(entry);
+    
+    // Limit number of entries
+    if (_sessionLog.length > _maxLogEntries) {
+      _sessionLog.removeAt(0);
+    }
+    
+    notifyListeners();
+  }
+
+  /// Get session statistics
+  Map<String, dynamic> getSessionStats() {
+    if (_sessionLog.isEmpty || _sessionStartTime == null) {
+      return {
+        'totalCommands': 0,
+        'successfulCommands': 0,
+        'failedCommands': 0,
+        'totalDuration': Duration.zero,
+        'sessionDuration': Duration.zero,
+        'commandsByType': <String, int>{},
+        'mostUsedCommands': <String>[],
+        'successRate': 0.0,
+      };
+    }
+    
+    final totalCommands = _sessionLog.length;
+    final successfulCommands = _sessionLog.where((e) => e.wasSuccessful).length;
+    final failedCommands = _sessionLog.where((e) => e.hasError).length;
+    
+    final totalDuration = _sessionLog.fold<Duration>(
+      Duration.zero,
+      (sum, entry) => sum + entry.duration,
+    );
+    
+    final sessionDuration = DateTime.now().difference(_sessionStartTime!);
+    
+    // Count commands by type
+    final commandsByType = <String, int>{};
+    for (final entry in _sessionLog) {
+      final typeName = entry.type.toString().split('.').last;
+      commandsByType[typeName] = (commandsByType[typeName] ?? 0) + 1;
+    }
+    
+    // Get most used commands
+    final commandCounts = <String, int>{};
+    for (final entry in _sessionLog) {
+      final cmd = entry.command.split(' ').first;
+      commandCounts[cmd] = (commandCounts[cmd] ?? 0) + 1;
+    }
+    
+    final mostUsed = commandCounts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    
+    final mostUsedCommands = mostUsed.take(5).map((e) => e.key).toList();
+    
+    final successRate = totalCommands > 0 ? successfulCommands / totalCommands : 0.0;
+    
+    return {
+      'totalCommands': totalCommands,
+      'successfulCommands': successfulCommands,
+      'failedCommands': failedCommands,
+      'totalDuration': totalDuration,
+      'sessionDuration': sessionDuration,
+      'commandsByType': commandsByType,
+      'mostUsedCommands': mostUsedCommands,
+      'successRate': successRate,
+    };
+  }
+
+  /// Filter session log
+  List<LogEntry> filterSessionLog({
+    CommandType? type,
+    CommandStatus? status,
+    String? searchTerm,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) {
+    var filtered = _sessionLog.where((entry) {
+      // Filter by type
+      if (type != null && entry.type != type) return false;
+      
+      // Filter by status
+      if (status != null && entry.status != status) return false;
+      
+      // Filter by search term
+      if (searchTerm != null && searchTerm.isNotEmpty) {
+        final term = searchTerm.toLowerCase();
+        if (!entry.command.toLowerCase().contains(term) &&
+            !entry.stdout.toLowerCase().contains(term) &&
+            !entry.stderr.toLowerCase().contains(term)) {
+          return false;
+        }
+      }
+      
+      // Filter by date range
+      if (startDate != null && entry.timestamp.isBefore(startDate)) return false;
+      if (endDate != null && entry.timestamp.isAfter(endDate)) return false;
+      
+      return true;
+    }).toList();
+    
+    return filtered;
+  }
+
+  /// Clear session log
+  void clearSessionLog() {
+    _sessionLog.clear();
+    notifyListeners();
+  }
+
+  /// Set logging enabled/disabled
+  void setLoggingEnabled(bool enabled) {
+    _loggingEnabled = enabled;
+    notifyListeners();
+  }
+
+  /// Set maximum log entries
+  void setMaxLogEntries(int max) {
+    _maxLogEntries = max;
+    
+    // Trim existing log if necessary
+    while (_sessionLog.length > _maxLogEntries) {
+      _sessionLog.removeAt(0);
+    }
+    
+    notifyListeners();
+  }
+
+  /// Export session log in specified format
+  String exportSessionLog({
+    required String format,
+    List<LogEntry>? entries,
+  }) {
+    final logEntries = entries ?? _sessionLog;
+    
+    switch (format.toLowerCase()) {
+      case 'json':
+        return jsonEncode(logEntries.map((e) => e.toJson()).toList());
+      
+      case 'csv':
+        final header = 'Timestamp,Command,Type,Status,Duration,Working Directory,Exit Code,STDOUT,STDERR\n';
+        final rows = logEntries.map((e) => e.toCsvRow()).join('\n');
+        return header + rows;
+      
+      case 'txt':
+      default:
+        return logEntries.map((e) => e.toTextFormat()).join('\n${'-' * 80}\n');
+    }
   }
 
   @override
