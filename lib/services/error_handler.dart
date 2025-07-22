@@ -78,7 +78,7 @@ class ErrorHandler {
           type: type,
           originalMessage: stderr,
           userFriendlyMessage: 'Sem permissão para executar esta ação',
-          suggestion: 'Verifique se tem permissões de acesso ao ficheiro/diretório',
+          suggestion: 'Verifique se tem permissões de acesso ao arquivo/diretório',
           severity: ErrorSeverity.warning,
         );
         
@@ -86,7 +86,7 @@ class ErrorHandler {
         return SshError(
           type: type,
           originalMessage: stderr,
-          userFriendlyMessage: 'Ficheiro ou diretório não encontrado',
+          userFriendlyMessage: 'Arquivo ou diretório não encontrado',
           suggestion: 'Verifique se o caminho está correto',
           severity: ErrorSeverity.warning,
         );
@@ -96,7 +96,7 @@ class ErrorHandler {
           type: type,
           originalMessage: stderr,
           userFriendlyMessage: 'Operação não permitida pelo sistema',
-          suggestion: 'Contacte o administrador do sistema',
+          suggestion: 'Contate o administrador do sistema',
           severity: ErrorSeverity.error,
         );
         
@@ -141,7 +141,7 @@ class ErrorHandler {
           type: type,
           originalMessage: stderr,
           userFriendlyMessage: 'Sem espaço disponível no disco',
-          suggestion: 'Liberte espaço no servidor ou contacte o administrador',
+          suggestion: 'Libere espaço no servidor ou contate o administrador',
           severity: ErrorSeverity.critical,
         );
         
