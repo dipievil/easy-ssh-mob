@@ -238,7 +238,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
                     children: [
                       Icon(FontAwesomeIcons.edit, size: 16),
                       SizedBox(width: 8),
-                      Text('Editar'),
+                      const Text('Editar'),
                     ],
                   ),
                 ),
@@ -248,7 +248,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
                     children: [
                       Icon(FontAwesomeIcons.trash, size: 16, color: Colors.red),
                       SizedBox(width: 8),
-                      Text('Excluir', style: TextStyle(color: Colors.red)),
+                      const Text('Excluir', style: TextStyle(color: Colors.red)),
                     ],
                   ),
                 ),
@@ -310,7 +310,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
     if (!sshProvider.isConnected) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Não conectado ao servidor SSH'),
+          content: const Text('Não conectado ao servidor SSH'),
           backgroundColor: Colors.red,
         ),
       );
@@ -452,7 +452,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
         _loadCustomCommands();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Comando excluído com sucesso'),
+            content: const Text('Comando excluído com sucesso'),
             backgroundColor: Colors.green,
           ),
         );
@@ -518,7 +518,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
     // In a real app, you would use a file picker
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Funcionalidade de importação de arquivo em desenvolvimento'),
+        content: const Text('Funcionalidade de importação de arquivo em desenvolvimento'),
       ),
     );
   }

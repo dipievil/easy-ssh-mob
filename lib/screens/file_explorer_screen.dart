@@ -99,7 +99,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
           children: [
             CircularProgressIndicator(),
             SizedBox(height: 16),
-            Text('Carregando diretório...'),
+            const Text('Carregando diretório...'),
           ],
         ),
       );
@@ -916,7 +916,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
 
           // Loading state
           if (_isLoading) {
-            return ResponsiveContainer(
+            return const ResponsiveContainer(
               child: const SshLoadingIndicator(
                 message: 'Carregando diretório...',
               ),

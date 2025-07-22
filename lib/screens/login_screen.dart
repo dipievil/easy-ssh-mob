@@ -150,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Credenciais removidas com sucesso'),
+          content: const Text('Credenciais removidas com sucesso'),
           backgroundColor: Colors.green,
         ),
       );
@@ -369,7 +369,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                                 SizedBox(width: 12),
-                                Text('Conectando...'),
+                                const Text('Conectando...'),
                               ],
                             )
                           : const Row(
@@ -377,7 +377,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               children: [
                                 Icon(FontAwesomeIcons.plug),
                                 SizedBox(width: 8),
-                                Text('CONECTAR'),
+                                const Text('CONECTAR'),
                               ],
                             ),
                     );

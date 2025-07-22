@@ -153,7 +153,7 @@ class ExecutionResultDialog extends StatelessWidget {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Copiado para a área de transferência'),
+        content: const Text('Copiado para a área de transferência'),
         duration: Duration(seconds: 2),
       ),
     );
