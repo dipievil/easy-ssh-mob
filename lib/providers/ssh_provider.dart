@@ -548,7 +548,9 @@ class SshProvider extends ChangeNotifier {
           stderr: stderr,
           exitCode: exitCode,
           duration: duration,
-          status: stderr.isNotEmpty ? CommandStatus.partial : CommandStatus.success,
+          status: exitCode != 0
+              ? CommandStatus.error
+              : (stderr.isNotEmpty ? CommandStatus.partial : CommandStatus.success),
         );
         _addLogEntry(logEntry);
       }
