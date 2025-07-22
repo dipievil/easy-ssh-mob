@@ -139,7 +139,7 @@ class SshProvider extends ChangeNotifier {
   /// List contents of a directory
   Future<void> listDirectory(String path) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      final error = SshError(
+      final error = const SshError(
         type: ErrorType.connectionLost,
         originalMessage: 'Not connected to SSH server',
         userFriendlyMessage: 'Não conectado ao servidor SSH',
@@ -679,7 +679,7 @@ class SshProvider extends ChangeNotifier {
   /// Execute a command and return the result as a stream
   Future<String?> executeCommandWithResult(String command) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      final error = SshError(
+      final error = const SshError(
         type: ErrorType.connectionLost,
         originalMessage: 'Not connected to SSH server',
         userFriendlyMessage: 'Não conectado ao servidor SSH',
