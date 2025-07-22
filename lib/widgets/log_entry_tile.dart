@@ -40,7 +40,7 @@ class LogEntryTile extends StatelessWidget {
           children: [
             Text(
               '${_formatTimestamp(entry.timestamp)} • ${entry.durationFormatted}',
-              style: Theme.of(context).textTheme.caption?.copyWith(
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 fontSize: 11,
               ),
             ),
@@ -115,7 +115,7 @@ class LogEntryTile extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               'STDOUT:',
-              style: Theme.of(context).textTheme.subtitle2?.copyWith(
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -142,7 +142,7 @@ class LogEntryTile extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               'STDERR:',
-              style: Theme.of(context).textTheme.subtitle2?.copyWith(
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.red,
               ),
@@ -171,7 +171,7 @@ class LogEntryTile extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               'Metadados:',
-              style: Theme.of(context).textTheme.subtitle2?.copyWith(
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
