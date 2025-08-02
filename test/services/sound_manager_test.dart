@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easyssh/services/sound_manager.dart';
-import 'package:easyssh/services/notification_service.dart';
+import '../../src/lib/services/sound_manager.dart';
+import '../../src/lib/services/notification_service.dart';
 
 void main() {
   group('SoundManager Tests', () {

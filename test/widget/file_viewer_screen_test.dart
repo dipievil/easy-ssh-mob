@@ -3,11 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:easyssh/screens/file_viewer_screen.dart';
-import 'package:easyssh/providers/ssh_provider.dart';
-import 'package:easyssh/models/ssh_file.dart';
-import 'package:easyssh/models/file_content.dart';
-import 'package:easyssh/models/ssh_connection_state.dart';
+import '../../src/lib/screens/file_viewer_screen.dart';
+import '../../src/lib/providers/ssh_provider.dart';
+import '../../src/lib/models/ssh_file.dart';
+import '../../src/lib/models/file_content.dart';
+import '../../src/lib/models/ssh_connection_state.dart';
 
 // Gerar mocks - execute: flutter packages pub run build_runner build
 @GenerateMocks([SshProvider])
@@ -20,7 +20,7 @@ void main() {
 
     setUp(() {
       mockProvider = MockSshProvider();
-      testFile = SshFile(
+      testFile = const SshFile(
         name: 'test.txt',
         fullPath: '/home/user/test.txt',
         type: FileType.regular,
@@ -298,7 +298,7 @@ void main() {
     });
 
     testWidgets('should handle binary file gracefully', (WidgetTester tester) async {
-      final binaryFile = SshFile(
+      const binaryFile = SshFile(
         name: 'binary.exe',
         fullPath: '/home/user/binary.exe',
         type: FileType.regular,

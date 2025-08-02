@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easyssh/services/file_icon_manager.dart';
-import 'package:easyssh/models/ssh_file.dart';
+import '../../src/lib/services/file_icon_manager.dart';
+import '../../src/lib/models/ssh_file.dart';
 
 void main() {
   group('FileIconManager Tests', () {
@@ -12,28 +12,28 @@ void main() {
 
     group('Icon Selection', () {
       test('should return correct icons for different file types', () {
-        final directory = SshFile(
+        const directory = SshFile(
           name: 'folder',
           fullPath: '/folder',
           type: FileType.directory,
           displayName: 'folder/',
         );
         
-        final executable = SshFile(
+        const executable = SshFile(
           name: 'script.sh',
           fullPath: '/script.sh',
           type: FileType.executable,
           displayName: 'script.sh*',
         );
         
-        final regular = SshFile(
+        const regular = SshFile(
           name: 'file.txt',
           fullPath: '/file.txt',
           type: FileType.regular,
           displayName: 'file.txt',
         );
         
-        final symlink = SshFile(
+        const symlink = SshFile(
           name: 'link',
           fullPath: '/link',
           type: FileType.symlink,
@@ -147,14 +147,14 @@ void main() {
             theme: ThemeData.light(),
             home: Builder(
               builder: (context) {
-                final directory = SshFile(
+                const directory = SshFile(
                   name: 'folder',
                   fullPath: '/folder',
                   type: FileType.directory,
                   displayName: 'folder/',
                 );
                 
-                final executable = SshFile(
+                const executable = SshFile(
                   name: 'script.sh',
                   fullPath: '/script.sh',
                   type: FileType.executable,
@@ -176,7 +176,7 @@ void main() {
       });
 
       testWidgets('should return different colors for light and dark themes', (WidgetTester tester) async {
-        final file = SshFile(
+        const file = SshFile(
           name: 'test.txt',
           fullPath: '/test.txt',
           type: FileType.regular,
@@ -260,7 +260,7 @@ void main() {
 
     group('Caching', () {
       test('should cache icons for better performance', () {
-        final file = SshFile(
+        const file = SshFile(
           name: 'test.txt',
           fullPath: '/test.txt',
           type: FileType.regular,
@@ -281,7 +281,7 @@ void main() {
       });
 
       testWidgets('should cache colors for better performance', (WidgetTester tester) async {
-        final file = SshFile(
+        const file = SshFile(
           name: 'test.txt',
           fullPath: '/test.txt',
           type: FileType.regular,
@@ -313,7 +313,7 @@ void main() {
       });
 
       test('should clear cache when requested', () {
-        final file = SshFile(
+        const file = SshFile(
           name: 'test.txt',
           fullPath: '/test.txt',
           type: FileType.regular,
@@ -348,7 +348,7 @@ void main() {
 
     group('Edge Cases', () {
       test('should handle files without extensions', () {
-        final file = SshFile(
+        const file = SshFile(
           name: 'noextension',
           fullPath: '/noextension',
           type: FileType.regular,
@@ -361,7 +361,7 @@ void main() {
       });
 
       test('should handle files with multiple dots', () {
-        final file = SshFile(
+        const file = SshFile(
           name: 'file.backup.txt',
           fullPath: '/file.backup.txt',
           type: FileType.regular,
@@ -373,7 +373,7 @@ void main() {
       });
 
       test('should handle empty file names', () {
-        final file = SshFile(
+        const file = SshFile(
           name: '',
           fullPath: '/',
           type: FileType.regular,
@@ -386,21 +386,21 @@ void main() {
       });
 
       test('should handle case insensitive extensions', () {
-        final lowerCase = SshFile(
+        const lowerCase = SshFile(
           name: 'test.txt',
           fullPath: '/test.txt',
           type: FileType.regular,
           displayName: 'test.txt',
         );
         
-        final upperCase = SshFile(
+        const upperCase = SshFile(
           name: 'TEST.TXT',
           fullPath: '/TEST.TXT',
           type: FileType.regular,
           displayName: 'TEST.TXT',
         );
         
-        final mixedCase = SshFile(
+        const mixedCase = SshFile(
           name: 'Test.TxT',
           fullPath: '/Test.TxT',
           type: FileType.regular,
@@ -417,7 +417,7 @@ void main() {
       });
 
       test('should handle unknown file types gracefully', () {
-        final unknownFile = SshFile(
+        const unknownFile = SshFile(
           name: 'test.unknownextension',
           fullPath: '/test.unknownextension',
           type: FileType.unknown,
@@ -453,7 +453,7 @@ void main() {
       });
 
       test('should benefit from caching with repeated calls', () {
-        final file = SshFile(
+        const file = SshFile(
           name: 'test.txt',
           fullPath: '/test.txt',
           type: FileType.regular,

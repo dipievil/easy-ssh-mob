@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:easyssh/screens/file_explorer_screen.dart';
-import 'package:easyssh/providers/ssh_provider.dart';
+import '../../src/lib/screens/file_explorer_screen.dart';
+import '../../src/lib/providers/ssh_provider.dart';
 
 void main() {
   group('FileExplorerScreen', () {

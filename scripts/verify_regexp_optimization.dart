@@ -11,14 +11,14 @@ void main() {
   print('=== IMPLEMENTAÇÃO ATUAL (OTIMIZADA) ===');
   
   // Simular exatamente o que está no error_handler.dart
-  static const RegExp _permissionDeniedPattern = RegExp(r'Permission denied', caseSensitive: false);
-  static const RegExp _fileNotFoundPattern = RegExp(r'No such file or directory', caseSensitive: false);
-  static const RegExp _connectionLostPattern = RegExp(r'Connection.*(lost|closed|refused)', caseSensitive: false);
+  const RegExp permissionDeniedPattern = RegExp(r'Permission denied', caseSensitive: false);
+  const RegExp fileNotFoundPattern = RegExp(r'No such file or directory', caseSensitive: false);
+  const RegExp connectionLostPattern = RegExp(r'Connection.*(lost|closed|refused)', caseSensitive: false);
   
-  static final Map<RegExp, String> _errorPatterns = {
-    _permissionDeniedPattern: 'permissionDenied',
-    _fileNotFoundPattern: 'fileNotFound',
-    _connectionLostPattern: 'connectionLost',
+  final Map<RegExp, String> errorPatterns = {
+    permissionDeniedPattern: 'permissionDenied',
+    fileNotFoundPattern: 'fileNotFound',
+    connectionLostPattern: 'connectionLost',
   };
   
   print('✅ static const RegExp - compilados UMA VEZ');
@@ -34,7 +34,7 @@ void main() {
   // Teste com pattern otimizado (atual)
   final stopwatch1 = Stopwatch()..start();
   for (int i = 0; i < iterations; i++) {
-    _permissionDeniedPattern.hasMatch(testText);
+    permissionDeniedPattern.hasMatch(testText);
   }
   stopwatch1.stop();
   
@@ -67,7 +67,7 @@ void main() {
     print('Testing: "$testCase"');
     
     bool found = false;
-    for (final entry in _errorPatterns.entries) {
+    for (final entry in errorPatterns.entries) {
       if (entry.key.hasMatch(testCase)) {
         print('  ✅ Matched: ${entry.value}');
         found = true;

@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easyssh/models/execution_result.dart';
+import '../../src/lib/models/execution_result.dart';
 
 void main() {
   group('ExecutionResult', () {
     test('should create ExecutionResult with required parameters', () {
       final timestamp = DateTime.now();
-      final duration = const Duration(milliseconds: 500);
+      const duration = Duration(milliseconds: 500);
       
       final result = ExecutionResult(
         stdout: 'Hello World',
@@ -178,7 +178,7 @@ void main() {
 
     test('should support equality comparison', () {
       final timestamp = DateTime.now();
-      final duration = const Duration(milliseconds: 100);
+      const duration = Duration(milliseconds: 100);
 
       final result1 = ExecutionResult(
         stdout: 'Output',

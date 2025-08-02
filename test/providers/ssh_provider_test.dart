@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easyssh/providers/ssh_provider.dart';
-import 'package:easyssh/models/ssh_connection_state.dart';
-import 'package:easyssh/models/ssh_file.dart';
-import 'package:easyssh/models/execution_result.dart';
+import '../../src/lib/providers/ssh_provider.dart';
+import '../../src/lib/models/ssh_connection_state.dart';
+import '../../src/lib/models/ssh_file.dart';
+import '../../src/lib/models/execution_result.dart';
 
 void main() {
   group('SshProvider', () {
@@ -83,7 +83,7 @@ void main() {
     
     group('File Execution', () {
       test('executeFile should fail when not connected', () async {
-        final testFile = SshFile(
+        const testFile = SshFile(
           name: 'test.sh',
           fullPath: '/home/user/test.sh',
           type: FileType.executable,
@@ -99,7 +99,7 @@ void main() {
       });
       
       test('executeFile should handle timeout correctly', () async {
-        final testFile = SshFile(
+        const testFile = SshFile(
           name: 'test.sh',
           fullPath: '/home/user/test.sh',
           type: FileType.executable,

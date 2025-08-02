@@ -1,12 +1,12 @@
-# Documentação do Visualizador de Ficheiros
+# Documentação do Visualizador de arquivos
 
 ## Visão Geral
 
-O **Visualizador de Ficheiros** é uma funcionalidade do Easy SSH Mob que permite 
-visualizar o conteúdo de ficheiros de texto diretamente na aplicação, sem 
+O **Visualizador de arquivos** é uma funcionalidade do Easy SSH Mob que permite 
+visualizar o conteúdo de arquivos de texto diretamente na aplicação, sem 
 necessidade de conhecimentos avançados de SSH.
 
-## Tipos de Ficheiro Suportados
+## Tipos de arquivo Suportados
 
 ### Extensões Automaticamente Detectadas
 
@@ -16,7 +16,7 @@ necessidade de conhecimentos avançados de SSH.
 - **Scripts**: `.sh`, `.py`, `.js`, `.rb`, `.pl`
 - **Web**: `.html`, `.css`, `.sql`
 
-### Ficheiros Sem Extensão
+### arquivos Sem Extensão
 
 - `README`, `LICENSE`, `CHANGELOG`
 - `Makefile`, `Dockerfile`
@@ -26,7 +26,7 @@ necessidade de conhecimentos avançados de SSH.
 
 ### AppBar Actions
 
-1. **🔍 Buscar**: Encontrar texto no ficheiro
+1. **🔍 Buscar**: Encontrar texto no arquivo
 2. **📋 Copiar**: Copiar todo o conteúdo
 3. **⋮ Menu**: Opções adicionais
    - 🔄 Atualizar
@@ -35,15 +35,15 @@ necessidade de conhecimentos avançados de SSH.
 
 ### Indicadores de Status
 
-- **🔵 Azul**: Ficheiro de texto (clique para visualizar)
-- **🟢 Verde**: Ficheiro executável (clique para executar)
+- **🔵 Azul**: arquivo de texto (clique para visualizar)
+- **🟢 Verde**: arquivo executável (clique para executar)
 - **🔗 Roxo**: Link simbólico
 - **📁 Azul**: Diretório (clique para navegar)
 
 ## Limitações
 
-- Ficheiros maiores que 1MB são truncados
-- Apenas ficheiros de texto são suportados
+- arquivos maiores que 1MB são truncados
+- Apenas arquivos de texto são suportados
 - Binários não podem ser visualizados
 
 ---

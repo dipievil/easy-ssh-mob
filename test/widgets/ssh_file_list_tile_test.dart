@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easyssh/widgets/ssh_file_list_tile.dart';
-import 'package:easyssh/models/ssh_file.dart';
+import '../../src/lib/widgets/ssh_file_list_tile.dart';
+import '../../src/lib/models/ssh_file.dart';
 
 void main() {
   group('SshFileListTile', () {
     testWidgets('should display directory file correctly', (WidgetTester tester) async {
-      final file = SshFile(
+      const file = SshFile(
         name: 'test_dir',
         fullPath: '/home/test_dir',
         type: FileType.directory,
@@ -37,7 +37,7 @@ void main() {
     });
 
     testWidgets('should display executable file correctly', (WidgetTester tester) async {
-      final file = SshFile(
+      const file = SshFile(
         name: 'test_exec',
         fullPath: '/home/test_exec',
         type: FileType.executable,
@@ -61,7 +61,7 @@ void main() {
     });
 
     testWidgets('should display regular file correctly', (WidgetTester tester) async {
-      final file = SshFile(
+      const file = SshFile(
         name: 'test.txt',
         fullPath: '/home/test.txt',
         type: FileType.regular,
@@ -84,7 +84,7 @@ void main() {
     });
 
     testWidgets('should show loading indicator when isLoading is true', (WidgetTester tester) async {
-      final file = SshFile(
+      const file = SshFile(
         name: 'test_dir',
         fullPath: '/home/test_dir',
         type: FileType.directory,
@@ -108,7 +108,7 @@ void main() {
     });
 
     testWidgets('should detect script files and show appropriate icon', (WidgetTester tester) async {
-      final file = SshFile(
+      const file = SshFile(
         name: 'script.sh',
         fullPath: '/home/script.sh',
         type: FileType.regular,
@@ -132,7 +132,7 @@ void main() {
     });
 
     testWidgets('should disable tap when loading', (WidgetTester tester) async {
-      final file = SshFile(
+      const file = SshFile(
         name: 'test_dir',
         fullPath: '/home/test_dir',
         type: FileType.directory,
@@ -160,7 +160,7 @@ void main() {
     });
 
     testWidgets('should show scale animation on tap', (WidgetTester tester) async {
-      final file = SshFile(
+      const file = SshFile(
         name: 'test_dir',
         fullPath: '/home/test_dir',
         type: FileType.directory,
@@ -184,7 +184,7 @@ void main() {
     });
 
     testWidgets('should handle long press', (WidgetTester tester) async {
-      final file = SshFile(
+      const file = SshFile(
         name: 'test_file',
         fullPath: '/home/test_file',
         type: FileType.regular,
@@ -212,7 +212,7 @@ void main() {
     });
 
     testWidgets('should disable long press when loading', (WidgetTester tester) async {
-      final file = SshFile(
+      const file = SshFile(
         name: 'test_file',
         fullPath: '/home/test_file',
         type: FileType.regular,

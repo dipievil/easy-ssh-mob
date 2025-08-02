@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easyssh/models/file_content.dart';
+import '../../src/lib/models/file_content.dart';
 
 void main() {
   group('FileContent', () {

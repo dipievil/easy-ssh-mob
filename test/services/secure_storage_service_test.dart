@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:easyssh/services/secure_storage_service.dart';
-import 'package:easyssh/models/ssh_credentials.dart';
+import '../../src/lib/services/secure_storage_service.dart';
+import '../../src/lib/models/ssh_credentials.dart';
 
 void main() {
   group('SecureStorageService Unit Tests', () {
@@ -11,7 +11,7 @@ void main() {
     });
 
     test('should save valid credentials successfully', () async {
-      final credentials = SSHCredentials(
+      const credentials = SSHCredentials(
         host: 'localhost',
         port: 22,
         username: 'testuser',
@@ -24,7 +24,7 @@ void main() {
     });
 
     test('should not save invalid credentials', () async {
-      final invalidCredentials = SSHCredentials(
+      const invalidCredentials = SSHCredentials(
         host: '', // Host vazio = inválido
         port: 22,
         username: 'testuser',
@@ -37,7 +37,7 @@ void main() {
     });
 
     test('should load saved credentials correctly', () async {
-      final originalCredentials = SSHCredentials(
+      const originalCredentials = SSHCredentials(
         host: 'test-host',
         port: 2222,
         username: 'test-user',
@@ -68,7 +68,7 @@ void main() {
       expect(await SecureStorageService.hasStoredCredentials(), false);
       
       // Salvar credenciais
-      final credentials = SSHCredentials(
+      const credentials = SSHCredentials(
         host: 'test-host',
         port: 22,
         username: 'test-user',
@@ -82,7 +82,7 @@ void main() {
 
     test('should delete credentials successfully', () async {
       // Salvar credenciais primeiro
-      final credentials = SSHCredentials(
+      const credentials = SSHCredentials(
         host: 'test-host',
         port: 22,
         username: 'test-user',
@@ -104,7 +104,7 @@ void main() {
 
     test('should clear all storage successfully', () async {
       // Salvar credenciais primeiro
-      final credentials = SSHCredentials(
+      const credentials = SSHCredentials(
         host: 'test-host',
         port: 22,
         username: 'test-user',
@@ -155,7 +155,7 @@ void main() {
     });
 
     test('should save and load credentials with special characters', () async {
-      final credentials = SSHCredentials(
+      const credentials = SSHCredentials(
         host: 'host-with-special.chars.com',
         port: 22,
         username: 'user@domain.com',
@@ -177,7 +177,7 @@ void main() {
     });
 
     test('should save and load credentials with unicode characters', () async {
-      final credentials = SSHCredentials(
+      const credentials = SSHCredentials(
         host: 'tëst-hōst.côm',
         port: 22,
         username: 'üser_名前',

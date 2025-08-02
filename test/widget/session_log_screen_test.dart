@@ -3,10 +3,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:easyssh/screens/session_log_screen.dart';
-import 'package:easyssh/providers/ssh_provider.dart';
-import 'package:easyssh/models/log_entry.dart';
-import 'package:easyssh/models/ssh_connection_state.dart';
+import '../../src/lib/screens/session_log_screen.dart';
+import '../../src/lib/providers/ssh_provider.dart';
+import '../../src/lib/models/log_entry.dart';
+import '../../src/lib/models/ssh_connection_state.dart';
 
 // Gerar mocks - execute: flutter packages pub run build_runner build
 @GenerateMocks([SshProvider])
