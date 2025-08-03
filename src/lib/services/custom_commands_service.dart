@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer' as dev;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/command_item.dart';
 
@@ -19,7 +20,7 @@ class CustomCommandsService {
       final List<dynamic> commandsList = jsonDecode(commandsJson);
       return commandsList.map((json) => CommandItem.fromJson(json)).toList();
     } catch (e) {
-      log('Error loading custom commands: $e', error: e);
+      dev.log('Error loading custom commands: $e', error: e);
       return [];
     }
   }
@@ -30,7 +31,7 @@ class CustomCommandsService {
       final commandsJson = jsonEncode(commands.map((c) => c.toJson()).toList());
       await _storage.write(key: _storageKey, value: commandsJson);
     } catch (e) {
-      print('Error saving custom commands: $e');
+      dev.log('Error saving custom commands: $e', error: e);
       throw Exception('Erro ao salvar comandos personalizados');
     }
   }
@@ -48,7 +49,7 @@ class CustomCommandsService {
       commands.add(command);
       await saveCustomCommands(commands);
     } catch (e) {
-      print('Error adding custom command: $e');
+      dev.log('Error adding custom command: $e', error: e);
       rethrow;
     }
   }
@@ -60,7 +61,7 @@ class CustomCommandsService {
       commands.removeWhere((c) => c.name == command.name && c.command == command.command);
       await saveCustomCommands(commands);
     } catch (e) {
-      print('Error removing custom command: $e');
+      dev.log('Error removing custom command: $e', error: e);
       throw Exception('Erro ao remover comando personalizado');
     }
   }
@@ -78,7 +79,7 @@ class CustomCommandsService {
         throw Exception('Comando não encontrado');
       }
     } catch (e) {
-      print('Error updating custom command: $e');
+      dev.log('Error updating custom command: $e');
       rethrow;
     }
   }
@@ -94,7 +95,7 @@ class CustomCommandsService {
     try {
       await _storage.delete(key: _storageKey);
     } catch (e) {
-      print('Error clearing custom commands: $e');
+      dev.log('Error clearing custom commands: $e');
       throw Exception('Erro ao limpar comandos personalizados');
     }
   }
@@ -105,7 +106,7 @@ class CustomCommandsService {
       final commands = await loadCustomCommands();
       return jsonEncode(commands.map((c) => c.toJson()).toList());
     } catch (e) {
-      print('Error exporting custom commands: $e');
+      dev.log('Error exporting custom commands: $e');
       throw Exception('Erro ao exportar comandos personalizados');
     }
   }
@@ -133,7 +134,7 @@ class CustomCommandsService {
       
       await saveCustomCommands(existingCommands);
     } catch (e) {
-      print('Error importing custom commands: $e');
+      dev.log('Error importing custom commands: $e');
       throw Exception('Erro ao importar comandos personalizados');
     }
   }

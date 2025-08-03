@@ -151,3 +151,4 @@ class _SshFileListTileState extends State<SshFileListTile>
       ),
     );
   }
+}

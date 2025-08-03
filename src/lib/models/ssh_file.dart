@@ -18,12 +18,16 @@ class SshFile {
   final String fullPath;
   final FileType type;
   final String displayName;
+  final int? size;
+  final DateTime? lastModified;
 
   const SshFile({
     required this.name,
     required this.fullPath,
     required this.type,
     required this.displayName,
+    this.size,
+    this.lastModified,
   });
 
   /// Factory constructor to create SshFile from ls -F output line
@@ -60,6 +64,8 @@ class SshFile {
       fullPath: fullPath,
       type: type,
       displayName: displayName,
+      size: null, // Size will be obtained separately if needed
+      lastModified: null, // Date will be obtained separately if needed
     );
   }
 
@@ -131,12 +137,16 @@ class SshFile {
     String? fullPath,
     FileType? type,
     String? displayName,
+    int? size,
+    DateTime? lastModified,
   }) {
     return SshFile(
       name: name ?? this.name,
       fullPath: fullPath ?? this.fullPath,
       type: type ?? this.type,
       displayName: displayName ?? this.displayName,
+      size: size ?? this.size,
+      lastModified: lastModified ?? this.lastModified,
     );
   }
 
@@ -147,12 +157,14 @@ class SshFile {
         other.name == name &&
         other.fullPath == fullPath &&
         other.type == type &&
-        other.displayName == displayName;
+        other.displayName == displayName &&
+        other.size == size &&
+        other.lastModified == lastModified;
   }
 
   @override
   int get hashCode {
-    return Object.hash(name, fullPath, type, displayName);
+    return Object.hash(name, fullPath, type, displayName, size, lastModified);
   }
 
   @override

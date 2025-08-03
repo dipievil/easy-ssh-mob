@@ -48,7 +48,7 @@ class ErrorSnackBar {
       case ErrorType.operationNotPermitted:
         return FontAwesomeIcons.ban;
       case ErrorType.connectionLost:
-        return FontAwesomeIcons.wifiSlash;
+        return FontAwesomeIcons.wifi;
       case ErrorType.timeout:
         return FontAwesomeIcons.clock;
       case ErrorType.commandNotFound:

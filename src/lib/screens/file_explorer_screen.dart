@@ -4,7 +4,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../providers/ssh_provider.dart';
 import '../models/ssh_file.dart';
 import '../widgets/ssh_file_list_tile.dart';
-import '../models/execution_result.dart';
 import '../widgets/execution_result_dialog.dart';
 import '../widgets/file_type_indicator.dart';
 import '../widgets/error_widgets.dart';
@@ -207,17 +206,6 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     );
   }
 
-  /// Handle file/directory tap
-  Future<void> _handleFileTap(SshFile file) async {
-    if (file.isDirectory) {
-      await _navigateToDirectory(file.fullPath);
-    } else {
-      // For now, just show a message for non-directory files
-      // This will be expanded in Phase 3
-      _showMessage('Arquivo: ${file.name} (${file.typeDescription})');
-    }
-  }
-
   /// Navigate to directory with loading state
   Future<void> _navigateToDirectory(String path) async {
     setState(() {
@@ -353,30 +341,6 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
         );
       }
     }
-  }
-
-  void _handleFileTap(SshFile file) {
-    if (file.isDirectory) {
-      _navigateToDirectory(file);
-    } else if (file.isTextFile) {
-      _openFileViewer(file);
-    } else if (file.isExecutable || file.mightBeExecutable) {
-      _executeFile(file);
-    } else {
-      // Show info for non-executable, non-text files
-      _showFileInfo(file);
-    }
-  }
-
-  void _navigateToDirectory(SshFile file) async {
-    setState(() {
-      _isLoading = true;
-    });
-    final sshProvider = Provider.of<SshProvider>(context, listen: false);
-    await sshProvider.navigateToDirectory(file.fullPath);
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   void _openFileViewer(SshFile file) {
@@ -540,56 +504,6 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
       return '.../${components[components.length - 2]}/${components.last}';
     }
   }
-          ],
-        ),
-      );
-    }
-
-    return SingleChildScrollView(
-      scrollDirection = Axis.horizontal,
-      child = Row(
-        children: [
-          // Root directory
-          GestureDetector(
-            onTap: () => _navigateToDirectory('/'),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.home, size: 16),
-                SizedBox(width: 2),
-                Text('/', style: TextStyle(fontWeight: FontWeight.w500)),
-              ],
-            ),
-          ),
-          // Path components
-          ...List.generate(components.length, (index) {
-            final component = components[index];
-            final path = '/${components.take(index + 1).join('/')}';
-            final isLast = index == components.length - 1;
-            
-            return Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.arrow_forward_ios, size: 12),
-                const SizedBox(width: 4),
-                GestureDetector(
-                  onTap: isLast ? null : () => _navigateToDirectory(path),
-                  child: Text(
-                    component,
-                    style: TextStyle(
-                      fontWeight: isLast ? FontWeight.bold : FontWeight.w500,
-                      color: isLast ? null : Colors.blue.shade700,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 4),
-              ],
-            );
-          }),
-        ],
-      ),
-    );
-  }
 
   /// Show file options context menu
   void _showFileOptions(BuildContext context, SshFile file) {
@@ -714,12 +628,26 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     }
   }
 
+  /// Handle file tap based on file type
+  void _handleFileTap(SshFile file) {
+    if (file.isDirectory) {
+      _navigateToDirectory(file.fullPath);
+    } else if (file.isTextFile) {
+      _openFileViewer(file);
+    } else if (file.isExecutable || file.mightBeExecutable) {
+      _executeFile(file);
+    } else {
+      // Show info for non-executable, non-text files
+      _showFileInfo(file);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: Consumer<SshProvider>(
-        builder: (context, sshProvider, child) {
-          return GradientAppBar(
+    return Consumer<SshProvider>(
+      builder: (context, sshProvider, child) {
+        return Scaffold(
+          appBar: GradientAppBar(
             title: _buildBreadcrumbText(sshProvider.currentPath),
             actions: [
               // Back navigation button
@@ -777,78 +705,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
                 tooltip: 'Terminal',
               ),
             ],
-          );
-        },
-      ),
-      endDrawer: const ToolsDrawer(),
-          // Parent directory button
-          Consumer<SshProvider>(
-            builder: (context, sshProvider, child) {
-              if (sshProvider.currentPath.isNotEmpty && sshProvider.currentPath != '/') {
-                return IconButton(
-                  onPressed: () async {
-                    setState(() {
-                      _isLoading = true;
-                    });
-                    await sshProvider.navigateToParent();
-                    setState(() {
-                      _isLoading = false;
-                    });
-                  },
-                  icon: const Icon(Icons.arrow_upward),
-                  tooltip: 'Diretório pai',
-                );
-              }
-              return const SizedBox.shrink();
-            },
           ),
-          // Home button with improved styling
-          Consumer<SshProvider>(
-            builder: (context, sshProvider, child) {
-              final isAtHome = _isAtHome();
-              return IconButton(
-                onPressed: isAtHome ? null : _goHome,
-                icon: Icon(
-                  FontAwesomeIcons.home,
-                  color: isAtHome ? Colors.grey : null,
-                ),
-                tooltip: isAtHome ? 'Já está no diretório home' : 'Ir para Home',
-              );
-            },
-          ),
-          // Tools drawer button
-          Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(FontAwesomeIcons.tools),
-              tooltip: 'Ferramentas',
-              onPressed: () => Scaffold.of(context).openEndDrawer(),
-            ),
-          ),
-          // Connection status indicator
-          Consumer<SshProvider>(
-            builder: (context, sshProvider, child) {
-              if (sshProvider.isConnected) {
-                return const Icon(
-                  Icons.wifi,
-                  color: Colors.green,
-                );
-              } else if (sshProvider.isConnecting) {
-                return const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                );
-              } else {
-                return const Icon(
-                  Icons.wifi_off,
-                  color: Colors.red,
-                );
-              }
-            },
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
       endDrawer: const ToolsDrawer(),
       body: Consumer<SshProvider>(
         builder: (context, sshProvider, child) {
@@ -1035,6 +892,8 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
         tooltip: 'Atualizar',
         child: const Icon(Icons.refresh),
       ),
-    )
+        );
+      },
+    );
   }
 }

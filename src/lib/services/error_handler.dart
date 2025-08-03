@@ -34,14 +34,14 @@ class SshError {
 /// Service for analyzing and handling SSH errors
 class ErrorHandler {
   /// Pattern matching for common SSH errors
-  static const RegExp _permissionDeniedPattern = RegExp(r'Permission denied', caseSensitive: false);
-  static const RegExp _fileNotFoundPattern = RegExp(r'No such file or directory', caseSensitive: false);
-  static const RegExp _operationNotPermittedPattern = RegExp(r'Operation not permitted', caseSensitive: false);
-  static const RegExp _accessDeniedPattern = RegExp(r'Access denied', caseSensitive: false);
-  static const RegExp _connectionLostPattern = RegExp(r'Connection.*(lost|closed|refused)', caseSensitive: false);
-  static const RegExp _timeoutPattern = RegExp(r'Timeout|timed out', caseSensitive: false);
-  static const RegExp _commandNotFoundPattern = RegExp(r'command not found', caseSensitive: false);
-  static const RegExp _diskFullPattern = RegExp(r'No space left on device', caseSensitive: false);
+  static final RegExp _permissionDeniedPattern = RegExp(r'Permission denied', caseSensitive: false);
+  static final RegExp _fileNotFoundPattern = RegExp(r'No such file or directory', caseSensitive: false);
+  static final RegExp _operationNotPermittedPattern = RegExp(r'Operation not permitted', caseSensitive: false);
+  static final RegExp _accessDeniedPattern = RegExp(r'Access denied', caseSensitive: false);
+  static final RegExp _connectionLostPattern = RegExp(r'Connection.*(lost|closed|refused)', caseSensitive: false);
+  static final RegExp _timeoutPattern = RegExp(r'Timeout|timed out', caseSensitive: false);
+  static final RegExp _commandNotFoundPattern = RegExp(r'command not found', caseSensitive: false);
+  static final RegExp _diskFullPattern = RegExp(r'No space left on device', caseSensitive: false);
 
   static final Map<RegExp, ErrorType> _errorPatterns = {
     _permissionDeniedPattern: ErrorType.permissionDenied,

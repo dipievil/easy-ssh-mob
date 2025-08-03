@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../providers/ssh_provider.dart';
-import '../models/ssh_credentials.dart';
 import '../widgets/custom_components.dart';
 import '../utils/custom_animations.dart';
 import '../utils/responsive_breakpoints.dart';

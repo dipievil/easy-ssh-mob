@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'sound_manager.dart';
-import 'secure_storage_service.dart';
 
 /// Types of notifications
 enum NotificationType {
@@ -64,28 +64,28 @@ class NotificationService {
   double soundVolume = 0.7;
   bool vibrateEnabled = true;
   
-  late final SecureStorageService _storage;
+  late final FlutterSecureStorage _storage;
   
   /// Initialize the service and load user preferences
   Future<void> initialize() async {
-    _storage = SecureStorageService();
+    _storage = const FlutterSecureStorage();
     await _loadUserPreferences();
   }
   
   /// Load user preferences from storage
   Future<void> _loadUserPreferences() async {
     try {
-      final soundEnabledStr = await _storage.read('notification_sound_enabled');
+      final soundEnabledStr = await _storage.read(key: 'notification_sound_enabled');
       if (soundEnabledStr != null) {
         soundEnabled = soundEnabledStr.toLowerCase() == 'true';
       }
       
-      final soundVolumeStr = await _storage.read('notification_sound_volume');
+      final soundVolumeStr = await _storage.read(key: 'notification_sound_volume');
       if (soundVolumeStr != null) {
         soundVolume = double.tryParse(soundVolumeStr) ?? 0.7;
       }
       
-      final vibrateEnabledStr = await _storage.read('notification_vibrate_enabled');
+      final vibrateEnabledStr = await _storage.read(key: 'notification_vibrate_enabled');
       if (vibrateEnabledStr != null) {
         vibrateEnabled = vibrateEnabledStr.toLowerCase() == 'true';
       }
@@ -97,9 +97,9 @@ class NotificationService {
   /// Save user preferences to storage
   Future<void> saveUserPreferences() async {
     try {
-      await _storage.write('notification_sound_enabled', soundEnabled.toString());
-      await _storage.write('notification_sound_volume', soundVolume.toString());
-      await _storage.write('notification_vibrate_enabled', vibrateEnabled.toString());
+      await _storage.write(key: 'notification_sound_enabled', value: soundEnabled.toString());
+      await _storage.write(key: 'notification_sound_volume', value: soundVolume.toString());
+      await _storage.write(key: 'notification_vibrate_enabled', value: vibrateEnabled.toString());
     } catch (e) {
       print('Error saving notification preferences: $e');
     }

@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 /// Represents a command item that can be executed in the SSH terminal
 class CommandItem {
@@ -16,12 +17,34 @@ class CommandItem {
 
   /// Create CommandItem from JSON (for custom commands storage)
   factory CommandItem.fromJson(Map<String, dynamic> json) {
+    // Use a safer approach for icon recreation from JSON
+    final iconCodePoint = json['iconCodePoint'] as int? ?? Icons.terminal.codePoint;
+    final iconFontFamily = json['iconFontFamily'] as String?;
+    
     return CommandItem(
       json['name'] as String,
       json['command'] as String,
-      IconData(json['iconCodePoint'] as int, fontFamily: json['iconFontFamily'] as String?),
+      _getIconFromCodePoint(iconCodePoint, iconFontFamily),
       json['description'] as String?,
     );
+  }
+
+  /// Helper method to safely recreate IconData
+  static IconData _getIconFromCodePoint(int codePoint, String? fontFamily) {
+    // Use common Material icons to avoid tree shaking issues
+    switch (codePoint) {
+      case 0xe5c3: return Icons.terminal;
+      case 0xe145: return Icons.folder;
+      case 0xe2c7: return Icons.file_copy;
+      case 0xe8b6: return Icons.settings;
+      case 0xe8e8: return Icons.sync;
+      case 0xe8f4: return Icons.system_update;
+      case 0xe2c8: return Icons.file_download;
+      case 0xe2c9: return Icons.file_upload;
+      case 0xe86f: return Icons.refresh;
+      case 0xe5d2: return Icons.folder_open;
+      default: return Icons.terminal; // Default fallback
+    }
   }
 
   /// Convert CommandItem to JSON (for custom commands storage)

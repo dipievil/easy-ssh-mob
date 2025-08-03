@@ -192,7 +192,6 @@ class FileIconManager {
     
     // Executable files (Windows)
     '.exe': FontAwesomeIcons.terminal,
-    '.msi': FontAwesomeIcons.box,
     '.bat': FontAwesomeIcons.terminal,
     '.cmd': FontAwesomeIcons.terminal,
     '.ps1': FontAwesomeIcons.terminal,

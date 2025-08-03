@@ -155,8 +155,8 @@ class SshProvider extends ChangeNotifier {
       
       // Execute ls -F command using session for proper error capture
       final session = await _sshClient!.execute('ls -F "$normalizedPath"');
-      final stdout = await session.stdout.transform(utf8.decoder).join();
-      final stderr = await session.stderr.transform(utf8.decoder).join();
+      final stdout = await utf8.decoder.bind(session.stdout).join();
+      final stderr = await utf8.decoder.bind(session.stderr).join();
       
       // Check for errors in stderr
       if (stderr.isNotEmpty) {
@@ -243,7 +243,8 @@ class SshProvider extends ChangeNotifier {
       final normalizedPath = _normalizePath(path);
       
       // Test if directory exists and is accessible
-      final testResult = await _sshClient!.execute('test -d "$normalizedPath" && echo "OK"');
+      final testSession = await _sshClient!.execute('test -d "$normalizedPath" && echo "OK"');
+      final testResult = await utf8.decoder.bind(testSession.stdout).join();
       
       if (testResult.trim() != 'OK') {
         _errorMessage = 'Directory does not exist or is not accessible: $normalizedPath';
@@ -289,8 +290,9 @@ class SshProvider extends ChangeNotifier {
   /// Navigate to home directory
   Future<void> navigateToHome() async {
     try {
-      final homeResult = await _sshClient!.execute('echo ~');
-      final homePath = homeResult.trim() ?? '/';
+      final homeSession = await _sshClient!.execute('echo ~');
+      final homeResult = await utf8.decoder.bind(homeSession.stdout).join();
+      final homePath = homeResult.trim().isEmpty ? '/' : homeResult.trim();
       await navigateToDirectory(homePath);
     } catch (e) {
       await navigateToDirectory('/');
@@ -429,7 +431,8 @@ class SshProvider extends ChangeNotifier {
     
     // For files without clear extension, try to read shebang
     try {
-      final headResult = await _sshClient!.execute('head -1 "$filePath"');
+      final headSession = await _sshClient!.execute('head -1 "$filePath"');
+      final headResult = await utf8.decoder.bind(headSession.stdout).join();
       if (headResult.startsWith('#!')) {
         // Extract interpreter from shebang
         final shebang = headResult.trim();
@@ -451,20 +454,19 @@ class SshProvider extends ChangeNotifier {
       final session = await _sshClient!.execute(command);
       
       // Set up timeout and capture streams
-      final Future<String> stdoutFuture = session.stdout.transform(utf8.decoder).join();
-      final Future<String> stderrFuture = session.stderr.transform(utf8.decoder).join();
-      final Future<int?> exitCodeFuture = session.exitCode;
+      final Future<String> stdoutFuture = utf8.decoder.bind(session.stdout).join();
+      final Future<String> stderrFuture = utf8.decoder.bind(session.stderr).join();
+      final int? exitCode = session.exitCode;
       
       // Wait for all with timeout
       final results = await Future.wait([
         stdoutFuture.timeout(timeout),
         stderrFuture.timeout(timeout),
-        exitCodeFuture.timeout(timeout),
       ]);
       
-      final stdout = results[0] as String;
-      final stderr = results[1] as String;
-      final exitCode = results[2] as int?;
+      final stdout = results[0];
+      final stderr = results[1];
+      // exitCode já está disponível
       
       // If there's stderr, analyze it for errors
       if (stderr.isNotEmpty) {
@@ -531,8 +533,8 @@ class SshProvider extends ChangeNotifier {
       final session = await _sshClient!.execute(command);
       
       // Wait for command completion and capture both stdout and stderr
-      final stdout = await session.stdout.transform(utf8.decoder).join();
-      final stderr = await session.stderr.transform(utf8.decoder).join();
+      final stdout = await utf8.decoder.bind(session.stdout).join();
+      final stderr = await utf8.decoder.bind(session.stderr).join();
       final exitCode = session.exitCode;
       final duration = DateTime.now().difference(startTime);
       
@@ -694,8 +696,8 @@ class SshProvider extends ChangeNotifier {
       final session = await _sshClient!.execute(command);
       
       // Wait for command completion and capture both stdout and stderr
-      final stdout = await session.stdout.transform(utf8.decoder).join();
-      final stderr = await session.stderr.transform(utf8.decoder).join();
+      final stdout = await utf8.decoder.bind(session.stdout).join();
+      final stderr = await utf8.decoder.bind(session.stderr).join();
       
       // Check if there were errors in stderr
       if (stderr.isNotEmpty) {
@@ -734,8 +736,9 @@ class SshProvider extends ChangeNotifier {
     }
     
     // Executa o comando stat e armazena o resultado em cache
-    final sizeOutput = await _sshClient!.execute('stat -f%z "${file.fullPath}" 2>/dev/null || stat -c%s "${file.fullPath}"');
-    final fileSize = int.tryParse(sizeOutput.trim() ?? '') ?? 0;
+    final sizeSession = await _sshClient!.execute('stat -f%z "${file.fullPath}" 2>/dev/null || stat -c%s "${file.fullPath}"');
+    final sizeOutput = await utf8.decoder.bind(sizeSession.stdout).join();
+    final fileSize = int.tryParse(sizeOutput.trim()) ?? 0;
     
     // Armazena o resultado em cache
     _fileSizeCache[cacheKey] = fileSize;
@@ -765,7 +768,8 @@ class SshProvider extends ChangeNotifier {
         return _readFilePart(file, FileViewMode.head, fileSize);
       } else {
         // Small file - read complete
-        final content = await _sshClient!.execute('cat "${file.fullPath}"');
+        final contentSession = await _sshClient!.execute('cat "${file.fullPath}"');
+        final content = await utf8.decoder.bind(contentSession.stdout).join();
         
         final lines = content.split('\n');
         
@@ -799,11 +803,13 @@ class SshProvider extends ChangeNotifier {
         throw Exception('Modo inválido para leitura parcial: $mode');
     }
     
-    final content = await _sshClient!.execute(command);
+    final contentSession = await _sshClient!.execute(command);
+    final content = await utf8.decoder.bind(contentSession.stdout).join();
     
     // Get total line count
-    final lineCountOutput = await _sshClient!.execute('wc -l "${file.fullPath}"');
-    final totalLines = int.tryParse(lineCountOutput.split(' ').first ?? '') ?? 0;
+    final lineCountSession = await _sshClient!.execute('wc -l "${file.fullPath}"');
+    final lineCountOutput = await utf8.decoder.bind(lineCountSession.stdout).join();
+    final totalLines = int.tryParse(lineCountOutput.split(' ').first) ?? 0;
     
     final lines = content.split('\n');
     final displayedLines = lines.where((line) => line.isNotEmpty).length;

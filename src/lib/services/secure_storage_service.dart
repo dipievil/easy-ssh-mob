@@ -15,9 +15,6 @@ class SecureStorageService {
       accessibility: KeychainAccessibility.first_unlock_this_device,
       accountName: 'EasySSH',
     ),
-    lOptions: LinuxOptions(
-      useSessionKeyring: true,
-    ),
     wOptions: WindowsOptions(),
     mOptions: MacOsOptions(),
   );

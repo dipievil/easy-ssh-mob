@@ -53,7 +53,7 @@ class ErrorTestScreen extends StatelessWidget {
                     context,
                     'Conexão Perdida',
                     'Testa erro de conexão SSH perdida',
-                    FontAwesomeIcons.wifiSlash,
+                    FontAwesomeIcons.wifi,
                     () => _showTestError(context, ErrorType.connectionLost),
                   ),
                   _buildErrorTestCard(

@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.example.easy_ssh_mob_new"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
