@@ -29,7 +29,6 @@ jobs:
       - name: Get dependencies
         run: |
           cd src
-          flutter config --no-animations
           flutter pub get
 
       - name: Verify formatting
