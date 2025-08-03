@@ -32,6 +32,7 @@ jobs:
           dart --version
 
       - name: Clean Flutter cache
+        working-directory: ./src
         run: flutter clean
 
       - name: Get dependencies
