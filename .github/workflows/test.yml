@@ -22,16 +22,24 @@ jobs:
           channel: 'stable'
 
       - name: Get dependencies
-        run: flutter pub get
+        run: |
+          cd src
+          flutter pub get
 
       - name: Verify formatting
-        run: dart format --output=none --set-exit-if-changed .
+        run: |
+          cd src
+          dart format --output=none --set-exit-if-changed .
 
       - name: Analyze project source
-        run: flutter analyze --fatal-infos
+        run: |
+          cd src
+          flutter analyze --fatal-infos
 
       - name: Check for outdated dependencies
-        run: flutter pub outdated
+        run: |
+          cd src
+          flutter pub outdated
 
   # Testes unitários e de widget
   test:
@@ -48,25 +56,39 @@ jobs:
           channel: 'stable'
 
       - name: Get dependencies
-        run: flutter pub get
+        run: |
+          cd src
+          flutter pub get
 
       - name: Generate mocks
-        run: flutter packages pub run build_runner build --delete-conflicting-outputs
+        run: |
+          cd src
+          flutter packages pub run build_runner build --delete-conflicting-outputs
 
       - name: Run unit tests
-        run: flutter test --coverage --reporter=expanded
+        run: |
+          cd src
+          flutter test --coverage --reporter=expanded
 
       - name: Run widget tests
-        run: flutter test test/widget/ --reporter=expanded
+        run: |
+          cd src
+          flutter test test/widget/ --reporter=expanded
 
       - name: Run service tests  
-        run: flutter test test/services/ --reporter=expanded
+        run: |
+          cd src
+          flutter test test/services/ --reporter=expanded
 
       - name: Run model tests
-        run: flutter test test/models/ --reporter=expanded
+        run: |
+          cd src
+          flutter test test/models/ --reporter=expanded
 
       - name: Run provider tests
-        run: flutter test test/providers/ --reporter=expanded
+        run: |
+          cd src
+          flutter test test/providers/ --reporter=expanded
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
@@ -89,13 +111,19 @@ jobs:
           channel: 'stable'
 
       - name: Get dependencies
-        run: flutter pub get
+        run: |
+          cd src
+          flutter pub get
 
       - name: Generate mocks
-        run: flutter packages pub run build_runner build --delete-conflicting-outputs
+        run: |
+          cd src
+          flutter packages pub run build_runner build --delete-conflicting-outputs
 
       - name: Run performance tests
-        run: flutter test test/performance/ --reporter=expanded
+        run: |
+          cd src
+          flutter test test/performance/ --reporter=expanded
 
   # Testes de acessibilidade
   accessibility:
@@ -112,13 +140,19 @@ jobs:
           channel: 'stable'
 
       - name: Get dependencies
-        run: flutter pub get
+        run: |
+          cd src
+          flutter pub get
 
       - name: Generate mocks
-        run: flutter packages pub run build_runner build --delete-conflicting-outputs
+        run: |
+          cd src
+          flutter packages pub run build_runner build --delete-conflicting-outputs
 
       - name: Run accessibility tests
-        run: flutter test test/accessibility/ --reporter=expanded
+        run: |
+          cd src
+          flutter test test/accessibility/ --reporter=expanded
 
   # Build para Android
   build-android:
@@ -142,10 +176,14 @@ jobs:
           channel: 'stable'
 
       - name: Get dependencies
-        run: flutter pub get
+        run: |
+          cd src
+          flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release
+        run: |
+          cd src
+          flutter build apk --release
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v3
@@ -169,10 +207,14 @@ jobs:
           channel: 'stable'
 
       - name: Get dependencies
-        run: flutter pub get
+        run: |
+          cd src
+          flutter pub get
 
       - name: Build iOS (no codesign)
-        run: flutter build ios --release --no-codesign
+        run: |
+          cd src
+          flutter build ios --release --no-codesign
 
   # Testes de integração (Android)
   integration-test-android:
@@ -199,10 +241,14 @@ jobs:
           channel: 'stable'
 
       - name: Get dependencies
-        run: flutter pub get
+        run: |
+          cd src
+          flutter pub get
 
       - name: Enable KVM group perms
         run: |
+          cd src
+           |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
@@ -231,15 +277,21 @@ jobs:
           channel: 'stable'
 
       - name: Get dependencies
-        run: flutter pub get
+        run: |
+          cd src
+          flutter pub get
 
       - name: Start iOS Simulator
         run: |
+          cd src
+           |
           xcrun simctl boot "iPhone 14" || true
           xcrun simctl list devices
 
       - name: Run integration tests
-        run: flutter test integration_test/app_test.dart -d "iPhone 14"
+        run: |
+          cd src
+          flutter test integration_test/app_test.dart -d "iPhone 14"
 
   # Relatório de cobertura
   coverage-report:
@@ -257,16 +309,24 @@ jobs:
           channel: 'stable'
 
       - name: Get dependencies
-        run: flutter pub get
+        run: |
+          cd src
+          flutter pub get
 
       - name: Generate mocks
-        run: flutter packages pub run build_runner build --delete-conflicting-outputs
+        run: |
+          cd src
+          flutter packages pub run build_runner build --delete-conflicting-outputs
 
       - name: Run all tests with coverage
-        run: flutter test --coverage
+        run: |
+          cd src
+          flutter test --coverage
 
       - name: Generate coverage HTML report
         run: |
+          cd src
+          mkdir -p coverage/html
           sudo apt-get update
           sudo apt-get install -y lcov
           genhtml coverage/lcov.info -o coverage/html
@@ -292,13 +352,18 @@ jobs:
           channel: 'stable'
 
       - name: Get dependencies
-        run: flutter pub get
+        run: |
+          cd src
+           flutter pub get
 
       - name: Run security audit
-        run: flutter pub deps --json | jq '.packages[] | select(.kind == "direct") | .name' | xargs -I {} echo "Checking {}"
+        run: |
+          cd src
+          flutter pub deps --json | jq '.packages[] | select(.kind == "direct") | .name' | xargs -I {} echo "Checking {}"
 
       - name: Check for known vulnerabilities
         run: |
+          cd src
           # Verificar se há dependências com vulnerabilidades conhecidas
           flutter pub deps --json > deps.json
           # Em um ambiente real, você usaria ferramentas como 'audit' do pub.dev
