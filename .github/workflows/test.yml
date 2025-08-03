@@ -21,6 +21,10 @@ jobs:
           flutter-version-file: src\pubspec.yaml
           channel: 'stable'
 
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.8.1'
+
       - name: Get dependencies
         run: |
           cd src
