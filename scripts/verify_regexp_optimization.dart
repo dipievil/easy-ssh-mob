@@ -11,17 +11,17 @@ void main() {
   print('=== IMPLEMENTAÇÃO ATUAL (OTIMIZADA) ===');
   
   // Simular exatamente o que está no error_handler.dart
-  const RegExp permissionDeniedPattern = RegExp(r'Permission denied', caseSensitive: false);
-  const RegExp fileNotFoundPattern = RegExp(r'No such file or directory', caseSensitive: false);
-  const RegExp connectionLostPattern = RegExp(r'Connection.*(lost|closed|refused)', caseSensitive: false);
-  
+  final RegExp permissionDeniedPattern = RegExp(r'Permission denied', caseSensitive: false);
+  final RegExp fileNotFoundPattern = RegExp(r'No such file or directory', caseSensitive: false);
+  final RegExp connectionLostPattern = RegExp(r'Connection.*(lost|closed|refused)', caseSensitive: false);
+
   final Map<RegExp, String> errorPatterns = {
     permissionDeniedPattern: 'permissionDenied',
     fileNotFoundPattern: 'fileNotFound',
     connectionLostPattern: 'connectionLost',
   };
-  
-  print('✅ static const RegExp - compilados UMA VEZ');
+
+  print('✅ static final RegExp - compilados UMA VEZ');
   print('✅ static final Map - referencia patterns pré-compilados');
   print('✅ Nenhuma criação de RegExp em hot paths\n');
   
