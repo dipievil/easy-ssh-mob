@@ -1,14 +1,14 @@
 {
   "aplicacao": "Easy SSH Mob",
   "versao": "1.0.0",
-  "descricao": "Gerenciador de ficheiros SSH multiplataforma",
+  "descricao": "Gerenciador de arquivos SSH multiplataforma",
   "funcionalidades": [
     "Navegação de diretórios",
     "Execução de scripts",
-    "Visualização de ficheiros de texto",
+    "Visualização de arquivos de texto",
     "Terminal integrado"
   ],
-  "suporte_ficheiros": {
+  "suporte_arquivos": {
     "texto": [
       ".txt", ".log", ".conf", ".json", ".xml", 
       ".yml", ".yaml", ".md", ".sh", ".py"

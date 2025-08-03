@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easyssh/models/log_entry.dart';
+import '../../src/lib/models/log_entry.dart';
 
 void main() {
   group('LogEntry', () {
     group('constructor and basic properties', () {
       test('should create LogEntry with all properties', () {
         final timestamp = DateTime(2024, 1, 15, 10, 30, 0);
-        final duration = const Duration(milliseconds: 250);
+        const duration = Duration(milliseconds: 250);
         
         final entry = LogEntry(
           id: 'test_001',
@@ -132,7 +132,7 @@ void main() {
         
         expect(shortEntry.shortCommand, equals('ls'));
         
-        final longCommand = 'find /home/user -type f -name "*.log" -exec grep "error" {} \\; | head -20';
+        const longCommand = 'find /home/user -type f -name "*.log" -exec grep "error" {} \\; | head -20';
         final longEntry = LogEntry(
           id: 'long',
           timestamp: DateTime.now(),

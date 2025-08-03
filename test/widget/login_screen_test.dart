@@ -3,10 +3,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:easyssh/screens/login_screen.dart';
-import 'package:easyssh/providers/ssh_provider.dart';
-import 'package:easyssh/models/ssh_connection_state.dart';
-import 'package:easyssh/models/ssh_credentials.dart';
+import '../../src/lib/screens/login_screen.dart';
+import '../../src/lib/providers/ssh_provider.dart';
+import '../../src/lib/models/ssh_connection_state.dart';
+import '../../src/lib/models/ssh_credentials.dart';
 
 // Gerar mocks - execute: flutter packages pub run build_runner build
 @GenerateMocks([SshProvider])
@@ -155,7 +155,7 @@ void main() {
     });
 
     testWidgets('should load saved credentials if available', (WidgetTester tester) async {
-      final credentials = SSHCredentials(
+      const credentials = SSHCredentials(
         host: 'saved-host',
         port: 2222,
         username: 'saved-user',

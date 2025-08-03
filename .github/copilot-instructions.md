@@ -28,4 +28,4 @@ Always create markdown files in the `docs/` folder.
 
 # git
 
-Follow instructions from `.github/copilot-instructions.md` for commits, branches, pull requests, issues and tags.
+Follow instructions from `.github\instructions\git-pattern.instructions.md` for commits, branches, pull requests, issues and tags.

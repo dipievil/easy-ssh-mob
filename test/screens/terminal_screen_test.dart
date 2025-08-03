@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:easyssh/screens/terminal_screen.dart';
-import 'package:easyssh/providers/ssh_provider.dart';
-import 'package:easyssh/models/execution_result.dart';
+import '../../src/lib/screens/terminal_screen.dart';
+import '../../src/lib/providers/ssh_provider.dart';
+import '../../src/lib/models/execution_result.dart';
 
 void main() {
   group('TerminalScreen', () {

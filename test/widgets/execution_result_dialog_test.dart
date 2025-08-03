@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easyssh/models/execution_result.dart';
-import 'package:easyssh/widgets/execution_result_dialog.dart';
+import '../../src/lib/models/execution_result.dart';
+import '../../src/lib/widgets/execution_result_dialog.dart';
 
 void main() {
   group('ExecutionResultDialog', () {

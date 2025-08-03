@@ -1,17 +1,17 @@
-# Easy SSH Mob - Visualizador de Ficheiros
+# Easy SSH Mob - Visualizador de arquivos
 
-Este é um ficheiro de demonstração para testar o visualizador de ficheiros.
+Este é um arquivo de demonstração para testar o visualizador de arquivos.
 
 ## Funcionalidades Implementadas
 
-1. **Detecção Automática de Ficheiros de Texto**
+1. **Detecção Automática de arquivos de Texto**
    - Suporte para extensões comuns (.txt, .log, .conf, .json, etc.)
-   - Detecção de ficheiros sem extensão (README, LICENSE, etc.)
+   - Detecção de arquivos sem extensão (README, LICENSE, etc.)
 
 2. **Modos de Visualização**
-   - Completo: ficheiros pequenos (< 1MB)
-   - Head: primeiras 100 linhas de ficheiros grandes
-   - Tail: últimas 100 linhas de ficheiros grandes
+   - Completo: arquivos pequenos (< 1MB)
+   - Head: primeiras 100 linhas de arquivos grandes
+   - Tail: últimas 100 linhas de arquivos grandes
 
 3. **Funcionalidades de Busca**
    - Busca de texto case-insensitive
@@ -23,7 +23,7 @@ Este é um ficheiro de demonstração para testar o visualizador de ficheiros.
    - Seleção de texto específico
 
 5. **Interface Intuitiva**
-   - Ícones diferentes para tipos de ficheiro
+   - Ícones diferentes para tipos de arquivo
    - Indicadores de status (carregamento, erros)
    - Menu de ações na AppBar
 
@@ -31,8 +31,8 @@ Este é um ficheiro de demonstração para testar o visualizador de ficheiros.
 
 1. Conecte-se ao servidor SSH
 2. Navegue pelos diretórios
-3. Clique em ficheiros de texto para visualizar
+3. Clique em arquivos de texto para visualizar
 4. Use os ícones na AppBar para buscar, copiar ou atualizar
-5. Use o menu de opções para ver início/final de ficheiros grandes
+5. Use o menu de opções para ver início/final de arquivos grandes
 
-Teste clicando neste ficheiro no explorador de ficheiros!
+Teste clicando neste arquivo no explorador de arquivos!

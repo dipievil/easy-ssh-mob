@@ -4,12 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:easyssh/screens/login_screen.dart';
-import 'package:easyssh/screens/file_explorer_screen.dart';
-import 'package:easyssh/widgets/optimized/optimized_file_list.dart';
-import 'package:easyssh/providers/ssh_provider.dart';
-import 'package:easyssh/models/ssh_connection_state.dart';
-import 'package:easyssh/models/ssh_file.dart';
+import '../../src/lib/screens/login_screen.dart';
+import '../../src/lib/screens/file_explorer_screen.dart';
+import '../../src/lib/widgets/optimized/optimized_file_list.dart';
+import '../../src/lib/providers/ssh_provider.dart';
+import '../../src/lib/models/ssh_connection_state.dart';
+import '../../src/lib/models/ssh_file.dart';
 
 // Gerar mocks - execute: flutter packages pub run build_runner build
 @GenerateMocks([SshProvider])
@@ -146,19 +146,19 @@ void main() {
     group('File List Accessibility', () {
       testWidgets('should have accessible file list items', (WidgetTester tester) async {
         final testFiles = [
-          SshFile(
+          const SshFile(
             name: 'document.txt',
             fullPath: '/home/document.txt',
             type: FileType.regular,
             displayName: 'document.txt',
           ),
-          SshFile(
+          const SshFile(
             name: 'folder',
             fullPath: '/home/folder',
             type: FileType.directory,
             displayName: 'folder/',
           ),
-          SshFile(
+          const SshFile(
             name: 'script.sh',
             fullPath: '/home/script.sh',
             type: FileType.executable,
@@ -219,13 +219,13 @@ void main() {
 
       testWidgets('should provide meaningful descriptions for file types', (WidgetTester tester) async {
         final testFiles = [
-          SshFile(
+          const SshFile(
             name: 'image.jpg',
             fullPath: '/home/image.jpg',
             type: FileType.regular,
             displayName: 'image.jpg',
           ),
-          SshFile(
+          const SshFile(
             name: 'folder',
             fullPath: '/home/folder',
             type: FileType.directory,

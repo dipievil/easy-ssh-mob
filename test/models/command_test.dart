@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:easyssh/models/command_item.dart';
-import 'package:easyssh/models/predefined_commands.dart';
+import '../../src/lib/models/command_item.dart';
+import '../../src/lib/models/predefined_commands.dart';
 
 void main() {
   group('CommandItem', () {

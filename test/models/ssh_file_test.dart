@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easyssh/models/ssh_file.dart';
+import '../../src/lib/models/ssh_file.dart';
 
 void main() {
   group('SshFile', () {

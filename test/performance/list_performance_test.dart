@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easyssh/widgets/optimized/optimized_file_list.dart';
-import 'package:easyssh/models/ssh_file.dart';
+import '../../src/lib/widgets/optimized/optimized_file_list.dart';
+import '../../src/lib/models/ssh_file.dart';
 
 void main() {
   group('Performance Tests', () {

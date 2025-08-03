@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easyssh/widgets/error_widgets.dart';
-import 'package:easyssh/services/notification_service.dart';
+import '../../src/lib/widgets/error_widgets.dart';
+import '../../src/lib/services/notification_service.dart';
 
 void main() {
   group('CustomSnackBar Tests', () {
@@ -63,8 +63,8 @@ void main() {
   
   group('CustomNotificationDialog Tests', () {
     testWidgets('should display dialog with correct content', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: const CustomNotificationDialog(
+      await tester.pumpWidget(const MaterialApp(
+        home: CustomNotificationDialog(
           title: 'Test Title',
           message: 'Test Message',
           type: NotificationType.error,

@@ -1,23 +1,23 @@
-# Ficheiros de Demonstração - Visualizador de Ficheiros
+# arquivos de Demonstração - Visualizador de arquivos
 
-Este diretório contém ficheiros de exemplo criados para demonstrar e testar as funcionalidades do **Visualizador de Ficheiros** do Easy SSH Mob.
+Este diretório contém arquivos de exemplo criados para demonstrar e testar as funcionalidades do **Visualizador de arquivos** do Easy SSH Mob.
 
 ## Como Usar
 
 1. **Execute o aplicativo Easy SSH Mob**
 2. **Conecte-se ao seu servidor SSH**
 3. **Navegue até este diretório** (`demo_files/`)
-4. **Clique nos ficheiros de texto** para abrir no visualizador
+4. **Clique nos arquivos de texto** para abrir no visualizador
 
-## Ficheiros Incluídos
+## arquivos Incluídos
 
 ### 📄 `readme.txt`
-- **Tipo**: Ficheiro de texto simples
+- **Tipo**: arquivo de texto simples
 - **Conteúdo**: Descrição das funcionalidades implementadas
 - **Teste**: Navegação básica, busca de texto
 
 ### ⚙️ `config.conf`
-- **Tipo**: Ficheiro de configuração
+- **Tipo**: arquivo de configuração
 - **Conteúdo**: Configurações de exemplo de servidor SSH
 - **Teste**: Detecção automática de tipo, formatação preservada
 
@@ -27,7 +27,7 @@ Este diretório contém ficheiros de exemplo criados para demonstrar e testar as
 - **Teste**: Formatação de JSON, busca em dados estruturados
 
 ### 📋 `aplicacao.log`
-- **Tipo**: Ficheiro de log
+- **Tipo**: arquivo de log
 - **Conteúdo**: Logs de exemplo da aplicação
 - **Teste**: Visualização de logs, busca de eventos específicos
 
@@ -35,7 +35,7 @@ Este diretório contém ficheiros de exemplo criados para demonstrar e testar as
 - **Tipo**: Script executável
 - **Conteúdo**: Script bash de demonstração
 - **Teste**: Detecção como executável E visualização de conteúdo
-- **Nota**: Este ficheiro pode ser tanto executado quanto visualizado
+- **Nota**: Este arquivo pode ser tanto executado quanto visualizado
 
 ### 📚 `documentacao.md`
 - **Tipo**: Markdown/Documentação
@@ -46,10 +46,10 @@ Este diretório contém ficheiros de exemplo criados para demonstrar e testar as
 
 ### 1. Detecção Automática de Tipos
 - **Ação**: Observe os ícones diferentes para cada tipo
-- **Esperado**: 📄 azul para ficheiros de texto, ⚡ verde para executáveis
+- **Esperado**: 📄 azul para arquivos de texto, ⚡ verde para executáveis
 
-### 2. Abertura de Ficheiros
-- **Ação**: Clique em qualquer ficheiro de texto
+### 2. Abertura de arquivos
+- **Ação**: Clique em qualquer arquivo de texto
 - **Esperado**: Abertura imediata no FileViewerScreen
 
 ### 3. Funcionalidade de Busca
@@ -57,15 +57,15 @@ Este diretório contém ficheiros de exemplo criados para demonstrar e testar as
 - **Esperado**: Resultados destacados, navegação entre resultados
 
 ### 4. Cópia de Conteúdo
-- **Ação**: Abra qualquer ficheiro → clique no ícone 📋
+- **Ação**: Abra qualquer arquivo → clique no ícone 📋
 - **Esperado**: Conteúdo copiado para área de transferência
 
 ### 5. Menu de Opções
-- **Ação**: Abra qualquer ficheiro → clique no menu ⋮
+- **Ação**: Abra qualquer arquivo → clique no menu ⋮
 - **Esperado**: Opções "Atualizar", "Ver início", "Ver final"
 
 ### 6. Seleção de Texto
-- **Ação**: Abra qualquer ficheiro → selecione texto manualmente
+- **Ação**: Abra qualquer arquivo → selecione texto manualmente
 - **Esperado**: Possibilidade de copiar texto específico
 
 ### 7. Comportamento com Executáveis
@@ -77,7 +77,7 @@ Este diretório contém ficheiros de exemplo criados para demonstrar e testar as
 Se conectado via terminal SSH, você pode testar os comandos que o aplicativo usa:
 
 ```bash
-# Verificar tamanho dos ficheiros
+# Verificar tamanho dos arquivos
 stat -c%s *.txt *.conf *.json
 
 # Simular leitura completa
@@ -93,9 +93,9 @@ tail -10 aplicacao.log
 wc -l *
 ```
 
-## Regenerar Ficheiros
+## Regenerar arquivos
 
-Para recriar todos os ficheiros de demonstração:
+Para recriar todos os arquivos de demonstração:
 
 ```bash
 cd /caminho/para/projeto
@@ -112,21 +112,21 @@ demo_files/
 ├── aplicacao.log       # Logs de aplicação
 ├── script_exemplo.sh   # Script executável
 ├── documentacao.md     # Documentação markdown
-└── README.md          # Este ficheiro
+└── README.md          # Este arquivo
 ```
 
 ## Resolução de Problemas
 
-### Ficheiro não abre como texto
+### arquivo não abre como texto
 - **Causa**: Tipo não detectado como texto
 - **Solução**: Verifique se a extensão está na lista suportada
 
-### Erro ao carregar ficheiro
+### Erro ao carregar arquivo
 - **Causa**: Permissões ou conectividade
 - **Solução**: Verifique permissões SSH e conexão
 
 ### Busca não funciona
-- **Causa**: Ficheiro vazio ou busca case-sensitive
+- **Causa**: arquivo vazio ou busca case-sensitive
 - **Solução**: Tente termos diferentes, busca é case-insensitive
 
 ---
