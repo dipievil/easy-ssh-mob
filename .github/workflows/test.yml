@@ -26,6 +26,11 @@ jobs:
         with:
           sdk: '3.8.1'
 
+      - name: Check Flutter and Dart versions
+        run: |
+          flutter --version
+          dart --version          
+
       - name: Get dependencies
         run: |
           cd src
