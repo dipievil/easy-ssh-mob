@@ -18,14 +18,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Dart
-        uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603        
+      # - name: Setup Dart
+      #   uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603        
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          #flutter-version: '3.19.0'
 
       # - name: Setup Dart
       #   uses: dart-lang/setup-dart@v1
@@ -64,7 +63,7 @@ jobs:
   # Testes unitários e de widget
   test:
     name: Unit and Widget Tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -72,7 +71,6 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.0'
           channel: 'stable'
 
       - name: Get dependencies
@@ -119,7 +117,7 @@ jobs:
   # Testes de performance
   performance:
     name: Performance Tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -148,7 +146,7 @@ jobs:
   # Testes de acessibilidade
   accessibility:
     name: Accessibility Tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -177,7 +175,7 @@ jobs:
   # Build para Android
   build-android:
     name: Build Android APK
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [analyze, test]
     steps:
       - name: Checkout code
@@ -214,7 +212,7 @@ jobs:
   # Build para iOS (apenas se estiver no macOS)
   build-ios:
     name: Build iOS App
-    runs-on: macos-latest
+    runs-on: self-hosted
     needs: [analyze, test]
     steps:
       - name: Checkout code
@@ -239,7 +237,7 @@ jobs:
   # Testes de integração (Android)
   integration-test-android:
     name: Integration Tests (Android)
-    runs-on: macos-latest
+    runs-on: self-hosted
     needs: [test]
     strategy:
       matrix:
@@ -284,7 +282,7 @@ jobs:
   # Testes de integração (iOS)
   integration-test-ios:
     name: Integration Tests (iOS)
-    runs-on: macos-latest
+    runs-on: self-hosted
     needs: [test]
     steps:
       - name: Checkout code
@@ -316,7 +314,7 @@ jobs:
   # Relatório de cobertura
   coverage-report:
     name: Coverage Report
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [test]
     steps:
       - name: Checkout code
@@ -360,7 +358,7 @@ jobs:
   # Verificação de segurança
   security:
     name: Security Check
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
