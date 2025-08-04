@@ -7,13 +7,13 @@ import '../screens/terminal_screen.dart';
 class ExecutionResultDialog extends StatelessWidget {
   final ExecutionResult result;
   final String fileName;
-  
+
   const ExecutionResultDialog({
     super.key,
     required this.result,
     required this.fileName,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -25,10 +25,7 @@ class ExecutionResultDialog extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(
-              'Execução: $fileName',
-              overflow: TextOverflow.ellipsis,
-            ),
+            child: Text('Execução: $fileName', overflow: TextOverflow.ellipsis),
           ),
         ],
       ),
@@ -42,8 +39,8 @@ class ExecutionResultDialog extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: result.hasError 
-                    ? Colors.red.withOpacity(0.1) 
+                color: result.hasError
+                    ? Colors.red.withOpacity(0.1)
                     : Colors.green.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(4),
               ),
@@ -65,7 +62,7 @@ class ExecutionResultDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Output content
             Expanded(
               child: result.isEmpty
@@ -82,8 +79,14 @@ class ExecutionResultDialog extends StatelessWidget {
                           if (result.stderr.isNotEmpty)
                             TabBar(
                               tabs: [
-                                Tab(text: 'Saída (${result.stdout.split('\n').length} linhas)'),
-                                Tab(text: 'Erros (${result.stderr.split('\n').length} linhas)'),
+                                Tab(
+                                  text:
+                                      'Saída (${result.stdout.split('\n').length} linhas)',
+                                ),
+                                Tab(
+                                  text:
+                                      'Erros (${result.stderr.split('\n').length} linhas)',
+                                ),
                               ],
                             ),
                           Expanded(
@@ -123,7 +126,7 @@ class ExecutionResultDialog extends StatelessWidget {
       ],
     );
   }
-  
+
   Widget _buildOutputSection(String content, bool isError) {
     if (content.isEmpty) {
       return Center(
@@ -133,7 +136,7 @@ class ExecutionResultDialog extends StatelessWidget {
         ),
       );
     }
-    
+
     return Container(
       padding: const EdgeInsets.all(8),
       child: SingleChildScrollView(
@@ -148,7 +151,7 @@ class ExecutionResultDialog extends StatelessWidget {
       ),
     );
   }
-  
+
   void _copyToClipboard(BuildContext context, String text) {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
@@ -158,7 +161,7 @@ class ExecutionResultDialog extends StatelessWidget {
       ),
     );
   }
-  
+
   void _openInTerminal(BuildContext context) {
     Navigator.of(context).pop(); // Close current dialog
     Navigator.of(context).push(

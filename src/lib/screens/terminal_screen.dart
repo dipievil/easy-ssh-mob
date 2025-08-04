@@ -8,12 +8,8 @@ import '../widgets/error_widgets.dart';
 class TerminalScreen extends StatefulWidget {
   final ExecutionResult? initialResult;
   final String? initialCommand;
-  
-  const TerminalScreen({
-    super.key,
-    this.initialResult,
-    this.initialCommand,
-  });
+
+  const TerminalScreen({super.key, this.initialResult, this.initialCommand});
 
   @override
   State<TerminalScreen> createState() => _TerminalScreenState();
@@ -29,14 +25,16 @@ class _TerminalScreenState extends State<TerminalScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     // Add initial result if provided
     if (widget.initialResult != null) {
-      _history.add(TerminalEntry(
-        command: widget.initialCommand ?? 'File execution',
-        result: widget.initialResult!,
-        timestamp: widget.initialResult!.timestamp,
-      ));
+      _history.add(
+        TerminalEntry(
+          command: widget.initialCommand ?? 'File execution',
+          result: widget.initialResult!,
+          timestamp: widget.initialResult!.timestamp,
+        ),
+      );
     }
   }
 
@@ -45,7 +43,7 @@ class _TerminalScreenState extends State<TerminalScreen> {
     super.didChangeDependencies();
     _setupErrorListener();
   }
-  
+
   void _setupErrorListener() {
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
     if (_lastSshProvider != sshProvider) {
@@ -54,7 +52,7 @@ class _TerminalScreenState extends State<TerminalScreen> {
       sshProvider.addListener(_handleProviderChange);
     }
   }
-  
+
   void _handleProviderChange() {
     final sshProvider = _lastSshProvider;
     if (sshProvider?.lastError != null && mounted) {
@@ -81,7 +79,7 @@ class _TerminalScreenState extends State<TerminalScreen> {
 
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
     final startTime = DateTime.now();
-    
+
     try {
       // Add command to history immediately
       final entry = TerminalEntry(
@@ -90,19 +88,19 @@ class _TerminalScreenState extends State<TerminalScreen> {
         timestamp: startTime,
         isExecuting: true,
       );
-      
+
       setState(() {
         _history.add(entry);
         _commandController.clear();
       });
-      
+
       // Scroll to bottom
       _scrollToBottom();
-      
+
       // Execute command
       final output = await sshProvider.executeCommandWithResult(command);
       final duration = DateTime.now().difference(startTime);
-      
+
       final result = ExecutionResult(
         stdout: output ?? '',
         stderr: '', // Basic execution doesn't separate stderr
@@ -110,7 +108,7 @@ class _TerminalScreenState extends State<TerminalScreen> {
         duration: duration,
         timestamp: startTime,
       );
-      
+
       // Update the entry with result
       setState(() {
         final index = _history.length - 1;
@@ -119,7 +117,6 @@ class _TerminalScreenState extends State<TerminalScreen> {
           isExecuting: false,
         );
       });
-      
     } catch (e) {
       // Handle execution error
       final result = ExecutionResult(
@@ -129,7 +126,7 @@ class _TerminalScreenState extends State<TerminalScreen> {
         duration: DateTime.now().difference(startTime),
         timestamp: startTime,
       );
-      
+
       setState(() {
         final index = _history.length - 1;
         _history[index] = _history[index].copyWith(
@@ -205,7 +202,7 @@ class _TerminalScreenState extends State<TerminalScreen> {
                     ),
             ),
           ),
-          
+
           // Command input area
           Container(
             padding: const EdgeInsets.all(8),
@@ -246,7 +243,9 @@ class _TerminalScreenState extends State<TerminalScreen> {
                           height: 16,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.green,
+                            ),
                           ),
                         )
                       : const Icon(Icons.send, color: Colors.green),
@@ -268,14 +267,14 @@ class _TerminalScreenState extends State<TerminalScreen> {
           // Command line
           RichText(
             text: TextSpan(
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 14,
-              ),
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 14),
               children: [
                 const TextSpan(
                   text: '\$ ',
-                  style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 TextSpan(
                   text: entry.command,
@@ -284,7 +283,7 @@ class _TerminalScreenState extends State<TerminalScreen> {
               ],
             ),
           ),
-          
+
           // Result output
           if (entry.isExecuting)
             const Padding(

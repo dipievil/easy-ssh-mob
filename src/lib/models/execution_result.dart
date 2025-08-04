@@ -5,7 +5,7 @@ class ExecutionResult {
   final int? exitCode;
   final Duration duration;
   final DateTime timestamp;
-  
+
   const ExecutionResult({
     required this.stdout,
     required this.stderr,
@@ -13,13 +13,13 @@ class ExecutionResult {
     required this.duration,
     required this.timestamp,
   });
-  
+
   /// Check if the execution resulted in an error
   bool get hasError => stderr.isNotEmpty || (exitCode != null && exitCode != 0);
-  
+
   /// Check if the execution produced no output
   bool get isEmpty => stdout.isEmpty && stderr.isEmpty;
-  
+
   /// Get combined output (stdout + stderr)
   String get combinedOutput {
     if (stdout.isEmpty && stderr.isEmpty) return '';
@@ -27,7 +27,7 @@ class ExecutionResult {
     if (stderr.isEmpty) return stdout;
     return '$stdout\n--- STDERR ---\n$stderr';
   }
-  
+
   /// Get a human-readable status description
   String get statusDescription {
     if (hasError) {
@@ -35,7 +35,7 @@ class ExecutionResult {
     }
     return 'Success';
   }
-  
+
   /// Create a copy with modified values
   ExecutionResult copyWith({
     String? stdout,
@@ -52,7 +52,7 @@ class ExecutionResult {
       timestamp: timestamp ?? this.timestamp,
     );
   }
-  
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -63,12 +63,12 @@ class ExecutionResult {
         other.duration == duration &&
         other.timestamp == timestamp;
   }
-  
+
   @override
   int get hashCode {
     return Object.hash(stdout, stderr, exitCode, duration, timestamp);
   }
-  
+
   @override
   String toString() {
     return 'ExecutionResult(stdout: "${stdout.length} chars", stderr: "${stderr.length} chars", exitCode: $exitCode, duration: ${duration.inMilliseconds}ms)';

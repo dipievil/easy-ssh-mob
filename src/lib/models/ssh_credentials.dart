@@ -34,9 +34,10 @@ class SSHCredentials {
   /// Validate credentials data
   bool isValid() {
     return host.trim().isNotEmpty &&
-           port > 0 && port <= 65535 &&
-           username.trim().isNotEmpty &&
-           password.isNotEmpty;
+        port > 0 &&
+        port <= 65535 &&
+        username.trim().isNotEmpty &&
+        password.isNotEmpty;
   }
 
   /// Create a copy with modified values
@@ -58,10 +59,10 @@ class SSHCredentials {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     return other is SSHCredentials &&
-           other.host == host &&
-           other.port == port &&
-           other.username == username &&
-           other.password == password;
+        other.host == host &&
+        other.port == port &&
+        other.username == username &&
+        other.password == password;
   }
 
   @override

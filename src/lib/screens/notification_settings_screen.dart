@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../services/notification_service.dart';
-import '../services/sound_manager.dart';
 import '../widgets/error_widgets.dart';
 
 /// Screen for configuring notification settings
@@ -9,10 +8,12 @@ class NotificationSettingsScreen extends StatefulWidget {
   const NotificationSettingsScreen({super.key});
 
   @override
-  State<NotificationSettingsScreen> createState() => _NotificationSettingsScreenState();
+  State<NotificationSettingsScreen> createState() =>
+      _NotificationSettingsScreenState();
 }
 
-class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
+class _NotificationSettingsScreenState
+    extends State<NotificationSettingsScreen> {
   late NotificationService _notificationService;
   bool _soundEnabled = true;
   double _soundVolume = 0.7;
@@ -66,16 +67,12 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         message: _getTestMessage(type),
         type: type,
       );
-      
+
       // Show visual notification
       if (mounted) {
-        CustomSnackBar.show(
-          context,
-          _getTestMessage(type),
-          type,
-        );
+        CustomSnackBar.show(context, _getTestMessage(type), type);
       }
-      
+
       await Future.delayed(const Duration(milliseconds: 1500));
     }
   }
@@ -99,12 +96,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Configurações de Notificação'),
-        ),
-        body: const Center(
-          child: CircularProgressIndicator(),
-        ),
+        appBar: AppBar(title: const Text('Configurações de Notificação')),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -132,9 +125,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                       const SizedBox(width: 8),
                       Text(
                         'Configurações de Som',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -165,9 +157,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Vibration Settings Card
           Card(
             child: Padding(
@@ -184,9 +176,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                       const SizedBox(width: 8),
                       Text(
                         'Configurações de Vibração',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -202,9 +193,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Test Settings Card
           Card(
             child: Padding(
@@ -221,16 +212,17 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                       const SizedBox(width: 8),
                       Text(
                         'Testar Notificações',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   ListTile(
                     title: const Text('Testar Todos os Tipos'),
-                    subtitle: const Text('Demonstra diferentes tipos de alerta'),
+                    subtitle: const Text(
+                      'Demonstra diferentes tipos de alerta',
+                    ),
                     trailing: const Icon(FontAwesomeIcons.play),
                     onTap: _showTestNotifications,
                     contentPadding: EdgeInsets.zero,
@@ -239,9 +231,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Info Card
           Card(
             color: Colors.blue.shade50,
@@ -267,11 +259,36 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                     ],
                   ),
                   const SizedBox(height: 12),
-                  _buildNotificationTypeInfo('Info', 'Informações gerais', Colors.blue, FontAwesomeIcons.circleInfo),
-                  _buildNotificationTypeInfo('Sucesso', 'Operações bem-sucedidas', Colors.green, FontAwesomeIcons.circleCheck),
-                  _buildNotificationTypeInfo('Aviso', 'Situações que requerem atenção', Colors.orange, FontAwesomeIcons.triangleExclamation),
-                  _buildNotificationTypeInfo('Erro', 'Problemas durante operações', Colors.red, FontAwesomeIcons.circleXmark),
-                  _buildNotificationTypeInfo('Crítico', 'Falhas graves do sistema', Colors.red.shade900, FontAwesomeIcons.exclamation),
+                  _buildNotificationTypeInfo(
+                    'Info',
+                    'Informações gerais',
+                    Colors.blue,
+                    FontAwesomeIcons.circleInfo,
+                  ),
+                  _buildNotificationTypeInfo(
+                    'Sucesso',
+                    'Operações bem-sucedidas',
+                    Colors.green,
+                    FontAwesomeIcons.circleCheck,
+                  ),
+                  _buildNotificationTypeInfo(
+                    'Aviso',
+                    'Situações que requerem atenção',
+                    Colors.orange,
+                    FontAwesomeIcons.triangleExclamation,
+                  ),
+                  _buildNotificationTypeInfo(
+                    'Erro',
+                    'Problemas durante operações',
+                    Colors.red,
+                    FontAwesomeIcons.circleXmark,
+                  ),
+                  _buildNotificationTypeInfo(
+                    'Crítico',
+                    'Falhas graves do sistema',
+                    Colors.red.shade900,
+                    FontAwesomeIcons.exclamation,
+                  ),
                 ],
               ),
             ),
@@ -281,7 +298,12 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     );
   }
 
-  Widget _buildNotificationTypeInfo(String name, String description, Color color, IconData icon) {
+  Widget _buildNotificationTypeInfo(
+    String name,
+    String description,
+    Color color,
+    IconData icon,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -290,18 +312,12 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
           const SizedBox(width: 8),
           Text(
             '$name: ',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
+            style: TextStyle(fontWeight: FontWeight.w600, color: color),
           ),
           Expanded(
             child: Text(
               description,
-              style: TextStyle(
-                color: Colors.grey.shade700,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: Colors.grey.shade700, fontSize: 12),
             ),
           ),
         ],

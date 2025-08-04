@@ -8,11 +8,8 @@ import '../widgets/error_widgets.dart';
 
 class FileViewerScreen extends StatefulWidget {
   final SshFile file;
-  
-  const FileViewerScreen({
-    super.key,
-    required this.file,
-  });
+
+  const FileViewerScreen({super.key, required this.file});
 
   @override
   State<FileViewerScreen> createState() => _FileViewerScreenState();
@@ -40,7 +37,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
     super.didChangeDependencies();
     _setupErrorListener();
   }
-  
+
   void _setupErrorListener() {
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
     if (_lastSshProvider != sshProvider) {
@@ -49,7 +46,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
       sshProvider.addListener(_handleProviderChange);
     }
   }
-  
+
   void _handleProviderChange() {
     final sshProvider = _lastSshProvider;
     if (sshProvider?.lastError != null && mounted) {
@@ -75,7 +72,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
     try {
       final sshProvider = Provider.of<SshProvider>(context, listen: false);
       final content = await sshProvider.readFile(widget.file);
-      
+
       setState(() {
         _fileContent = content;
         _isLoading = false;
@@ -97,7 +94,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
     try {
       final sshProvider = Provider.of<SshProvider>(context, listen: false);
       final content = await sshProvider.readFileWithMode(widget.file, mode);
-      
+
       setState(() {
         _fileContent = content;
         _isLoading = false;
@@ -160,7 +157,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
     while (true) {
       final index = content.indexOf(searchQuery, startIndex);
       if (index == -1) break;
-      
+
       _searchMatches.add(index);
       startIndex = index + 1;
     }
@@ -170,14 +167,11 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
         _currentMatchIndex = 0;
       });
       _scrollToMatch();
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${_searchMatches.length} resultados encontrados'),
-          action: SnackBarAction(
-            label: 'Próximo',
-            onPressed: _nextMatch,
-          ),
+          action: SnackBarAction(label: 'Próximo', onPressed: _nextMatch),
         ),
       );
     } else {
@@ -189,7 +183,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
 
   void _nextMatch() {
     if (_searchMatches.isEmpty) return;
-    
+
     setState(() {
       _currentMatchIndex = (_currentMatchIndex + 1) % _searchMatches.length;
     });
@@ -198,9 +192,11 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
 
   void _previousMatch() {
     if (_searchMatches.isEmpty) return;
-    
+
     setState(() {
-      _currentMatchIndex = (_currentMatchIndex - 1 + _searchMatches.length) % _searchMatches.length;
+      _currentMatchIndex =
+          (_currentMatchIndex - 1 + _searchMatches.length) %
+          _searchMatches.length;
     });
     _scrollToMatch();
   }
@@ -216,10 +212,12 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
 
   void _copyAllContent() {
     if (_fileContent == null) return;
-    
+
     Clipboard.setData(ClipboardData(text: _fileContent!.content));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Conteúdo copiado para a área de transferência')),
+      const SnackBar(
+        content: Text('Conteúdo copiado para a área de transferência'),
+      ),
     );
   }
 
@@ -256,11 +254,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.red,
-            ),
+            const Icon(Icons.error_outline, size: 64, color: Colors.red),
             const SizedBox(height: 16),
             const Text(
               'Erro ao Carregar Arquivo',
@@ -283,9 +277,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
     }
 
     if (_fileContent == null) {
-      return const Center(
-        child: Text('Nenhum conteúdo disponível'),
-      );
+      return const Center(child: Text('Nenhum conteúdo disponível'));
     }
 
     return Column(
@@ -309,7 +301,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
               ],
             ),
           ),
-        
+
         // Search results info
         if (_searchMatches.isNotEmpty)
           Container(
@@ -318,7 +310,9 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
             color: Theme.of(context).primaryColor.withOpacity(0.1),
             child: Row(
               children: [
-                Text('${_currentMatchIndex + 1} de ${_searchMatches.length} resultados'),
+                Text(
+                  '${_currentMatchIndex + 1} de ${_searchMatches.length} resultados',
+                ),
                 const Spacer(),
                 IconButton(
                   onPressed: _previousMatch,
@@ -333,7 +327,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
               ],
             ),
           ),
-        
+
         // Content
         Expanded(
           child: SingleChildScrollView(
@@ -341,10 +335,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
             padding: const EdgeInsets.all(16),
             child: SelectableText(
               _fileContent!.content,
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 14,
-              ),
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 14),
             ),
           ),
         ),

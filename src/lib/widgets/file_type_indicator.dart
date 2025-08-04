@@ -6,7 +6,7 @@ import '../utils/file_icon_manager.dart';
 class FileTypeIndicator extends StatelessWidget {
   final SshFile file;
   final bool showExecutionHint;
-  
+
   const FileTypeIndicator({
     super.key,
     required this.file,
@@ -43,17 +43,17 @@ extension SshFileExecutable on SshFile {
   /// Check if file might be executable based on extension or name
   bool get mightBeExecutable {
     if (isExecutable) return true;
-    
+
     final name = this.name.toLowerCase();
-    return name.endsWith('.sh') || 
-           name.endsWith('.py') || 
-           name.endsWith('.pl') || 
-           name.endsWith('.rb') || 
-           name.endsWith('.js') ||
-           name.endsWith('.bat') ||
-           name.endsWith('.cmd');
+    return name.endsWith('.sh') ||
+        name.endsWith('.py') ||
+        name.endsWith('.pl') ||
+        name.endsWith('.rb') ||
+        name.endsWith('.js') ||
+        name.endsWith('.bat') ||
+        name.endsWith('.cmd');
   }
-  
+
   /// Get execution hint text
   String get executionHint {
     if (isExecutable) return 'Clique para executar';

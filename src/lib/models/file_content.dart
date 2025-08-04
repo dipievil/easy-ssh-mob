@@ -1,9 +1,9 @@
 /// Enum representing different file view modes
 enum FileViewMode {
-  full,      // Complete file content
-  head,      // First lines of file
-  tail,      // Last lines of file  
-  truncated  // File truncated due to size
+  full, // Complete file content
+  head, // First lines of file
+  tail, // Last lines of file
+  truncated, // File truncated due to size
 }
 
 /// Model representing the content of a file read from SSH server
@@ -14,7 +14,7 @@ class FileContent {
   final int displayedLines;
   final FileViewMode mode;
   final int? fileSize;
-  
+
   const FileContent({
     required this.content,
     required this.isTruncated,
@@ -23,10 +23,10 @@ class FileContent {
     required this.mode,
     this.fileSize,
   });
-  
+
   /// Check if file content is empty
   bool get isEmpty => content.isEmpty;
-  
+
   /// Get human-readable view mode description
   String get modeDescription {
     switch (mode) {
@@ -40,11 +40,11 @@ class FileContent {
         return 'Truncated content';
     }
   }
-  
+
   /// Get file size description
   String get fileSizeDescription {
     if (fileSize == null) return 'Unknown size';
-    
+
     final size = fileSize!;
     if (size < 1024) {
       return '$size B';
@@ -56,7 +56,7 @@ class FileContent {
       return '${(size / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
     }
   }
-  
+
   /// Create a copy with modified values
   FileContent copyWith({
     String? content,
@@ -75,7 +75,7 @@ class FileContent {
       fileSize: fileSize ?? this.fileSize,
     );
   }
-  
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -87,12 +87,19 @@ class FileContent {
         other.mode == mode &&
         other.fileSize == fileSize;
   }
-  
+
   @override
   int get hashCode {
-    return Object.hash(content, isTruncated, totalLines, displayedLines, mode, fileSize);
+    return Object.hash(
+      content,
+      isTruncated,
+      totalLines,
+      displayedLines,
+      mode,
+      fileSize,
+    );
   }
-  
+
   @override
   String toString() {
     return 'FileContent(mode: $mode, lines: $displayedLines/$totalLines, truncated: $isTruncated)';

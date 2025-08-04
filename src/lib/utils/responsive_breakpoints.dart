@@ -36,7 +36,8 @@ class ResponsiveBreakpoints {
   }
 
   /// Get appropriate number of columns for grid layouts
-  static int getGridColumns(BuildContext context, {
+  static int getGridColumns(
+    BuildContext context, {
     int mobileColumns = 1,
     int tabletColumns = 2,
     int desktopColumns = 3,
@@ -56,7 +57,8 @@ class ResponsiveBreakpoints {
   }
 
   /// Get appropriate padding based on screen size
-  static EdgeInsets getScreenPadding(BuildContext context, {
+  static EdgeInsets getScreenPadding(
+    BuildContext context, {
     EdgeInsets? mobile,
     EdgeInsets? tablet,
     EdgeInsets? desktop,
@@ -71,7 +73,8 @@ class ResponsiveBreakpoints {
   }
 
   /// Get appropriate spacing based on screen size
-  static double getSpacing(BuildContext context, {
+  static double getSpacing(
+    BuildContext context, {
     double mobile = 8.0,
     double tablet = 12.0,
     double desktop = 16.0,
@@ -82,7 +85,8 @@ class ResponsiveBreakpoints {
   }
 
   /// Get appropriate icon size based on screen size
-  static double getIconSize(BuildContext context, {
+  static double getIconSize(
+    BuildContext context, {
     double mobile = 20.0,
     double tablet = 24.0,
     double desktop = 28.0,
@@ -167,7 +171,8 @@ class ResponsiveContainer extends StatelessWidget {
     // Apply responsive padding
     if (applyPadding) {
       content = Padding(
-        padding: customPadding ?? ResponsiveBreakpoints.getScreenPadding(context),
+        padding:
+            customPadding ?? ResponsiveBreakpoints.getScreenPadding(context),
         child: content,
       );
     }
@@ -235,8 +240,9 @@ class AdaptiveList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final shouldUseGrid = (ResponsiveBreakpoints.isTablet(context) && useGridOnTablet) ||
-                         (ResponsiveBreakpoints.isDesktop(context) && useGridOnDesktop);
+    final shouldUseGrid =
+        (ResponsiveBreakpoints.isTablet(context) && useGridOnTablet) ||
+        (ResponsiveBreakpoints.isDesktop(context) && useGridOnDesktop);
 
     if (shouldUseGrid) {
       return ResponsiveGrid(
@@ -288,7 +294,9 @@ class ResponsiveText extends StatelessWidget {
 
     final theme = Theme.of(context);
     final effectiveStyle = (baseStyle ?? theme.textTheme.bodyMedium!).copyWith(
-      fontSize: (baseStyle?.fontSize ?? theme.textTheme.bodyMedium!.fontSize!) * scale,
+      fontSize:
+          (baseStyle?.fontSize ?? theme.textTheme.bodyMedium!.fontSize!) *
+          scale,
     );
 
     return Text(
@@ -334,11 +342,7 @@ class ResponsiveSpacing extends StatelessWidget {
 
 /// Helper extension for responsive values
 extension ResponsiveValue<T> on BuildContext {
-  T responsive<T>({
-    required T mobile,
-    T? tablet,
-    T? desktop,
-  }) {
+  T responsive<T>({required T mobile, T? tablet, T? desktop}) {
     if (ResponsiveBreakpoints.isDesktop(this)) {
       return desktop ?? tablet ?? mobile;
     } else if (ResponsiveBreakpoints.isTablet(this)) {

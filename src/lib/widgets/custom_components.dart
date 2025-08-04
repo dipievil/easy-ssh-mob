@@ -28,7 +28,7 @@ class SshCard extends StatelessWidget {
       elevation: elevation,
       child: InkWell(
         onTap: onTap,
-        hoverColor: enableHover 
+        hoverColor: enableHover
             ? Theme.of(context).colorScheme.primary.withOpacity(0.04)
             : null,
         child: Padding(
@@ -64,7 +64,7 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     Widget appBar = AppBar(
       title: Text(
         title,
@@ -93,11 +93,13 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: gradientColors ?? [
-            colorScheme.primary,
-            colorScheme.primary.withOpacity(0.8),
-            colorScheme.secondary.withOpacity(0.6),
-          ],
+          colors:
+              gradientColors ??
+              [
+                colorScheme.primary,
+                colorScheme.primary.withOpacity(0.8),
+                colorScheme.secondary.withOpacity(0.6),
+              ],
         ),
       ),
       child: appBar,
@@ -126,7 +128,7 @@ class SshLoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -187,13 +189,9 @@ class _AnimatedSshFabState extends State<AnimatedSshFab>
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.9,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -250,7 +248,7 @@ class StatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (icon, color) = _getIconAndColor();
-    
+
     return SshCard(
       onTap: onTap,
       child: Row(
@@ -261,11 +259,7 @@ class StatusCard extends StatelessWidget {
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 20,
-            ),
+            child: Icon(icon, color: color, size: 20),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -283,7 +277,9 @@ class StatusCard extends StatelessWidget {
                   Text(
                     subtitle!,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.7),
                     ),
                   ),
                 ],
@@ -347,16 +343,14 @@ class SshListTile extends StatelessWidget {
         enableFeedback: enableFeedback,
         borderRadius: BorderRadius.circular(8),
         child: Padding(
-          padding: contentPadding ?? 
-              (dense 
+          padding:
+              contentPadding ??
+              (dense
                   ? const EdgeInsets.symmetric(horizontal: 16, vertical: 8)
                   : const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
           child: Row(
             children: [
-              if (leading != null) ...[
-                leading!,
-                const SizedBox(width: 16),
-              ],
+              if (leading != null) ...[leading!, const SizedBox(width: 16)],
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -372,7 +366,9 @@ class SshListTile extends StatelessWidget {
                       const SizedBox(height: 2),
                       DefaultTextStyle(
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.7),
                         ),
                         child: subtitle!,
                       ),
@@ -380,10 +376,7 @@ class SshListTile extends StatelessWidget {
                   ],
                 ),
               ),
-              if (trailing != null) ...[
-                const SizedBox(width: 16),
-                trailing!,
-              ],
+              if (trailing != null) ...[const SizedBox(width: 16), trailing!],
             ],
           ),
         ),
@@ -473,13 +466,9 @@ class _ShimmerPlaceholderState extends State<ShimmerPlaceholder>
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    _animation = Tween<double>(
-      begin: -1.0,
-      end: 2.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _animation = Tween<double>(begin: -1.0, end: 2.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
     _animationController.repeat();
   }
 
@@ -492,7 +481,7 @@ class _ShimmerPlaceholderState extends State<ShimmerPlaceholder>
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {

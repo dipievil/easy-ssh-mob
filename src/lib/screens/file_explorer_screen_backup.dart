@@ -29,9 +29,9 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     setState(() {
       _isLoading = true;
     });
-    
+
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
-    
+
     try {
       // Use the new navigation system - home directory is loaded automatically after connection
       if (sshProvider.currentPath.isEmpty) {
@@ -53,9 +53,9 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     setState(() {
       _isLoading = true;
     });
-    
+
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
-    
+
     try {
       await sshProvider.navigateToHome();
     } catch (e) {
@@ -112,7 +112,9 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Logout'),
-          content: const Text('Deseja desconectar e esquecer as credenciais salvas?'),
+          content: const Text(
+            'Deseja desconectar e esquecer as credenciais salvas?',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
@@ -137,7 +139,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     if (result != null && context.mounted) {
       final sshProvider = Provider.of<SshProvider>(context, listen: false);
       await sshProvider.logout(forgetCredentials: result);
-      
+
       if (context.mounted) {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -173,9 +175,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
 
   void _openFileViewer(SshFile file) {
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => FileViewerScreen(file: file),
-      ),
+      MaterialPageRoute(builder: (context) => FileViewerScreen(file: file)),
     );
   }
 
@@ -209,12 +209,12 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
 
   Future<void> _executeFile(SshFile file) async {
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
-    
+
     // Mark file as executing
     setState(() {
       _executingFiles[file.fullPath] = true;
     });
-    
+
     try {
       // Show immediate feedback
       ScaffoldMessenger.of(context).showSnackBar(
@@ -223,18 +223,16 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
           duration: const Duration(seconds: 1),
         ),
       );
-      
+
       // Execute the file
       final result = await sshProvider.executeFile(file);
-      
+
       // Show results in dialog
       if (mounted) {
         showDialog(
           context: context,
-          builder: (context) => ExecutionResultDialog(
-            result: result,
-            fileName: file.name,
-          ),
+          builder: (context) =>
+              ExecutionResultDialog(result: result, fileName: file.name),
         );
       }
     } catch (e) {
@@ -249,7 +247,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     }
   }
 
-// Removed redundant and incomplete _executeFile method.
+  // Removed redundant and incomplete _executeFile method.
 
   /// Displays an error message to the user using a `SnackBar`.
   ///
@@ -261,10 +259,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
   void _showErrorMessage(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text(message), backgroundColor: Colors.red),
       );
     }
   }
@@ -276,9 +271,11 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
       appBar: AppBar(
         title: Consumer<SshProvider>(
           builder: (context, sshProvider, child) {
-            return Text(sshProvider.currentPath.isNotEmpty 
-                ? sshProvider.currentPath 
-                : 'Easy SSH');
+            return Text(
+              sshProvider.currentPath.isNotEmpty
+                  ? sshProvider.currentPath
+                  : 'Easy SSH',
+            );
           },
         ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -307,7 +304,8 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
           // Parent directory button
           Consumer<SshProvider>(
             builder: (context, sshProvider, child) {
-              if (sshProvider.currentPath.isNotEmpty && sshProvider.currentPath != '/') {
+              if (sshProvider.currentPath.isNotEmpty &&
+                  sshProvider.currentPath != '/') {
                 return IconButton(
                   onPressed: () async {
                     setState(() {
@@ -339,10 +337,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
           Consumer<SshProvider>(
             builder: (context, sshProvider, child) {
               if (sshProvider.isConnected) {
-                return const Icon(
-                  Icons.wifi,
-                  color: Colors.green,
-                );
+                return const Icon(Icons.wifi, color: Colors.green);
               } else if (sshProvider.isConnecting) {
                 return const SizedBox(
                   width: 20,
@@ -350,10 +345,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 );
               } else {
-                return const Icon(
-                  Icons.wifi_off,
-                  color: Colors.red,
-                );
+                return const Icon(Icons.wifi_off, color: Colors.red);
               }
             },
           ),
@@ -368,11 +360,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Colors.red,
-                  ),
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
                   const SizedBox(height: 16),
                   const Text(
                     'Erro de Conexão',
@@ -403,11 +391,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.wifi_off,
-                    size: 64,
-                    color: Colors.grey,
-                  ),
+                  Icon(Icons.wifi_off, size: 64, color: Colors.grey),
                   SizedBox(height: 16),
                   Text(
                     'Desconectado',
@@ -446,7 +430,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
               itemBuilder: (context, index) {
                 final file = sshProvider.currentFiles[index];
                 final isExecuting = _executingFiles[file.fullPath] == true;
-                
+
                 return Card(
                   child: ListTile(
                     leading: isExecuting
@@ -464,19 +448,19 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
                       file.isTextFile
                           ? '${file.typeDescription} • Arquivo de texto'
                           : file.isExecutable || file.mightBeExecutable
-                              ? '${file.typeDescription} • ${file.executionHint}'
-                              : file.typeDescription,
+                          ? '${file.typeDescription} • ${file.executionHint}'
+                          : file.typeDescription,
                     ),
-                    trailing: file.isDirectory 
+                    trailing: file.isDirectory
                         ? const Icon(Icons.arrow_forward_ios)
                         : file.isTextFile
-                            ? const Icon(Icons.description, color: Colors.blue)
-                            : (file.isExecutable || file.mightBeExecutable)
-                                ? Icon(
-                                    Icons.play_arrow,
-                                    color: isExecuting ? Colors.grey : Colors.green,
-                                  )
-                                : const Icon(Icons.info_outline, color: Colors.grey),
+                        ? const Icon(Icons.description, color: Colors.blue)
+                        : (file.isExecutable || file.mightBeExecutable)
+                        ? Icon(
+                            Icons.play_arrow,
+                            color: isExecuting ? Colors.grey : Colors.green,
+                          )
+                        : const Icon(Icons.info_outline, color: Colors.grey),
                     onTap: isExecuting
                         ? null // Disable tap while executing
                         : () => _handleFileTap(file),
@@ -491,17 +475,16 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.folder_open,
-                  size: 64,
-                  color: Colors.grey,
-                ),
+                const Icon(Icons.folder_open, size: 64, color: Colors.grey),
                 const SizedBox(height: 16),
                 Consumer<SshProvider>(
                   builder: (context, sshProvider, child) {
                     return Text(
                       'Diretório: ${sshProvider.currentPath}',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     );
                   },
                 ),

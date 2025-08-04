@@ -2,22 +2,16 @@ import 'dart:convert';
 
 /// Types of SSH commands for categorization
 enum CommandType {
-  navigation,    // cd, ls, pwd
-  execution,     // Scripts, binários
-  fileView,      // cat, tail, head
-  system,        // ps, df, uname
-  custom,        // Comandos do drawer
-  unknown
+  navigation, // cd, ls, pwd
+  execution, // Scripts, binários
+  fileView, // cat, tail, head
+  system, // ps, df, uname
+  custom, // Comandos do drawer
+  unknown,
 }
 
 /// Status of command execution
-enum CommandStatus {
-  success,
-  error,
-  timeout,
-  cancelled,
-  partial
-}
+enum CommandStatus { success, error, timeout, cancelled, partial }
 
 /// Log entry for SSH commands executed during session
 class LogEntry {
@@ -32,7 +26,7 @@ class LogEntry {
   final Duration duration;
   final CommandStatus status;
   final Map<String, dynamic>? metadata;
-  
+
   LogEntry({
     required this.id,
     required this.timestamp,
@@ -46,7 +40,7 @@ class LogEntry {
     required this.status,
     this.metadata,
   });
-  
+
   /// Create LogEntry from JSON
   factory LogEntry.fromJson(Map<String, dynamic> json) {
     return LogEntry(
@@ -69,7 +63,7 @@ class LogEntry {
       metadata: json['metadata'] as Map<String, dynamic>?,
     );
   }
-  
+
   /// Convert LogEntry to JSON
   Map<String, dynamic> toJson() {
     return {
@@ -86,7 +80,7 @@ class LogEntry {
       'metadata': metadata,
     };
   }
-  
+
   /// Format as human-readable text
   String toTextFormat() {
     final buffer = StringBuffer();
@@ -101,25 +95,25 @@ class LogEntry {
     if (exitCode != null) {
       buffer.writeln('Exit Code: $exitCode');
     }
-    
+
     if (stdout.isNotEmpty) {
       buffer.writeln('--- STDOUT ---');
       buffer.writeln(stdout);
     }
-    
+
     if (stderr.isNotEmpty) {
       buffer.writeln('--- STDERR ---');
       buffer.writeln(stderr);
     }
-    
+
     if (metadata != null && metadata!.isNotEmpty) {
       buffer.writeln('--- METADATA ---');
       buffer.writeln(jsonEncode(metadata));
     }
-    
+
     return buffer.toString();
   }
-  
+
   /// Format as CSV row
   String toCsvRow() {
     return [
@@ -134,13 +128,14 @@ class LogEntry {
       _escapeCsv(stderr.replaceAll('\n', '\\n')),
     ].join(',');
   }
-  
+
   /// Check if command has error
   bool get hasError => status == CommandStatus.error || stderr.isNotEmpty;
-  
+
   /// Check if command was successful
-  bool get wasSuccessful => status == CommandStatus.success && (exitCode == null || exitCode == 0);
-  
+  bool get wasSuccessful =>
+      status == CommandStatus.success && (exitCode == null || exitCode == 0);
+
   /// Get formatted duration
   String get durationFormatted {
     if (duration.inSeconds > 0) {
@@ -149,13 +144,13 @@ class LogEntry {
       return '${duration.inMilliseconds}ms';
     }
   }
-  
+
   /// Get short command for display
   String get shortCommand {
     if (command.length <= 50) return command;
     return '${command.substring(0, 47)}...';
   }
-  
+
   /// Get first line of stdout for preview
   String get stdoutPreview {
     if (stdout.isEmpty) return '';
@@ -163,7 +158,7 @@ class LogEntry {
     if (firstLine.length <= 100) return firstLine;
     return '${firstLine.substring(0, 97)}...';
   }
-  
+
   /// Get first line of stderr for preview
   String get stderrPreview {
     if (stderr.isEmpty) return '';
@@ -171,16 +166,16 @@ class LogEntry {
     if (firstLine.length <= 100) return firstLine;
     return '${firstLine.substring(0, 97)}...';
   }
-  
+
   /// Format timestamp for display
   String _formatTimestamp(DateTime dt) {
     return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-'
-           '${dt.day.toString().padLeft(2, '0')} '
-           '${dt.hour.toString().padLeft(2, '0')}:'
-           '${dt.minute.toString().padLeft(2, '0')}:'
-           '${dt.second.toString().padLeft(2, '0')}';
+        '${dt.day.toString().padLeft(2, '0')} '
+        '${dt.hour.toString().padLeft(2, '0')}:'
+        '${dt.minute.toString().padLeft(2, '0')}:'
+        '${dt.second.toString().padLeft(2, '0')}';
   }
-  
+
   /// Format command type for display
   String _formatCommandType(CommandType type) {
     switch (type) {
@@ -198,7 +193,7 @@ class LogEntry {
         return 'Unknown';
     }
   }
-  
+
   /// Format status for display
   String _formatStatus(CommandStatus status) {
     switch (status) {
@@ -214,7 +209,7 @@ class LogEntry {
         return 'Partial';
     }
   }
-  
+
   /// Escape CSV field
   String _escapeCsv(String field) {
     if (field.contains(',') || field.contains('"') || field.contains('\n')) {
@@ -222,22 +217,22 @@ class LogEntry {
     }
     return field;
   }
-  
+
   @override
   String toString() {
     return 'LogEntry(id: $id, command: $command, type: $type, status: $status)';
   }
-  
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    
+
     return other is LogEntry &&
-      other.id == id &&
-      other.timestamp == timestamp &&
-      other.command == command;
+        other.id == id &&
+        other.timestamp == timestamp &&
+        other.command == command;
   }
-  
+
   @override
   int get hashCode {
     return id.hashCode ^ timestamp.hashCode ^ command.hashCode;

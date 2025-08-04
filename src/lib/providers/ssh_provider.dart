@@ -16,26 +16,26 @@ import '../services/notification_service.dart';
 class SshProvider extends ChangeNotifier {
   // Constants
   static const String _errorSoundPath = 'sounds/error_beep.wav';
-  
+
   SshConnectionState _connectionState = SshConnectionState.disconnected;
   String? _errorMessage;
   SSHCredentials? _currentCredentials;
   SSHClient? _sshClient;
-  
+
   // Directory navigation properties
   List<SshFile> _currentFiles = [];
   String _currentPath = '';
   final List<String> _navigationHistory = [];
-  
+
   // Error handling properties
   SshError? _lastError;
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _shouldPlayErrorSound = true;
   final NotificationService _notificationService = NotificationService();
-  
+
   // Cache de tamanho de arquivo para evitar comandos stat duplicados
   final Map<String, int> _fileSizeCache = {};
-  
+
   // Session logging properties
   final List<LogEntry> _sessionLog = [];
   bool _loggingEnabled = true;
@@ -50,13 +50,13 @@ class SshProvider extends ChangeNotifier {
   List<String> get navigationHistory => List.unmodifiable(_navigationHistory);
   SshError? get lastError => _lastError;
   bool get shouldPlayErrorSound => _shouldPlayErrorSound;
-  
+
   // Session logging getters
   List<LogEntry> get sessionLog => List.unmodifiable(_sessionLog);
   bool get loggingEnabled => _loggingEnabled;
   int get maxLogEntries => _maxLogEntries;
   DateTime? get sessionStartTime => _sessionStartTime;
-  
+
   // Backward compatibility getters
   bool get isConnecting => _connectionState.isConnecting;
   bool get isConnected => _connectionState.isConnected;
@@ -85,7 +85,7 @@ class SshProvider extends ChangeNotifier {
     try {
       // Create SSH socket connection
       final socket = await SSHSocket.connect(host, port);
-      
+
       // Create SSH client with password authentication
       _sshClient = SSHClient(
         socket,
@@ -95,12 +95,12 @@ class SshProvider extends ChangeNotifier {
 
       // Wait for authentication to complete
       await _sshClient!.authenticated;
-      
+
       _connectionState = SshConnectionState.connected;
-      
+
       // Initialize session logging
       _sessionStartTime = DateTime.now();
-      
+
       // Create credentials object
       final credentials = SSHCredentials(
         host: host,
@@ -115,7 +115,7 @@ class SshProvider extends ChangeNotifier {
       if (saveCredentials) {
         await SecureStorageService.saveCredentials(credentials);
       }
-      
+
       // Initialize directory navigation to home directory
       try {
         await navigateToHome();
@@ -123,7 +123,7 @@ class SshProvider extends ChangeNotifier {
         // If home navigation fails, don't fail the connection
         debugPrint('Warning: Could not navigate to home directory: $e');
       }
-      
+
       notifyListeners();
       return true;
     } catch (e) {
@@ -131,7 +131,7 @@ class SshProvider extends ChangeNotifier {
       _connectionState = SshConnectionState.error;
       await _cleanup();
       notifyListeners();
-      
+
       return false;
     }
   }
@@ -152,31 +152,34 @@ class SshProvider extends ChangeNotifier {
     try {
       // Normalize the path
       final normalizedPath = _normalizePath(path);
-      
+
       // Execute ls -F command using session for proper error capture
       final session = await _sshClient!.execute('ls -F "$normalizedPath"');
       final stdout = await utf8.decoder.bind(session.stdout).join();
       final stderr = await utf8.decoder.bind(session.stderr).join();
-      
+
       // Check for errors in stderr
       if (stderr.isNotEmpty) {
-        final error = ErrorHandler.analyzeError(stderr, 'ls -F "$normalizedPath"');
+        final error = ErrorHandler.analyzeError(
+          stderr,
+          'ls -F "$normalizedPath"',
+        );
         _handleSshError(error);
         return;
       }
-      
+
       if (stdout.isEmpty) {
         // Empty directory is valid
         _currentPath = normalizedPath;
         _currentFiles = [];
-        
+
         // Clear any previous errors on successful listing
         if (_connectionState.hasError) {
           _connectionState = SshConnectionState.connected;
           _errorMessage = null;
           _lastError = null;
         }
-        
+
         notifyListeners();
         return;
       }
@@ -184,7 +187,7 @@ class SshProvider extends ChangeNotifier {
       // Parse the output
       final files = <SshFile>[];
       final lines = stdout.split('\n');
-      
+
       for (String line in lines) {
         final trimmedLine = line.trim();
         if (trimmedLine.isNotEmpty) {
@@ -206,17 +209,17 @@ class SshProvider extends ChangeNotifier {
 
       _currentPath = normalizedPath;
       _currentFiles = files;
-      
+
       // Clear file size cache when changing directories to ensure fresh data
       _fileSizeCache.clear();
-      
+
       // Clear any previous errors on successful listing
       if (_connectionState.hasError) {
         _connectionState = SshConnectionState.connected;
         _errorMessage = null;
         _lastError = null;
       }
-      
+
       notifyListeners();
     } catch (e) {
       final error = SshError(
@@ -241,13 +244,16 @@ class SshProvider extends ChangeNotifier {
 
     try {
       final normalizedPath = _normalizePath(path);
-      
+
       // Test if directory exists and is accessible
-      final testSession = await _sshClient!.execute('test -d "$normalizedPath" && echo "OK"');
+      final testSession = await _sshClient!.execute(
+        'test -d "$normalizedPath" && echo "OK"',
+      );
       final testResult = await utf8.decoder.bind(testSession.stdout).join();
-      
+
       if (testResult.trim() != 'OK') {
-        _errorMessage = 'Directory does not exist or is not accessible: $normalizedPath';
+        _errorMessage =
+            'Directory does not exist or is not accessible: $normalizedPath';
         _connectionState = SshConnectionState.error;
         notifyListeners();
         return;
@@ -309,7 +315,7 @@ class SshProvider extends ChangeNotifier {
   /// Normalize path by removing redundant elements
   String _normalizePath(String path) {
     if (path.isEmpty) return '/';
-    
+
     // Convert to absolute path if relative
     if (!path.startsWith('/')) {
       path = _currentPath.isEmpty ? '/$path' : '$_currentPath/$path';
@@ -339,34 +345,40 @@ class SshProvider extends ChangeNotifier {
   /// Get parent path of given path
   String _getParentPath(String path) {
     if (path == '/' || path.isEmpty) return '/';
-    
+
     final lastSlash = path.lastIndexOf('/');
     if (lastSlash <= 0) return '/';
-    
+
     return path.substring(0, lastSlash);
   }
 
   /// Format directory-specific error messages
   String _formatDirectoryError(dynamic error) {
     final errorString = error.toString().toLowerCase();
-    
-    if (errorString.contains('permission denied') || errorString.contains('access denied')) {
+
+    if (errorString.contains('permission denied') ||
+        errorString.contains('access denied')) {
       return 'Permission denied. You do not have access to this directory.';
-    } else if (errorString.contains('no such file or directory') || errorString.contains('not found')) {
+    } else if (errorString.contains('no such file or directory') ||
+        errorString.contains('not found')) {
       return 'Directory not found or does not exist.';
     } else if (errorString.contains('not a directory')) {
       return 'The specified path is not a directory.';
-    } else if (errorString.contains('timeout') || errorString.contains('timed out')) {
+    } else if (errorString.contains('timeout') ||
+        errorString.contains('timed out')) {
       return 'Directory listing timeout. The server may be slow or unresponsive.';
     }
-    
+
     return 'Error accessing directory: ${error.toString()}';
   }
 
   /// Execute a file on the SSH server
-  Future<ExecutionResult> executeFile(SshFile file, {Duration timeout = const Duration(seconds: 30)}) async {
+  Future<ExecutionResult> executeFile(
+    SshFile file, {
+    Duration timeout = const Duration(seconds: 30),
+  }) async {
     final startTime = DateTime.now();
-    
+
     if (!_connectionState.isConnected || _sshClient == null) {
       return ExecutionResult(
         stdout: '',
@@ -379,7 +391,7 @@ class SshProvider extends ChangeNotifier {
 
     try {
       String command;
-      
+
       if (file.type == FileType.executable) {
         // For executables, run directly with proper escaping
         command = '"${file.fullPath}"';
@@ -387,12 +399,12 @@ class SshProvider extends ChangeNotifier {
         // For other files, try to detect script type and use appropriate interpreter
         command = await _buildScriptCommand(file);
       }
-      
+
       debugPrint('Executing command: $command');
-      
+
       // Execute with timeout handling
       final result = await _executeCommandWithTimeout(command, timeout);
-      
+
       return ExecutionResult(
         stdout: result['stdout'] ?? '',
         stderr: result['stderr'] ?? '',
@@ -410,12 +422,12 @@ class SshProvider extends ChangeNotifier {
       );
     }
   }
-  
+
   /// Build command for executing script files based on file extension or shebang
   Future<String> _buildScriptCommand(SshFile file) async {
     final filePath = file.fullPath;
     final fileName = file.name.toLowerCase();
-    
+
     // Check for common script extensions
     if (fileName.endsWith('.sh')) {
       return 'bash "$filePath"';
@@ -428,7 +440,7 @@ class SshProvider extends ChangeNotifier {
     } else if (fileName.endsWith('.js')) {
       return 'node "$filePath"';
     }
-    
+
     // For files without clear extension, try to read shebang
     try {
       final headSession = await _sshClient!.execute('head -1 "$filePath"');
@@ -442,54 +454,58 @@ class SshProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Could not read shebang: $e');
     }
-    
+
     // Default: try to execute directly
     return '"$filePath"';
   }
-  
+
   /// Execute command with timeout and separate stdout/stderr capture
-  Future<Map<String, dynamic>> _executeCommandWithTimeout(String command, Duration timeout) async {
+  Future<Map<String, dynamic>> _executeCommandWithTimeout(
+    String command,
+    Duration timeout,
+  ) async {
     try {
       // Create SSH session for proper stderr capture
       final session = await _sshClient!.execute(command);
-      
+
       // Set up timeout and capture streams
-      final Future<String> stdoutFuture = utf8.decoder.bind(session.stdout).join();
-      final Future<String> stderrFuture = utf8.decoder.bind(session.stderr).join();
+      final Future<String> stdoutFuture = utf8.decoder
+          .bind(session.stdout)
+          .join();
+      final Future<String> stderrFuture = utf8.decoder
+          .bind(session.stderr)
+          .join();
       final int? exitCode = session.exitCode;
-      
+
       // Wait for all with timeout
       final results = await Future.wait([
         stdoutFuture.timeout(timeout),
         stderrFuture.timeout(timeout),
       ]);
-      
+
       final stdout = results[0];
       final stderr = results[1];
       // exitCode já está disponível
-      
+
       // If there's stderr, analyze it for errors
       if (stderr.isNotEmpty) {
         final error = ErrorHandler.analyzeError(stderr, command);
         _handleSshError(error);
       }
-      
-      return {
-        'stdout': stdout,
-        'stderr': stderr,
-        'exitCode': exitCode ?? 0,
-      };
+
+      return {'stdout': stdout, 'stderr': stderr, 'exitCode': exitCode ?? 0};
     } catch (e) {
       if (e.toString().contains('TimeoutException')) {
         final timeoutError = SshError(
           type: ErrorType.timeout,
-          originalMessage: 'Command timed out after ${timeout.inSeconds} seconds',
+          originalMessage:
+              'Command timed out after ${timeout.inSeconds} seconds',
           userFriendlyMessage: 'Comando demorou muito tempo para executar',
           suggestion: 'Tente usar um timeout maior ou simplificar o comando',
           severity: ErrorSeverity.warning,
         );
         _handleSshError(timeoutError);
-        
+
         return {
           'stdout': '',
           'stderr': 'Command timed out after ${timeout.inSeconds} seconds',
@@ -499,12 +515,12 @@ class SshProvider extends ChangeNotifier {
       rethrow;
     }
   }
-  
+
   /// Execute a SSH command and return output
   Future<String?> executeCommand(String command) async {
     final startTime = DateTime.now();
     final logId = _generateLogId();
-    
+
     if (!_connectionState.isConnected || _sshClient == null) {
       if (_loggingEnabled) {
         final errorEntry = LogEntry(
@@ -521,7 +537,7 @@ class SshProvider extends ChangeNotifier {
         );
         _addLogEntry(errorEntry);
       }
-      
+
       _errorMessage = 'Não conectado ao servidor SSH';
       _connectionState = SshConnectionState.error;
       notifyListeners();
@@ -531,13 +547,13 @@ class SshProvider extends ChangeNotifier {
     try {
       // Execute command using SSH client with session for stderr capture
       final session = await _sshClient!.execute(command);
-      
+
       // Wait for command completion and capture both stdout and stderr
       final stdout = await utf8.decoder.bind(session.stdout).join();
       final stderr = await utf8.decoder.bind(session.stderr).join();
       final exitCode = session.exitCode;
       final duration = DateTime.now().difference(startTime);
-      
+
       // Log the command execution
       if (_loggingEnabled) {
         final logEntry = LogEntry(
@@ -552,28 +568,30 @@ class SshProvider extends ChangeNotifier {
           duration: duration,
           status: exitCode != 0
               ? CommandStatus.error
-              : (stderr.isNotEmpty ? CommandStatus.partial : CommandStatus.success),
+              : (stderr.isNotEmpty
+                    ? CommandStatus.partial
+                    : CommandStatus.success),
         );
         _addLogEntry(logEntry);
       }
-      
+
       // Check if there were errors in stderr
       if (stderr.isNotEmpty) {
         final error = ErrorHandler.analyzeError(stderr, command);
         _handleSshError(error);
       }
-      
+
       // Clear any previous errors on successful execution
       if (_connectionState.hasError && stderr.isEmpty) {
         _connectionState = SshConnectionState.connected;
         _errorMessage = null;
         notifyListeners();
       }
-      
+
       return stdout;
     } catch (e) {
       final duration = DateTime.now().difference(startTime);
-      
+
       // Log the error
       if (_loggingEnabled) {
         final errorEntry = LogEntry(
@@ -590,7 +608,7 @@ class SshProvider extends ChangeNotifier {
         );
         _addLogEntry(errorEntry);
       }
-      
+
       final error = SshError(
         type: ErrorType.unknown,
         originalMessage: e.toString(),
@@ -608,10 +626,10 @@ class SshProvider extends ChangeNotifier {
     _errorMessage = error.userFriendlyMessage;
     _connectionState = SshConnectionState.error;
     notifyListeners();
-    
+
     // Log for debug
     debugPrint('SSH Error: ${error.type} - ${error.originalMessage}');
-    
+
     // Send notification using the new NotificationService
     _notificationService.showNotification(
       message: error.userFriendlyMessage,
@@ -619,13 +637,13 @@ class SshProvider extends ChangeNotifier {
       title: 'Erro SSH',
       details: error.originalMessage,
     );
-    
+
     // Play error sound if configured (legacy support)
     if (_shouldPlayErrorSound && _shouldPlaySoundForSeverity(error.severity)) {
       _playErrorSound();
     }
   }
-  
+
   /// Map error severity to notification type
   NotificationType _mapErrorToNotificationType(ErrorSeverity severity) {
     switch (severity) {
@@ -639,7 +657,7 @@ class SshProvider extends ChangeNotifier {
         return NotificationType.critical;
     }
   }
-  
+
   /// Determine if sound should be played for given severity
   bool _shouldPlaySoundForSeverity(ErrorSeverity severity) {
     switch (severity) {
@@ -651,7 +669,7 @@ class SshProvider extends ChangeNotifier {
         return true;
     }
   }
-  
+
   /// Play error sound
   void _playErrorSound() {
     try {
@@ -666,13 +684,13 @@ class SshProvider extends ChangeNotifier {
       debugPrint('Could not play error sound: $e');
     }
   }
-  
+
   /// Toggle error sound setting
   void setErrorSoundEnabled(bool enabled) {
     _shouldPlayErrorSound = enabled;
     notifyListeners();
   }
-  
+
   /// Test error sound (for debugging)
   void testErrorSound() {
     _playErrorSound();
@@ -694,18 +712,18 @@ class SshProvider extends ChangeNotifier {
     try {
       // Execute command using SSH client with session for stderr capture
       final session = await _sshClient!.execute(command);
-      
+
       // Wait for command completion and capture both stdout and stderr
       final stdout = await utf8.decoder.bind(session.stdout).join();
       final stderr = await utf8.decoder.bind(session.stderr).join();
-      
+
       // Check if there were errors in stderr
       if (stderr.isNotEmpty) {
         final error = ErrorHandler.analyzeError(stderr, command);
         _handleSshError(error);
         return stdout; // Return stdout even if there are warnings in stderr
       }
-      
+
       // Clear any previous errors on successful execution
       if (_connectionState.hasError) {
         _connectionState = SshConnectionState.connected;
@@ -713,7 +731,7 @@ class SshProvider extends ChangeNotifier {
         _lastError = null;
         notifyListeners();
       }
-      
+
       return stdout;
     } catch (e) {
       final error = SshError(
@@ -734,15 +752,17 @@ class SshProvider extends ChangeNotifier {
     if (_fileSizeCache.containsKey(cacheKey)) {
       return _fileSizeCache[cacheKey]!;
     }
-    
+
     // Executa o comando stat e armazena o resultado em cache
-    final sizeSession = await _sshClient!.execute('stat -f%z "${file.fullPath}" 2>/dev/null || stat -c%s "${file.fullPath}"');
+    final sizeSession = await _sshClient!.execute(
+      'stat -f%z "${file.fullPath}" 2>/dev/null || stat -c%s "${file.fullPath}"',
+    );
     final sizeOutput = await utf8.decoder.bind(sizeSession.stdout).join();
     final fileSize = int.tryParse(sizeOutput.trim()) ?? 0;
-    
+
     // Armazena o resultado em cache
     _fileSizeCache[cacheKey] = fileSize;
-    
+
     return fileSize;
   }
 
@@ -759,20 +779,22 @@ class SshProvider extends ChangeNotifier {
     try {
       // First check file size
       final fileSize = await _getFileSize(file);
-      
+
       // File size limit: 1MB
       const maxSize = 1024 * 1024;
-      
+
       if (fileSize > maxSize) {
         // Large file - show only part
         return _readFilePart(file, FileViewMode.head, fileSize);
       } else {
         // Small file - read complete
-        final contentSession = await _sshClient!.execute('cat "${file.fullPath}"');
+        final contentSession = await _sshClient!.execute(
+          'cat "${file.fullPath}"',
+        );
         final content = await utf8.decoder.bind(contentSession.stdout).join();
-        
+
         final lines = content.split('\n');
-        
+
         return FileContent(
           content: content,
           isTruncated: false,
@@ -786,11 +808,15 @@ class SshProvider extends ChangeNotifier {
       throw Exception('Erro ao ler arquivo: $e');
     }
   }
-  
+
   /// Read part of a file (head or tail)
-  Future<FileContent> _readFilePart(SshFile file, FileViewMode mode, int fileSize) async {
+  Future<FileContent> _readFilePart(
+    SshFile file,
+    FileViewMode mode,
+    int fileSize,
+  ) async {
     const linesCount = 100; // Read 100 lines by default
-    
+
     String command;
     switch (mode) {
       case FileViewMode.head:
@@ -802,18 +828,22 @@ class SshProvider extends ChangeNotifier {
       default:
         throw Exception('Modo inválido para leitura parcial: $mode');
     }
-    
+
     final contentSession = await _sshClient!.execute(command);
     final content = await utf8.decoder.bind(contentSession.stdout).join();
-    
+
     // Get total line count
-    final lineCountSession = await _sshClient!.execute('wc -l "${file.fullPath}"');
-    final lineCountOutput = await utf8.decoder.bind(lineCountSession.stdout).join();
+    final lineCountSession = await _sshClient!.execute(
+      'wc -l "${file.fullPath}"',
+    );
+    final lineCountOutput = await utf8.decoder
+        .bind(lineCountSession.stdout)
+        .join();
     final totalLines = int.tryParse(lineCountOutput.split(' ').first) ?? 0;
-    
+
     final lines = content.split('\n');
     final displayedLines = lines.where((line) => line.isNotEmpty).length;
-    
+
     return FileContent(
       content: content,
       isTruncated: true,
@@ -823,7 +853,7 @@ class SshProvider extends ChangeNotifier {
       fileSize: fileSize,
     );
   }
-  
+
   /// Read file with specific mode
   Future<FileContent> readFileWithMode(SshFile file, FileViewMode mode) async {
     if (!_connectionState.isConnected || _sshClient == null) {
@@ -833,7 +863,7 @@ class SshProvider extends ChangeNotifier {
     try {
       // Get file size first
       final fileSize = await _getFileSize(file);
-      
+
       switch (mode) {
         case FileViewMode.full:
           return readFile(file);
@@ -871,8 +901,8 @@ class SshProvider extends ChangeNotifier {
 
   void clearError() {
     if (_connectionState.hasError) {
-      _connectionState = _connectionState.isConnected 
-          ? SshConnectionState.connected 
+      _connectionState = _connectionState.isConnected
+          ? SshConnectionState.connected
           : SshConnectionState.disconnected;
     }
     _errorMessage = null;
@@ -897,12 +927,12 @@ class SshProvider extends ChangeNotifier {
     try {
       _sshClient?.close();
       _sshClient = null;
-      
+
       // Clear navigation state
       _currentFiles.clear();
       _currentPath = '';
       _navigationHistory.clear();
-      
+
       // Limpar o cache de tamanho de arquivo
       _fileSizeCache.clear();
     } catch (e) {
@@ -914,24 +944,29 @@ class SshProvider extends ChangeNotifier {
   /// Format error messages for better user experience
   String _formatError(dynamic error) {
     final errorString = error.toString().toLowerCase();
-    
+
     // Common SSH connection errors
-    if (errorString.contains('connection refused') || errorString.contains('connection denied')) {
+    if (errorString.contains('connection refused') ||
+        errorString.contains('connection denied')) {
       return 'Connection refused. Check if SSH service is running on the server.';
-    } else if (errorString.contains('no route to host') || errorString.contains('unreachable')) {
+    } else if (errorString.contains('no route to host') ||
+        errorString.contains('unreachable')) {
       return 'Host unreachable. Check the server address and network connection.';
-    } else if (errorString.contains('authentication failed') || errorString.contains('access denied')) {
+    } else if (errorString.contains('authentication failed') ||
+        errorString.contains('access denied')) {
       return 'Authentication failed. Check your username and password.';
-    } else if (errorString.contains('timeout') || errorString.contains('timed out')) {
+    } else if (errorString.contains('timeout') ||
+        errorString.contains('timed out')) {
       return 'Connection timeout. The server may be down or unreachable.';
-    } else if (errorString.contains('key exchange') || errorString.contains('handshake')) {
+    } else if (errorString.contains('key exchange') ||
+        errorString.contains('handshake')) {
       return 'Key exchange failed. The server may not support this client.';
     } else if (errorString.contains('host key verification')) {
       return 'Host key verification failed. The server identity could not be verified.';
     } else if (errorString.contains('network')) {
       return 'Network error. Check your internet connection.';
     }
-    
+
     return 'Connection error: ${error.toString()}';
   }
 
@@ -945,7 +980,7 @@ class SshProvider extends ChangeNotifier {
   /// Detect command type based on command string
   CommandType _detectCommandType(String command) {
     final cmd = command.trim().split(' ').first.toLowerCase();
-    
+
     const Map<String, CommandType> commandMap = {
       'ls': CommandType.navigation,
       'cd': CommandType.navigation,
@@ -975,32 +1010,36 @@ class SshProvider extends ChangeNotifier {
       'systemctl': CommandType.system,
       'service': CommandType.system,
     };
-    
+
     // Check if it's a known command type
     if (commandMap.containsKey(cmd)) {
       return commandMap[cmd]!;
     }
-    
+
     // Check for script execution patterns
-    if (cmd.startsWith('./') || cmd.startsWith('/') || 
-        command.contains('bash') || command.contains('sh') ||
-        command.contains('python') || command.contains('perl') ||
-        command.contains('ruby') || command.contains('node')) {
+    if (cmd.startsWith('./') ||
+        cmd.startsWith('/') ||
+        command.contains('bash') ||
+        command.contains('sh') ||
+        command.contains('python') ||
+        command.contains('perl') ||
+        command.contains('ruby') ||
+        command.contains('node')) {
       return CommandType.execution;
     }
-    
+
     return CommandType.unknown;
   }
 
   /// Add log entry to session log
   void _addLogEntry(LogEntry entry) {
     _sessionLog.add(entry);
-    
+
     // Limit number of entries
     if (_sessionLog.length > _maxLogEntries) {
       _sessionLog.removeAt(0);
     }
-    
+
     notifyListeners();
   }
 
@@ -1018,39 +1057,41 @@ class SshProvider extends ChangeNotifier {
         'successRate': 0.0,
       };
     }
-    
+
     final totalCommands = _sessionLog.length;
     final successfulCommands = _sessionLog.where((e) => e.wasSuccessful).length;
     final failedCommands = _sessionLog.where((e) => e.hasError).length;
-    
+
     final totalDuration = _sessionLog.fold<Duration>(
       Duration.zero,
       (sum, entry) => sum + entry.duration,
     );
-    
+
     final sessionDuration = DateTime.now().difference(_sessionStartTime!);
-    
+
     // Count commands by type
     final commandsByType = <String, int>{};
     for (final entry in _sessionLog) {
       final typeName = entry.type.toString().split('.').last;
       commandsByType[typeName] = (commandsByType[typeName] ?? 0) + 1;
     }
-    
+
     // Get most used commands
     final commandCounts = <String, int>{};
     for (final entry in _sessionLog) {
       final cmd = entry.command.split(' ').first;
       commandCounts[cmd] = (commandCounts[cmd] ?? 0) + 1;
     }
-    
+
     final mostUsed = commandCounts.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
-    
+
     final mostUsedCommands = mostUsed.take(5).map((e) => e.key).toList();
-    
-    final successRate = totalCommands > 0 ? successfulCommands / totalCommands : 0.0;
-    
+
+    final successRate = totalCommands > 0
+        ? successfulCommands / totalCommands
+        : 0.0;
+
     return {
       'totalCommands': totalCommands,
       'successfulCommands': successfulCommands,
@@ -1074,10 +1115,10 @@ class SshProvider extends ChangeNotifier {
     var filtered = _sessionLog.where((entry) {
       // Filter by type
       if (type != null && entry.type != type) return false;
-      
+
       // Filter by status
       if (status != null && entry.status != status) return false;
-      
+
       // Filter by search term
       if (searchTerm != null && searchTerm.isNotEmpty) {
         final term = searchTerm.toLowerCase();
@@ -1087,14 +1128,15 @@ class SshProvider extends ChangeNotifier {
           return false;
         }
       }
-      
+
       // Filter by date range
-      if (startDate != null && entry.timestamp.isBefore(startDate)) return false;
+      if (startDate != null && entry.timestamp.isBefore(startDate))
+        return false;
       if (endDate != null && entry.timestamp.isAfter(endDate)) return false;
-      
+
       return true;
     }).toList();
-    
+
     return filtered;
   }
 
@@ -1113,31 +1155,29 @@ class SshProvider extends ChangeNotifier {
   /// Set maximum log entries
   void setMaxLogEntries(int max) {
     _maxLogEntries = max;
-    
+
     // Trim existing log if necessary
     while (_sessionLog.length > _maxLogEntries) {
       _sessionLog.removeAt(0);
     }
-    
+
     notifyListeners();
   }
 
   /// Export session log in specified format
-  String exportSessionLog({
-    required String format,
-    List<LogEntry>? entries,
-  }) {
+  String exportSessionLog({required String format, List<LogEntry>? entries}) {
     final logEntries = entries ?? _sessionLog;
-    
+
     switch (format.toLowerCase()) {
       case 'json':
         return jsonEncode(logEntries.map((e) => e.toJson()).toList());
-      
+
       case 'csv':
-        const header = 'Timestamp,Command,Type,Status,Duration,Working Directory,Exit Code,STDOUT,STDERR\n';
+        const header =
+            'Timestamp,Command,Type,Status,Duration,Working Directory,Exit Code,STDOUT,STDERR\n';
         final rows = logEntries.map((e) => e.toCsvRow()).join('\n');
         return header + rows;
-      
+
       case 'txt':
       default:
         return logEntries.map((e) => e.toTextFormat()).join('\n${'-' * 80}\n');

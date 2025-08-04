@@ -36,24 +36,15 @@ class _SshFileListTileState extends State<SshFileListTile>
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.95,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
   }
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
-  }
-
-  /// Get icon color based on file type using advanced color system
-  Color _getIconColor(BuildContext context) {
-    return FileIconManager.getColorForFile(widget.file, context);
   }
 
   /// Get appropriate subtitle text
@@ -65,6 +56,10 @@ class _SshFileListTileState extends State<SshFileListTile>
   IconData? _getTrailingIcon() {
     if (widget.file.isDirectory) {
       return Icons.arrow_forward_ios;
+    } else if (_isScript()) {
+      return Icons.code;
+    } else if (widget.file.isExecutable) {
+      return Icons.play_arrow;
     }
     return null;
   }
@@ -72,7 +67,9 @@ class _SshFileListTileState extends State<SshFileListTile>
   /// Check if this file is a script based on common script extensions
   bool _isScript() {
     final scriptExtensions = ['.sh', '.py', '.js', '.rb', '.pl', '.php'];
-    return scriptExtensions.any((ext) => widget.file.name.toLowerCase().endsWith(ext));
+    return scriptExtensions.any(
+      (ext) => widget.file.name.toLowerCase().endsWith(ext),
+    );
   }
 
   /// Get enhanced icon for file type with improved detection
@@ -114,7 +111,7 @@ class _SshFileListTileState extends State<SshFileListTile>
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return BouncyScale(
       onTap: widget.isLoading ? null : widget.onTap,
       child: SshListTile(
@@ -130,7 +127,7 @@ class _SshFileListTileState extends State<SshFileListTile>
         subtitle: Text(
           _getSubtitle(),
           style: TextStyle(
-            color: colorScheme.onSurface.withOpacity(0.6),
+            color: colorScheme.onSurface.withValues(alpha: 0.6),
             fontSize: 12,
           ),
         ),
@@ -143,7 +140,7 @@ class _SshFileListTileState extends State<SshFileListTile>
             : Icon(
                 _getTrailingIcon(),
                 size: 16,
-                color: colorScheme.onSurface.withOpacity(0.4),
+                color: colorScheme.onSurface.withValues(alpha: 0.6),
               ),
         onTap: widget.isLoading ? null : widget.onTap,
         onLongPress: widget.isLoading ? null : widget.onLongPress,

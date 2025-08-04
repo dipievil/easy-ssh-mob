@@ -21,7 +21,7 @@ class FileIconManager {
     '.odt': FontAwesomeIcons.fileAlt,
     '.ods': FontAwesomeIcons.fileExcel,
     '.odp': FontAwesomeIcons.filePowerpoint,
-    
+
     // Code files
     '.py': FontAwesomeIcons.python,
     '.js': FontAwesomeIcons.js,
@@ -77,7 +77,7 @@ class FileIconManager {
     '.tcl': FontAwesomeIcons.fileCode,
     '.asm': FontAwesomeIcons.microchip,
     '.s': FontAwesomeIcons.microchip,
-    
+
     // Images
     '.jpg': FontAwesomeIcons.fileImage,
     '.jpeg': FontAwesomeIcons.fileImage,
@@ -97,7 +97,7 @@ class FileIconManager {
     '.nef': FontAwesomeIcons.fileImage,
     '.orf': FontAwesomeIcons.fileImage,
     '.sr2': FontAwesomeIcons.fileImage,
-    
+
     // Video files
     '.mp4': FontAwesomeIcons.fileVideo,
     '.avi': FontAwesomeIcons.fileVideo,
@@ -115,7 +115,7 @@ class FileIconManager {
     '.rmvb': FontAwesomeIcons.fileVideo,
     '.vob': FontAwesomeIcons.fileVideo,
     '.ogv': FontAwesomeIcons.fileVideo,
-    
+
     // Audio files
     '.mp3': FontAwesomeIcons.fileAudio,
     '.wav': FontAwesomeIcons.fileAudio,
@@ -130,7 +130,7 @@ class FileIconManager {
     '.ra': FontAwesomeIcons.fileAudio,
     '.3ga': FontAwesomeIcons.fileAudio,
     '.amr': FontAwesomeIcons.fileAudio,
-    
+
     // Archive files
     '.zip': FontAwesomeIcons.fileArchive,
     '.rar': FontAwesomeIcons.fileArchive,
@@ -152,7 +152,7 @@ class FileIconManager {
     '.msi': FontAwesomeIcons.box,
     '.apk': FontAwesomeIcons.android,
     '.ipa': FontAwesomeIcons.apple,
-    
+
     // System and config files
     '.log': FontAwesomeIcons.fileAlt,
     '.env': FontAwesomeIcons.cog,
@@ -165,21 +165,21 @@ class FileIconManager {
     '.htpasswd': FontAwesomeIcons.server,
     '.nginx': FontAwesomeIcons.server,
     '.apache': FontAwesomeIcons.server,
-    
+
     // Database files
     '.db': FontAwesomeIcons.database,
     '.sqlite': FontAwesomeIcons.database,
     '.sqlite3': FontAwesomeIcons.database,
     '.mdb': FontAwesomeIcons.database,
     '.accdb': FontAwesomeIcons.database,
-    
+
     // Font files
     '.ttf': FontAwesomeIcons.font,
     '.otf': FontAwesomeIcons.font,
     '.woff': FontAwesomeIcons.font,
     '.woff2': FontAwesomeIcons.font,
     '.eot': FontAwesomeIcons.font,
-    
+
     // Certificate and key files
     '.pem': FontAwesomeIcons.key,
     '.key': FontAwesomeIcons.key,
@@ -189,14 +189,14 @@ class FileIconManager {
     '.pfx': FontAwesomeIcons.certificate,
     '.jks': FontAwesomeIcons.certificate,
     '.pub': FontAwesomeIcons.key,
-    
+
     // Executable files (Windows)
     '.exe': FontAwesomeIcons.terminal,
     '.bat': FontAwesomeIcons.terminal,
     '.cmd': FontAwesomeIcons.terminal,
     '.ps1': FontAwesomeIcons.terminal,
     '.vbs': FontAwesomeIcons.terminal,
-    
+
     // Markup and documentation
     '.md': FontAwesomeIcons.readme,
     '.markdown': FontAwesomeIcons.readme,
@@ -330,44 +330,76 @@ class FileIconManager {
     // Define color categories
     final Map<List<String>, Color> categoryColors = {
       // Code files - Blue
-      ['.py', '.js', '.ts', '.html', '.css', '.java', '.php', '.cpp', '.c', '.sh', '.dart', '.go', '.rs', '.rb', '.swift', '.kt']: 
-        FileTypeColors.code,
+      [
+        '.py',
+        '.js',
+        '.ts',
+        '.html',
+        '.css',
+        '.java',
+        '.php',
+        '.cpp',
+        '.c',
+        '.sh',
+        '.dart',
+        '.go',
+        '.rs',
+        '.rb',
+        '.swift',
+        '.kt',
+      ]: FileTypeColors.code,
 
       // Documents - Purple
-      ['.pdf', '.doc', '.docx', '.txt', '.rtf', '.odt', '.md']: 
-        FileTypeColors.document,
+      ['.pdf', '.doc', '.docx', '.txt', '.rtf', '.odt', '.md']:
+          FileTypeColors.document,
 
       // Spreadsheets - Green
-      ['.xls', '.xlsx', '.csv', '.ods']: 
-        FileTypeColors.spreadsheet,
+      ['.xls', '.xlsx', '.csv', '.ods']: FileTypeColors.spreadsheet,
 
       // Presentations - Orange
-      ['.ppt', '.pptx', '.odp']: 
-        FileTypeColors.presentation,
+      ['.ppt', '.pptx', '.odp']: FileTypeColors.presentation,
 
       // Images - Pink
-      ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg', '.webp', '.ico', '.tiff', '.psd']: 
-        FileTypeColors.image,
+      [
+        '.jpg',
+        '.jpeg',
+        '.png',
+        '.gif',
+        '.bmp',
+        '.svg',
+        '.webp',
+        '.ico',
+        '.tiff',
+        '.psd',
+      ]: FileTypeColors.image,
 
       // Videos - Red
-      ['.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv', '.webm', '.m4v']: 
-        FileTypeColors.video,
+      ['.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv', '.webm', '.m4v']:
+          FileTypeColors.video,
 
       // Audio - Purple
-      ['.mp3', '.wav', '.flac', '.ogg', '.m4a', '.aac', '.wma']: 
-        FileTypeColors.audio,
+      ['.mp3', '.wav', '.flac', '.ogg', '.m4a', '.aac', '.wma']:
+          FileTypeColors.audio,
 
       // Archives - Brown
-      ['.zip', '.rar', '.tar', '.gz', '.7z', '.bz2', '.xz', '.iso', '.dmg']: 
-        FileTypeColors.archive,
+      ['.zip', '.rar', '.tar', '.gz', '.7z', '.bz2', '.xz', '.iso', '.dmg']:
+          FileTypeColors.archive,
 
       // Configuration - Amber
-      ['.conf', '.cfg', '.ini', '.env', '.json', '.xml', '.yaml', '.yml', '.toml']: 
-        FileTypeColors.config,
+      [
+        '.conf',
+        '.cfg',
+        '.ini',
+        '.env',
+        '.json',
+        '.xml',
+        '.yaml',
+        '.yml',
+        '.toml',
+      ]: FileTypeColors.config,
 
       // Logs - Grey
-      ['.log']: 
-        FileTypeColors.log,
+      ['.log']: FileTypeColors.log,
     };
 
     for (final category in categoryColors.entries) {
@@ -378,11 +410,15 @@ class FileIconManager {
 
     // Check for special file names
     final lowerName = fileName.toLowerCase();
-    if (lowerName.contains('readme') || lowerName.contains('license') || lowerName.contains('changelog')) {
+    if (lowerName.contains('readme') ||
+        lowerName.contains('license') ||
+        lowerName.contains('changelog')) {
       return FileTypeColors.document;
     }
 
-    if (lowerName.contains('makefile') || lowerName.contains('dockerfile') || lowerName.contains('package.json')) {
+    if (lowerName.contains('makefile') ||
+        lowerName.contains('dockerfile') ||
+        lowerName.contains('package.json')) {
       return FileTypeColors.config;
     }
 
@@ -402,11 +438,38 @@ class FileIconManager {
   /// Check if file is a code file
   static bool isCodeFile(String fileName) {
     final codeExtensions = [
-      '.py', '.js', '.ts', '.html', '.css', '.java', '.php', '.cpp', '.c', '.h',
-      '.cs', '.sh', '.sql', '.json', '.xml', '.yaml', '.yml', '.rb', '.go', '.rs',
-      '.dart', '.swift', '.kt', '.scala', '.clj', '.hs', '.lua', '.r', '.m', '.pl'
+      '.py',
+      '.js',
+      '.ts',
+      '.html',
+      '.css',
+      '.java',
+      '.php',
+      '.cpp',
+      '.c',
+      '.h',
+      '.cs',
+      '.sh',
+      '.sql',
+      '.json',
+      '.xml',
+      '.yaml',
+      '.yml',
+      '.rb',
+      '.go',
+      '.rs',
+      '.dart',
+      '.swift',
+      '.kt',
+      '.scala',
+      '.clj',
+      '.hs',
+      '.lua',
+      '.r',
+      '.m',
+      '.pl',
     ];
-    
+
     final extension = _getFileExtension(fileName).toLowerCase();
     return codeExtensions.contains(extension);
   }
@@ -414,9 +477,18 @@ class FileIconManager {
   /// Check if file is an image file
   static bool isImageFile(String fileName) {
     final imageExtensions = [
-      '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg', '.webp', '.ico', '.tiff', '.psd'
+      '.jpg',
+      '.jpeg',
+      '.png',
+      '.gif',
+      '.bmp',
+      '.svg',
+      '.webp',
+      '.ico',
+      '.tiff',
+      '.psd',
     ];
-    
+
     final extension = _getFileExtension(fileName).toLowerCase();
     return imageExtensions.contains(extension);
   }
@@ -424,9 +496,16 @@ class FileIconManager {
   /// Check if file is a video file
   static bool isVideoFile(String fileName) {
     final videoExtensions = [
-      '.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv', '.webm', '.m4v'
+      '.mp4',
+      '.avi',
+      '.mkv',
+      '.mov',
+      '.wmv',
+      '.flv',
+      '.webm',
+      '.m4v',
     ];
-    
+
     final extension = _getFileExtension(fileName).toLowerCase();
     return videoExtensions.contains(extension);
   }
@@ -434,9 +513,15 @@ class FileIconManager {
   /// Check if file is an audio file
   static bool isAudioFile(String fileName) {
     final audioExtensions = [
-      '.mp3', '.wav', '.flac', '.ogg', '.m4a', '.aac', '.wma'
+      '.mp3',
+      '.wav',
+      '.flac',
+      '.ogg',
+      '.m4a',
+      '.aac',
+      '.wma',
     ];
-    
+
     final extension = _getFileExtension(fileName).toLowerCase();
     return audioExtensions.contains(extension);
   }
@@ -444,9 +529,17 @@ class FileIconManager {
   /// Check if file is an archive
   static bool isArchiveFile(String fileName) {
     final archiveExtensions = [
-      '.zip', '.rar', '.tar', '.gz', '.7z', '.bz2', '.xz', '.iso', '.dmg'
+      '.zip',
+      '.rar',
+      '.tar',
+      '.gz',
+      '.7z',
+      '.bz2',
+      '.xz',
+      '.iso',
+      '.dmg',
     ];
-    
+
     final extension = _getFileExtension(fileName).toLowerCase();
     return archiveExtensions.contains(extension);
   }

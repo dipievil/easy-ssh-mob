@@ -7,14 +7,14 @@ class LogEntryTile extends StatelessWidget {
   final LogEntry entry;
   final VoidCallback? onTap;
   final bool showDetails;
-  
+
   const LogEntryTile({
-    Key? key,
+    super.key,
     required this.entry,
     this.onTap,
     this.showDetails = false,
-  }) : super(key: key);
-  
+  });
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -27,10 +27,7 @@ class LogEntryTile extends StatelessWidget {
         ),
         title: Text(
           entry.shortCommand,
-          style: const TextStyle(
-            fontFamily: 'monospace',
-            fontSize: 14,
-          ),
+          style: const TextStyle(fontFamily: 'monospace', fontSize: 14),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -40,17 +37,14 @@ class LogEntryTile extends StatelessWidget {
           children: [
             Text(
               '${_formatTimestamp(entry.timestamp)} • ${entry.durationFormatted}',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontSize: 11,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(fontSize: 11),
             ),
             if (entry.hasError)
               Text(
                 'Erro: ${entry.stderrPreview}',
-                style: const TextStyle(
-                  color: Colors.red,
-                  fontSize: 11,
-                ),
+                style: const TextStyle(color: Colors.red, fontSize: 11),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -83,9 +77,7 @@ class LogEntryTile extends StatelessWidget {
               ),
           ],
         ),
-        children: [
-          if (showDetails || onTap == null) _buildDetailView(context),
-        ],
+        children: [if (showDetails || onTap == null) _buildDetailView(context)],
         onExpansionChanged: (expanded) {
           if (expanded && onTap != null) {
             onTap!();
@@ -94,7 +86,7 @@ class LogEntryTile extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildDetailView(BuildContext context) {
     return Container(
       width: double.infinity,
@@ -110,14 +102,14 @@ class LogEntryTile extends StatelessWidget {
           _buildDetailRow('Duração', entry.durationFormatted),
           if (entry.exitCode != null)
             _buildDetailRow('Código de Saída', '${entry.exitCode}'),
-          
+
           if (entry.stdout.isNotEmpty) ...[
             const SizedBox(height: 12),
             Text(
               'STDOUT:',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
             Container(
@@ -130,14 +122,11 @@ class LogEntryTile extends StatelessWidget {
               ),
               child: Text(
                 entry.stdout,
-                style: const TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 12,
-                ),
+                style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
               ),
             ),
           ],
-          
+
           if (entry.stderr.isNotEmpty) ...[
             const SizedBox(height: 12),
             Text(
@@ -166,14 +155,14 @@ class LogEntryTile extends StatelessWidget {
               ),
             ),
           ],
-          
+
           if (entry.metadata != null && entry.metadata!.isNotEmpty) ...[
             const SizedBox(height: 12),
             Text(
               'Metadados:',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
             Container(
@@ -186,10 +175,7 @@ class LogEntryTile extends StatelessWidget {
               ),
               child: Text(
                 entry.metadata.toString(),
-                style: const TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 12,
-                ),
+                style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
               ),
             ),
           ],
@@ -197,7 +183,7 @@ class LogEntryTile extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
@@ -208,26 +194,20 @@ class LogEntryTile extends StatelessWidget {
             width: 120,
             child: Text(
               '$label:',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 12,
-              ),
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
             ),
           ),
         ],
       ),
     );
   }
-  
+
   IconData _getCommandTypeIcon(CommandType type) {
     switch (type) {
       case CommandType.navigation:
@@ -244,7 +224,7 @@ class LogEntryTile extends StatelessWidget {
         return FontAwesomeIcons.question;
     }
   }
-  
+
   IconData _getStatusIcon(CommandStatus status) {
     switch (status) {
       case CommandStatus.success:
@@ -259,7 +239,7 @@ class LogEntryTile extends StatelessWidget {
         return FontAwesomeIcons.exclamationCircle;
     }
   }
-  
+
   Color _getStatusColor(CommandStatus status) {
     switch (status) {
       case CommandStatus.success:
@@ -274,13 +254,13 @@ class LogEntryTile extends StatelessWidget {
         return Colors.amber;
     }
   }
-  
+
   String _formatTimestamp(DateTime dt) {
     return '${dt.hour.toString().padLeft(2, '0')}:'
-           '${dt.minute.toString().padLeft(2, '0')}:'
-           '${dt.second.toString().padLeft(2, '0')}';
+        '${dt.minute.toString().padLeft(2, '0')}:'
+        '${dt.second.toString().padLeft(2, '0')}';
   }
-  
+
   String _formatCommandType(CommandType type) {
     switch (type) {
       case CommandType.navigation:
@@ -297,7 +277,7 @@ class LogEntryTile extends StatelessWidget {
         return 'Desconhecido';
     }
   }
-  
+
   String _formatStatus(CommandStatus status) {
     switch (status) {
       case CommandStatus.success:

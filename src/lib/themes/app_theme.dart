@@ -14,55 +14,44 @@ class AppTheme {
       brightness: Brightness.light,
     ),
     typography: Typography.material2021(),
-    
+
     // AppBar theme with clean Material 3 design
     appBarTheme: const AppBarTheme(
       centerTitle: false,
       elevation: 0,
       scrolledUnderElevation: 1,
-      titleTextStyle: TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.w500,
-      ),
+      titleTextStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
     ),
-    
+
     // Card theme with rounded corners
     cardTheme: CardThemeData(
       elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
     ),
-    
+
     // Button themes
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       ),
     ),
-    
+
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       ),
     ),
-    
+
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
     ),
-    
+
     // Input decoration theme
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -84,7 +73,7 @@ class AppTheme {
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     ),
-    
+
     // List tile theme
     listTileTheme: const ListTileThemeData(
       shape: RoundedRectangleBorder(
@@ -92,22 +81,18 @@ class AppTheme {
       ),
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
     ),
-    
+
     // Floating action button theme
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
-    
+
     // Dialog theme
     dialogTheme: DialogThemeData(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       actionsPadding: const EdgeInsets.all(16),
     ),
-    
+
     // Bottom sheet theme
     bottomSheetTheme: const BottomSheetThemeData(
       shape: RoundedRectangleBorder(
@@ -125,55 +110,44 @@ class AppTheme {
       brightness: Brightness.dark,
     ),
     typography: Typography.material2021(),
-    
+
     // AppBar theme for dark mode
     appBarTheme: const AppBarTheme(
       centerTitle: false,
       elevation: 0,
       scrolledUnderElevation: 1,
-      titleTextStyle: TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.w500,
-      ),
+      titleTextStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
     ),
-    
+
     // Card theme with rounded corners
     cardTheme: CardThemeData(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
     ),
-    
+
     // Button themes
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       ),
     ),
-    
+
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       ),
     ),
-    
+
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
     ),
-    
+
     // Input decoration theme for dark mode
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -195,7 +169,7 @@ class AppTheme {
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     ),
-    
+
     // List tile theme
     listTileTheme: const ListTileThemeData(
       shape: RoundedRectangleBorder(
@@ -203,22 +177,18 @@ class AppTheme {
       ),
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
     ),
-    
+
     // Floating action button theme
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
-    
+
     // Dialog theme
     dialogTheme: DialogThemeData(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       actionsPadding: const EdgeInsets.all(16),
     ),
-    
+
     // Bottom sheet theme
     bottomSheetTheme: const BottomSheetThemeData(
       shape: RoundedRectangleBorder(
@@ -229,12 +199,13 @@ class AppTheme {
   );
 
   /// Get dynamic color scheme if available (Android 12+)
-  static Future<ColorScheme?> getDynamicColorScheme(Brightness brightness) async {
+  static Future<ColorScheme?> getDynamicColorScheme(
+    Brightness brightness,
+  ) async {
     // This would integrate with dynamic_color package if added
     // For now, return null to use the seed colors
     return null;
   }
-
 }
 
 /// State colors for different UI states

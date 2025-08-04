@@ -47,7 +47,10 @@ class ErrorTestScreen extends StatelessWidget {
                     'Operação Não Permitida',
                     'Testa erro de operação restrita',
                     FontAwesomeIcons.ban,
-                    () => _showTestError(context, ErrorType.operationNotPermitted),
+                    () => _showTestError(
+                      context,
+                      ErrorType.operationNotPermitted,
+                    ),
                   ),
                   _buildErrorTestCard(
                     context,
@@ -114,10 +117,10 @@ class ErrorTestScreen extends StatelessWidget {
 
   void _showTestError(BuildContext context, ErrorType errorType) {
     final error = _createTestError(errorType);
-    
+
     // Show both SnackBar and Dialog for demonstration
     ErrorSnackBar.show(context, error);
-    
+
     // Also show dialog after a short delay
     Future.delayed(const Duration(milliseconds: 500), () {
       if (context.mounted) {
@@ -131,7 +134,7 @@ class ErrorTestScreen extends StatelessWidget {
 
   SshError _createTestError(ErrorType errorType) {
     const command = 'test_command';
-    
+
     switch (errorType) {
       case ErrorType.permissionDenied:
         return ErrorHandler.analyzeError('Permission denied', command);
@@ -142,7 +145,10 @@ class ErrorTestScreen extends StatelessWidget {
       case ErrorType.accessDenied:
         return ErrorHandler.analyzeError('Access denied', command);
       case ErrorType.connectionLost:
-        return ErrorHandler.analyzeError('Connection lost to remote host', command);
+        return ErrorHandler.analyzeError(
+          'Connection lost to remote host',
+          command,
+        );
       case ErrorType.timeout:
         return ErrorHandler.analyzeError('Connection timed out', command);
       case ErrorType.commandNotFound:

@@ -17,18 +17,20 @@ class ErrorSnackBar {
           ],
         ),
         backgroundColor: _getErrorColor(error.severity),
-        duration: Duration(seconds: error.severity == ErrorSeverity.critical ? 10 : 4),
+        duration: Duration(
+          seconds: error.severity == ErrorSeverity.critical ? 10 : 4,
+        ),
         action: error.suggestion != null
-          ? SnackBarAction(
-              label: 'AJUDA',
-              textColor: Colors.white,
-              onPressed: () => _showErrorDialog(context, error),
-            )
-          : null,
+            ? SnackBarAction(
+                label: 'AJUDA',
+                textColor: Colors.white,
+                onPressed: () => _showErrorDialog(context, error),
+              )
+            : null,
       ),
     );
   }
-  
+
   /// Show detailed error dialog
   static void _showErrorDialog(BuildContext context, SshError error) {
     showDialog(
@@ -36,7 +38,7 @@ class ErrorSnackBar {
       builder: (context) => ErrorDialog(error: error),
     );
   }
-  
+
   /// Get appropriate icon for error type
   static IconData _getErrorIcon(ErrorType type) {
     switch (type) {
@@ -59,7 +61,7 @@ class ErrorSnackBar {
         return FontAwesomeIcons.triangleExclamation;
     }
   }
-  
+
   /// Get appropriate color for error severity
   static Color _getErrorColor(ErrorSeverity severity) {
     switch (severity) {
@@ -78,7 +80,7 @@ class ErrorSnackBar {
 /// Detailed error dialog with technical information and suggestions
 class ErrorDialog extends StatelessWidget {
   final SshError error;
-  
+
   const ErrorDialog({super.key, required this.error});
 
   @override
@@ -98,7 +100,10 @@ class ErrorDialog extends StatelessWidget {
           Text(error.userFriendlyMessage),
           if (error.suggestion != null) ...[
             const SizedBox(height: 12),
-            const Text('Sugestão:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'Sugestão:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             Text(error.suggestion!),
           ],
           const SizedBox(height: 12),
@@ -153,20 +158,18 @@ class CustomSnackBar {
         backgroundColor: _getTypeColor(type),
         duration: duration ?? const Duration(seconds: 4),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         action: action != null && actionLabel != null
-          ? SnackBarAction(
-              label: actionLabel,
-              textColor: Colors.white,
-              onPressed: action,
-            )
-          : null,
+            ? SnackBarAction(
+                label: actionLabel,
+                textColor: Colors.white,
+                onPressed: action,
+              )
+            : null,
       ),
     );
   }
-  
+
   /// Get appropriate icon for notification type
   static IconData _getTypeIcon(NotificationType type) {
     switch (type) {
@@ -182,7 +185,7 @@ class CustomSnackBar {
         return FontAwesomeIcons.exclamation;
     }
   }
-  
+
   /// Get appropriate color for notification type
   static Color _getTypeColor(NotificationType type) {
     switch (type) {
@@ -207,7 +210,7 @@ class CustomNotificationDialog extends StatelessWidget {
   final String? details;
   final NotificationType type;
   final VoidCallback? onRetry;
-  
+
   const CustomNotificationDialog({
     super.key,
     required this.title,
@@ -220,9 +223,7 @@ class CustomNotificationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Row(
         children: [
           Icon(
@@ -263,10 +264,7 @@ class CustomNotificationDialog extends StatelessWidget {
       ),
       actions: [
         if (onRetry != null)
-          TextButton(
-            onPressed: onRetry,
-            child: const Text('TENTAR NOVAMENTE'),
-          ),
+          TextButton(onPressed: onRetry, child: const Text('TENTAR NOVAMENTE')),
         ElevatedButton(
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('OK'),
@@ -281,14 +279,14 @@ class ToastNotification extends StatefulWidget {
   final String message;
   final NotificationType type;
   final Duration duration;
-  
+
   const ToastNotification({
     super.key,
     required this.message,
     required this.type,
     this.duration = const Duration(seconds: 3),
   });
-  
+
   static void show(
     BuildContext context,
     String message,
@@ -297,7 +295,7 @@ class ToastNotification extends StatefulWidget {
   }) {
     final overlay = Overlay.of(context);
     late OverlayEntry overlayEntry;
-    
+
     overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
         top: MediaQuery.of(context).padding.top + 20,
@@ -313,9 +311,9 @@ class ToastNotification extends StatefulWidget {
         ),
       ),
     );
-    
+
     overlay.insert(overlayEntry);
-    
+
     Future.delayed(duration ?? const Duration(seconds: 3), () {
       overlayEntry.remove();
     });
@@ -338,25 +336,19 @@ class _ToastNotificationState extends State<ToastNotification>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    
+
     _slideAnimation = Tween<double>(
       begin: -100,
       end: 0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
-    
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
     _fadeAnimation = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeIn,
-    ));
-    
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+
     _controller.forward();
-    
+
     // Auto-dismiss
     Future.delayed(widget.duration - const Duration(milliseconds: 300), () {
       if (mounted) {
@@ -425,35 +417,32 @@ class LoadingOverlay extends StatefulWidget {
   final String message;
   final bool isVisible;
   final VoidCallback? onCancel;
-  
+
   const LoadingOverlay({
     super.key,
     required this.message,
     required this.isVisible,
     this.onCancel,
   });
-  
+
   static OverlayEntry? _currentOverlay;
-  
+
   static void show(
     BuildContext context,
     String message, {
     VoidCallback? onCancel,
   }) {
     hide(); // Remove any existing overlay
-    
+
     final overlay = Overlay.of(context);
     _currentOverlay = OverlayEntry(
-      builder: (context) => LoadingOverlay(
-        message: message,
-        isVisible: true,
-        onCancel: onCancel,
-      ),
+      builder: (context) =>
+          LoadingOverlay(message: message, isVisible: true, onCancel: onCancel),
     );
-    
+
     overlay.insert(_currentOverlay!);
   }
-  
+
   static void hide() {
     _currentOverlay?.remove();
     _currentOverlay = null;
@@ -475,15 +464,12 @@ class _LoadingOverlayState extends State<LoadingOverlay>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeIn,
-    ));
-    
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+
     if (widget.isVisible) {
       _controller.forward();
     }

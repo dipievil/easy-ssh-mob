@@ -28,7 +28,8 @@ class MyApp extends StatelessWidget {
         title: 'EasySSH',
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system, // Automatically switch based on system preference
+        themeMode:
+            ThemeMode.system, // Automatically switch based on system preference
         home: const LoginScreen(),
       ),
     );

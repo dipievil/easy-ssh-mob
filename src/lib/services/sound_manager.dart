@@ -10,7 +10,7 @@ class SoundManager {
     NotificationType.success: 'sounds/success.mp3',
     NotificationType.critical: 'sounds/critical.mp3',
   };
-  
+
   /// Play notification sound for the specified type
   static Future<void> playNotificationSound(
     NotificationType type,
@@ -22,7 +22,7 @@ class SoundManager {
         final player = AudioPlayer();
         await player.setVolume(volume);
         await player.play(AssetSource(soundFile));
-        
+
         // Release the player after playing
         player.dispose();
       }
@@ -32,7 +32,7 @@ class SoundManager {
       await _playFallbackSound();
     }
   }
-  
+
   /// Play fallback sound when asset sounds fail
   static Future<void> _playFallbackSound() async {
     try {
@@ -47,7 +47,7 @@ class SoundManager {
       // At this point, we just fail silently
     }
   }
-  
+
   /// Test all notification sounds
   static Future<void> testAllSounds(double volume) async {
     for (final type in NotificationType.values) {
@@ -55,12 +55,12 @@ class SoundManager {
       await Future.delayed(const Duration(milliseconds: 800));
     }
   }
-  
+
   /// Check if sound file exists for the given type
   static bool hasSoundForType(NotificationType type) {
     return _soundFiles.containsKey(type);
   }
-  
+
   /// Get sound file path for the given type
   static String? getSoundPath(NotificationType type) {
     return _soundFiles[type];

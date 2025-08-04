@@ -54,7 +54,7 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            
+
             // SnackBar Examples
             Card(
               child: Padding(
@@ -64,16 +64,24 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                   children: [
                     const Text(
                       'SnackBars',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Wrap(
                       spacing: 8,
                       children: [
                         ElevatedButton.icon(
-                          icon: const Icon(FontAwesomeIcons.circleInfo, size: 16),
+                          icon: const Icon(
+                            FontAwesomeIcons.circleInfo,
+                            size: 16,
+                          ),
                           label: const Text('Info'),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                          ),
                           onPressed: () {
                             CustomSnackBar.show(
                               context,
@@ -87,9 +95,14 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                           },
                         ),
                         ElevatedButton.icon(
-                          icon: const Icon(FontAwesomeIcons.circleCheck, size: 16),
+                          icon: const Icon(
+                            FontAwesomeIcons.circleCheck,
+                            size: 16,
+                          ),
                           label: const Text('Sucesso'),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                          ),
                           onPressed: () {
                             CustomSnackBar.show(
                               context,
@@ -103,9 +116,14 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                           },
                         ),
                         ElevatedButton.icon(
-                          icon: const Icon(FontAwesomeIcons.triangleExclamation, size: 16),
+                          icon: const Icon(
+                            FontAwesomeIcons.triangleExclamation,
+                            size: 16,
+                          ),
                           label: const Text('Aviso'),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                          ),
                           onPressed: () {
                             CustomSnackBar.show(
                               context,
@@ -113,7 +131,8 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                               NotificationType.warning,
                             );
                             _notificationService.showNotification(
-                              message: 'Atenção: Esta ação pode ter consequências',
+                              message:
+                                  'Atenção: Esta ação pode ter consequências',
                               type: NotificationType.warning,
                             );
                           },
@@ -125,9 +144,14 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                       spacing: 8,
                       children: [
                         ElevatedButton.icon(
-                          icon: const Icon(FontAwesomeIcons.circleXmark, size: 16),
+                          icon: const Icon(
+                            FontAwesomeIcons.circleXmark,
+                            size: 16,
+                          ),
                           label: const Text('Erro'),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
                           onPressed: () {
                             CustomSnackBar.show(
                               context,
@@ -135,7 +159,9 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                               NotificationType.error,
                               action: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Ação de retry executada')),
+                                  const SnackBar(
+                                    content: Text('Ação de retry executada'),
+                                  ),
                                 );
                               },
                               actionLabel: 'RETRY',
@@ -147,9 +173,14 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                           },
                         ),
                         ElevatedButton.icon(
-                          icon: const Icon(FontAwesomeIcons.exclamation, size: 16),
+                          icon: const Icon(
+                            FontAwesomeIcons.exclamation,
+                            size: 16,
+                          ),
                           label: const Text('Crítico'),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade900),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red.shade900,
+                          ),
                           onPressed: () {
                             CustomSnackBar.show(
                               context,
@@ -168,9 +199,9 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Dialog Examples
             Card(
               child: Padding(
@@ -180,7 +211,10 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                   children: [
                     const Text(
                       'Diálogos de Notificação',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton.icon(
@@ -191,9 +225,11 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                           context: context,
                           builder: (context) => const CustomNotificationDialog(
                             title: 'Erro de Conexão',
-                            message: 'Não foi possível conectar ao servidor SSH',
+                            message:
+                                'Não foi possível conectar ao servidor SSH',
                             type: NotificationType.error,
-                            details: 'Timeout: Connection to 192.168.1.100:22 timed out after 30 seconds.\nPlease check your network connection and server status.',
+                            details:
+                                'Timeout: Connection to 192.168.1.100:22 timed out after 30 seconds.\nPlease check your network connection and server status.',
                           ),
                         );
                       },
@@ -202,9 +238,9 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Toast Examples
             Card(
               child: Padding(
@@ -214,7 +250,10 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                   children: [
                     const Text(
                       'Toast Notifications',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton.icon(
@@ -232,9 +271,9 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Loading Overlay Examples
             Card(
               child: Padding(
@@ -244,7 +283,10 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                   children: [
                     const Text(
                       'Loading Overlay',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton.icon(
@@ -257,11 +299,13 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                           onCancel: () {
                             LoadingOverlay.hide();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Operação cancelada')),
+                              const SnackBar(
+                                content: Text('Operação cancelada'),
+                              ),
                             );
                           },
                         );
-                        
+
                         // Simular operação
                         Future.delayed(const Duration(seconds: 3), () {
                           LoadingOverlay.hide();

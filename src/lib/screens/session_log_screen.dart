@@ -8,7 +8,7 @@ import '../services/notification_service.dart';
 
 /// Screen for viewing SSH session log history
 class SessionLogScreen extends StatefulWidget {
-  const SessionLogScreen({Key? key}) : super(key: key);
+  const SessionLogScreen({super.key});
 
   @override
   State<SessionLogScreen> createState() => _SessionLogScreenState();
@@ -19,7 +19,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
   CommandType? _filterType;
   CommandStatus? _filterStatus;
   bool _showFilters = false;
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +35,9 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
           ),
           IconButton(
             icon: Icon(
-              _showFilters ? FontAwesomeIcons.filterCircleXmark : FontAwesomeIcons.filter,
+              _showFilters
+                  ? FontAwesomeIcons.filterCircleXmark
+                  : FontAwesomeIcons.filter,
             ),
             onPressed: _toggleFilters,
             tooltip: 'Filtros',
@@ -78,7 +80,10 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
                 value: 'clear',
                 child: ListTile(
                   leading: Icon(FontAwesomeIcons.trash, color: Colors.red),
-                  title: Text('Limpar Histórico', style: TextStyle(color: Colors.red)),
+                  title: Text(
+                    'Limpar Histórico',
+                    style: TextStyle(color: Colors.red),
+                  ),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
@@ -100,7 +105,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       ),
     );
   }
-  
+
   Widget _buildFilterBar() {
     return Container(
       padding: const EdgeInsets.all(8),
@@ -113,17 +118,22 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
               decoration: const InputDecoration(
                 labelText: 'Tipo',
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 8,
+                ),
               ),
               items: [
                 const DropdownMenuItem<CommandType?>(
                   value: null,
                   child: Text('Todos'),
                 ),
-                ...CommandType.values.map((type) => DropdownMenuItem(
-                  value: type,
-                  child: Text(_formatCommandType(type)),
-                )),
+                ...CommandType.values.map(
+                  (type) => DropdownMenuItem(
+                    value: type,
+                    child: Text(_formatCommandType(type)),
+                  ),
+                ),
               ],
               onChanged: (value) {
                 setState(() {
@@ -139,17 +149,22 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
               decoration: const InputDecoration(
                 labelText: 'Status',
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 8,
+                ),
               ),
               items: [
                 const DropdownMenuItem<CommandStatus?>(
                   value: null,
                   child: Text('Todos'),
                 ),
-                ...CommandStatus.values.map((status) => DropdownMenuItem(
-                  value: status,
-                  child: Text(_formatStatus(status)),
-                )),
+                ...CommandStatus.values.map(
+                  (status) => DropdownMenuItem(
+                    value: status,
+                    child: Text(_formatStatus(status)),
+                  ),
+                ),
               ],
               onChanged: (value) {
                 setState(() {
@@ -167,7 +182,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       ),
     );
   }
-  
+
   Widget _buildLogList() {
     return Consumer<SshProvider>(
       builder: (context, sshProvider, child) {
@@ -176,15 +191,15 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
           status: _filterStatus,
           searchTerm: _searchTerm.isNotEmpty ? _searchTerm : null,
         );
-        
+
         if (filteredLog.isEmpty && sshProvider.sessionLog.isEmpty) {
           return _buildEmptyState('Nenhum comando foi executado ainda');
         }
-        
+
         if (filteredLog.isEmpty && sshProvider.sessionLog.isNotEmpty) {
           return _buildEmptyState('Nenhum comando corresponde aos filtros');
         }
-        
+
         return ListView.builder(
           reverse: true, // Mais recentes primeiro
           itemCount: filteredLog.length,
@@ -199,26 +214,21 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       },
     );
   }
-  
+
   Widget _buildEmptyState(String message) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            FontAwesomeIcons.history,
-            size: 64,
-            color: Colors.grey[400],
-          ),
+          Icon(FontAwesomeIcons.history, size: 64, color: Colors.grey[400]),
           const SizedBox(height: 16),
           Text(
             message,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
-          if (_searchTerm.isNotEmpty || _filterType != null || _filterStatus != null) ...[
+          if (_searchTerm.isNotEmpty ||
+              _filterType != null ||
+              _filterStatus != null) ...[
             const SizedBox(height: 8),
             TextButton(
               onPressed: _clearFilters,
@@ -229,7 +239,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       ),
     );
   }
-  
+
   void _showSearchDialog() {
     showDialog(
       context: context,
@@ -265,13 +275,13 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       ),
     );
   }
-  
+
   void _toggleFilters() {
     setState(() {
       _showFilters = !_showFilters;
     });
   }
-  
+
   void _clearFilters() {
     setState(() {
       _searchTerm = '';
@@ -279,7 +289,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       _filterStatus = null;
     });
   }
-  
+
   void _showLogDetails(LogEntry entry) {
     showDialog(
       context: context,
@@ -287,10 +297,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
         title: const Text('Detalhes do Comando'),
         content: SizedBox(
           width: double.maxFinite,
-          child: LogEntryTile(
-            entry: entry,
-            showDetails: true,
-          ),
+          child: LogEntryTile(entry: entry, showDetails: true),
         ),
         actions: [
           TextButton(
@@ -301,7 +308,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       ),
     );
   }
-  
+
   void _handleMenuAction(String action) {
     switch (action) {
       case 'stats':
@@ -321,11 +328,11 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
         break;
     }
   }
-  
+
   void _showSessionStats() {
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
     final stats = sshProvider.getSessionStats();
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -336,23 +343,45 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               _buildStatRow('Total de comandos', '${stats['totalCommands']}'),
-              _buildStatRow('Comandos bem-sucedidos', '${stats['successfulCommands']}'),
+              _buildStatRow(
+                'Comandos bem-sucedidos',
+                '${stats['successfulCommands']}',
+              ),
               _buildStatRow('Comandos com erro', '${stats['failedCommands']}'),
-              _buildStatRow('Taxa de sucesso', '${(stats['successRate'] * 100).toStringAsFixed(1)}%'),
-              _buildStatRow('Duração total', _formatDuration(stats['totalDuration'])),
-              _buildStatRow('Duração da sessão', _formatDuration(stats['sessionDuration'])),
-              
+              _buildStatRow(
+                'Taxa de sucesso',
+                '${(stats['successRate'] * 100).toStringAsFixed(1)}%',
+              ),
+              _buildStatRow(
+                'Duração total',
+                _formatDuration(stats['totalDuration']),
+              ),
+              _buildStatRow(
+                'Duração da sessão',
+                _formatDuration(stats['sessionDuration']),
+              ),
+
               const SizedBox(height: 16),
-              const Text('Comandos por tipo:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                'Comandos por tipo:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               ...((stats['commandsByType'] as Map<String, int>).entries.map(
                 (entry) => _buildStatRow('  ${entry.key}', '${entry.value}'),
               )),
-              
+
               const SizedBox(height: 16),
-              const Text('Comandos mais usados:', style: TextStyle(fontWeight: FontWeight.bold)),
-              ...((stats['mostUsedCommands'] as List<String>).asMap().entries.map(
-                (entry) => _buildStatRow('  ${entry.key + 1}. ${entry.value}', ''),
-              )),
+              const Text(
+                'Comandos mais usados:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              ...((stats['mostUsedCommands'] as List<String>)
+                  .asMap()
+                  .entries
+                  .map(
+                    (entry) =>
+                        _buildStatRow('  ${entry.key + 1}. ${entry.value}', ''),
+                  )),
             ],
           ),
         ),
@@ -365,7 +394,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       ),
     );
   }
-  
+
   Widget _buildStatRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
@@ -378,12 +407,12 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       ),
     );
   }
-  
+
   String _formatDuration(Duration duration) {
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;
     final seconds = duration.inSeconds % 60;
-    
+
     if (hours > 0) {
       return '${hours}h ${minutes}m ${seconds}s';
     } else if (minutes > 0) {
@@ -392,13 +421,15 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       return '${seconds}s';
     }
   }
-  
+
   void _confirmClearHistory() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Limpar Histórico'),
-        content: const Text('Tem certeza que deseja limpar todo o histórico de comandos? Esta ação não pode ser desfeita.'),
+        content: const Text(
+          'Tem certeza que deseja limpar todo o histórico de comandos? Esta ação não pode ser desfeita.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -406,9 +437,15 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              Provider.of<SshProvider>(context, listen: false).clearSessionLog();
+              Provider.of<SshProvider>(
+                context,
+                listen: false,
+              ).clearSessionLog();
               Navigator.pop(context);
-              _showNotification('Histórico limpo com sucesso', NotificationType.info);
+              _showNotification(
+                'Histórico limpo com sucesso',
+                NotificationType.info,
+              );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Limpar', style: TextStyle(color: Colors.white)),
@@ -417,53 +454,54 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       ),
     );
   }
-  
+
   Future<void> _saveLogToServer({String format = 'txt'}) async {
     try {
       final sshProvider = Provider.of<SshProvider>(context, listen: false);
-      
+
       if (!sshProvider.isConnected) {
-        _showNotification('Não conectado ao servidor SSH', NotificationType.error);
+        _showNotification(
+          'Não conectado ao servidor SSH',
+          NotificationType.error,
+        );
         return;
       }
-      
+
       if (sshProvider.sessionLog.isEmpty) {
-        _showNotification('Nenhum comando para salvar', NotificationType.warning);
+        _showNotification(
+          'Nenhum comando para salvar',
+          NotificationType.warning,
+        );
         return;
       }
-      
+
       final content = sshProvider.exportSessionLog(format: format);
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final fileName = 'easyssh_log_$timestamp.$format';
-      
+
       // Create temporary file content
-      final tempCommand = '''
+      final tempCommand =
+          '''
 cat > /tmp/$fileName << 'EOF'
 $content
 EOF
       ''';
-      
+
       await sshProvider.executeCommand(tempCommand);
-      
+
       _showNotification(
         'Log salvo como /tmp/$fileName',
         NotificationType.success,
       );
     } catch (e) {
-      _showNotification(
-        'Erro ao salvar log: $e',
-        NotificationType.error,
-      );
+      _showNotification('Erro ao salvar log: $e', NotificationType.error);
     }
   }
-  
+
   void _showNotification(String message, NotificationType type) {
-    NotificationService().showNotification(
-      message: message,
-      type: type,
-    );
+    NotificationService().showNotification(message: message, type: type);
   }
-  
+
   String _formatCommandType(CommandType type) {
     switch (type) {
       case CommandType.navigation:
@@ -480,7 +518,7 @@ EOF
         return 'Desconhecido';
     }
   }
-  
+
   String _formatStatus(CommandStatus status) {
     switch (status) {
       case CommandStatus.success:

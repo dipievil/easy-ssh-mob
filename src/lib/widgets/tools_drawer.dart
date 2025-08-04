@@ -29,7 +29,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
     setState(() {
       _isLoadingCustomCommands = true;
     });
-    
+
     try {
       final commands = await CustomCommandsService.loadCustomCommands();
       setState(() {
@@ -48,14 +48,16 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
     return Consumer<SshProvider>(
       builder: (context, sshProvider, child) {
         return UserAccountsDrawerHeader(
-          accountName: Text(sshProvider.currentCredentials?.username ?? 'Usuário'),
-          accountEmail: Text('${sshProvider.currentCredentials?.host ?? 'localhost'}:${sshProvider.currentCredentials?.port ?? 22}'),
+          accountName: Text(
+            sshProvider.currentCredentials?.username ?? 'Usuário',
+          ),
+          accountEmail: Text(
+            '${sshProvider.currentCredentials?.host ?? 'localhost'}:${sshProvider.currentCredentials?.port ?? 22}',
+          ),
           currentAccountPicture: const CircleAvatar(
             child: Icon(FontAwesomeIcons.server),
           ),
-          decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
-          ),
+          decoration: BoxDecoration(color: Theme.of(context).primaryColor),
         );
       },
     );
@@ -70,7 +72,10 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
             children: [
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.blue.shade50,
                   border: Border(
@@ -87,7 +92,11 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
                 ),
               ),
               ListTile(
-                leading: const Icon(FontAwesomeIcons.history, size: 20, color: Colors.blue),
+                leading: const Icon(
+                  FontAwesomeIcons.history,
+                  size: 20,
+                  color: Colors.blue,
+                ),
                 title: const Text('Histórico de Comandos'),
                 subtitle: Text(
                   '${sshProvider.sessionLog.length} comandos registados',
@@ -95,7 +104,10 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
                 ),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 12),
                 dense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 4,
+                ),
                 onTap: () {
                   Navigator.of(context).pop(); // Close drawer
                   Navigator.of(context).push(
@@ -107,14 +119,23 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
               ),
               if (sshProvider.sessionStartTime != null)
                 ListTile(
-                  leading: const Icon(FontAwesomeIcons.clock, size: 20, color: Colors.green),
+                  leading: const Icon(
+                    FontAwesomeIcons.clock,
+                    size: 20,
+                    color: Colors.green,
+                  ),
                   title: const Text('Tempo de Sessão'),
                   subtitle: Text(
-                    _formatSessionDuration(DateTime.now().difference(sshProvider.sessionStartTime!)),
+                    _formatSessionDuration(
+                      DateTime.now().difference(sshProvider.sessionStartTime!),
+                    ),
                     style: const TextStyle(fontSize: 12),
                   ),
                   dense: true,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
                 ),
             ],
           ),
@@ -127,7 +148,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;
     final seconds = duration.inSeconds % 60;
-    
+
     if (hours > 0) {
       return '${hours}h ${minutes}m';
     } else if (minutes > 0) {
@@ -149,9 +170,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: Colors.grey.shade200,
-            border: Border(
-              bottom: BorderSide(color: Colors.grey.shade300),
-            ),
+            border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
           ),
           child: Row(
             children: [
@@ -169,7 +188,10 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
                   onPressed: _addCustomCommand,
                   tooltip: 'Adicionar comando',
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                  constraints: const BoxConstraints(
+                    minWidth: 32,
+                    minHeight: 32,
+                  ),
                 ),
               ],
             ],
@@ -185,7 +207,11 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                Icon(FontAwesomeIcons.plus, color: Colors.grey.shade400, size: 32),
+                Icon(
+                  FontAwesomeIcons.plus,
+                  color: Colors.grey.shade400,
+                  size: 32,
+                ),
                 const SizedBox(height: 8),
                 Text(
                   'Nenhum comando personalizado',
@@ -201,7 +227,10 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
             ),
           )
         else
-          ...commands.map((command) => _buildCommandTile(command, isCustom: title == 'Personalizado')),
+          ...commands.map(
+            (command) =>
+                _buildCommandTile(command, isCustom: title == 'Personalizado'),
+          ),
       ],
     );
   }
@@ -210,7 +239,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
     return ListTile(
       leading: Icon(command.icon, size: 20),
       title: Text(command.name),
-      subtitle: command.description != null 
+      subtitle: command.description != null
           ? Text(
               command.description!,
               style: const TextStyle(fontSize: 12),
@@ -218,7 +247,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
               overflow: TextOverflow.ellipsis,
             )
           : null,
-      trailing: isCustom 
+      trailing: isCustom
           ? PopupMenuButton<String>(
               icon: const Icon(Icons.more_vert, size: 16),
               onSelected: (value) {
@@ -292,10 +321,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
           const SizedBox(height: 8),
           Text(
             'Easy SSH Mob v1.0.0',
-            style: TextStyle(
-              color: Colors.grey.shade600,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
           ),
         ],
       ),
@@ -304,9 +330,9 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
 
   Future<void> _executeCommand(CommandItem command) async {
     Navigator.of(context).pop(); // Close drawer
-    
+
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
-    
+
     if (!sshProvider.isConnected) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -325,7 +351,10 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
             const SizedBox(
               width: 20,
               height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(width: 16),
             Text('Executando: ${command.name}...'),
@@ -336,8 +365,10 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
     );
 
     try {
-      final result = await sshProvider.executeCommandWithResult(command.command);
-      
+      final result = await sshProvider.executeCommandWithResult(
+        command.command,
+      );
+
       if (result != null && mounted) {
         _showCommandResultDialog(command, result);
       }
@@ -347,10 +378,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
           SnackBar(
             content: Text('Erro ao executar ${command.name}: $e'),
             backgroundColor: Colors.red,
-            action: SnackBarAction(
-              label: 'OK',
-              onPressed: () {},
-            ),
+            action: SnackBarAction(label: 'OK', onPressed: () {}),
           ),
         );
       }
@@ -366,10 +394,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
             Icon(command.icon, size: 20),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(
-                command.name,
-                style: const TextStyle(fontSize: 18),
-              ),
+              child: Text(command.name, style: const TextStyle(fontSize: 18)),
             ),
           ],
         ),
@@ -389,7 +414,11 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
               // Copy to clipboard functionality would go here
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Resultado copiado para a área de transferência')),
+                const SnackBar(
+                  content: Text(
+                    'Resultado copiado para a área de transferência',
+                  ),
+                ),
               );
             },
             icon: const Icon(FontAwesomeIcons.copy, size: 16),
@@ -409,7 +438,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
       context: context,
       builder: (context) => const AddCustomCommandDialog(),
     );
-    
+
     if (result == true) {
       _loadCustomCommands();
     }
@@ -420,7 +449,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
       context: context,
       builder: (context) => AddCustomCommandDialog(editCommand: command),
     );
-    
+
     if (result == true) {
       _loadCustomCommands();
     }
@@ -469,13 +498,15 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
 
   Future<void> _exportCommands() async {
     Navigator.of(context).pop(); // Close drawer
-    
+
     try {
       final exported = await CustomCommandsService.exportCustomCommands();
       // In a real app, you would use a file picker or share dialog
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Comandos exportados (funcionalidade de arquivo em desenvolvimento)'),
+          content: const Text(
+            'Comandos exportados (funcionalidade de arquivo em desenvolvimento)',
+          ),
           action: SnackBarAction(
             label: 'Ver JSON',
             onPressed: () {
@@ -514,11 +545,13 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
 
   Future<void> _importCommands() async {
     Navigator.of(context).pop(); // Close drawer
-    
+
     // In a real app, you would use a file picker
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Funcionalidade de importação de arquivo em desenvolvimento'),
+        content: Text(
+          'Funcionalidade de importação de arquivo em desenvolvimento',
+        ),
       ),
     );
   }
@@ -534,10 +567,22 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
               padding: EdgeInsets.zero,
               children: [
                 _buildSessionSection(),
-                _buildCommandSection('Informações', PredefinedCommands.getCommandsForCategory('Informações')),
-                _buildCommandSection('Sistema', PredefinedCommands.getCommandsForCategory('Sistema')),
-                _buildCommandSection('Rede', PredefinedCommands.getCommandsForCategory('Rede')),
-                _buildCommandSection('Logs', PredefinedCommands.getCommandsForCategory('Logs')),
+                _buildCommandSection(
+                  'Informações',
+                  PredefinedCommands.getCommandsForCategory('Informações'),
+                ),
+                _buildCommandSection(
+                  'Sistema',
+                  PredefinedCommands.getCommandsForCategory('Sistema'),
+                ),
+                _buildCommandSection(
+                  'Rede',
+                  PredefinedCommands.getCommandsForCategory('Rede'),
+                ),
+                _buildCommandSection(
+                  'Logs',
+                  PredefinedCommands.getCommandsForCategory('Logs'),
+                ),
                 _buildCommandSection('Personalizado', _customCommands),
               ],
             ),

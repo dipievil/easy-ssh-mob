@@ -5,7 +5,7 @@ import '../services/custom_commands_service.dart';
 
 class AddCustomCommandDialog extends StatefulWidget {
   final CommandItem? editCommand;
-  
+
   const AddCustomCommandDialog({super.key, this.editCommand});
 
   @override
@@ -17,7 +17,7 @@ class _AddCustomCommandDialogState extends State<AddCustomCommandDialog> {
   final _nameController = TextEditingController();
   final _commandController = TextEditingController();
   final _descriptionController = TextEditingController();
-  
+
   IconData _selectedIcon = FontAwesomeIcons.terminal;
   bool _isLoading = false;
 
@@ -97,11 +97,16 @@ class _AddCustomCommandDialogState extends State<AddCustomCommandDialog> {
         _nameController.text.trim(),
         _commandController.text.trim(),
         _selectedIcon,
-        _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim(),
+        _descriptionController.text.trim().isEmpty
+            ? null
+            : _descriptionController.text.trim(),
       );
 
       if (widget.editCommand != null) {
-        await CustomCommandsService.updateCustomCommand(widget.editCommand!, command);
+        await CustomCommandsService.updateCustomCommand(
+          widget.editCommand!,
+          command,
+        );
       } else {
         await CustomCommandsService.addCustomCommand(command);
       }
@@ -110,9 +115,11 @@ class _AddCustomCommandDialogState extends State<AddCustomCommandDialog> {
         Navigator.of(context).pop(true);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(widget.editCommand != null 
-                ? 'Comando atualizado com sucesso!' 
-                : 'Comando adicionado com sucesso!'),
+            content: Text(
+              widget.editCommand != null
+                  ? 'Comando atualizado com sucesso!'
+                  : 'Comando adicionado com sucesso!',
+            ),
             backgroundColor: Colors.green,
           ),
         );
@@ -120,10 +127,7 @@ class _AddCustomCommandDialogState extends State<AddCustomCommandDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erro: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Erro: $e'), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -152,7 +156,7 @@ class _AddCustomCommandDialogState extends State<AddCustomCommandDialog> {
             itemBuilder: (context, index) {
               final icon = _availableIcons[index];
               final isSelected = icon == _selectedIcon;
-              
+
               return GestureDetector(
                 onTap: () {
                   setState(() {
@@ -165,7 +169,9 @@ class _AddCustomCommandDialogState extends State<AddCustomCommandDialog> {
                   decoration: BoxDecoration(
                     color: isSelected ? Theme.of(context).primaryColor : null,
                     border: Border.all(
-                      color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
+                      color: isSelected
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey,
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -192,7 +198,11 @@ class _AddCustomCommandDialogState extends State<AddCustomCommandDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.editCommand != null ? 'Editar Comando' : 'Adicionar Comando Personalizado'),
+      title: Text(
+        widget.editCommand != null
+            ? 'Editar Comando'
+            : 'Adicionar Comando Personalizado',
+      ),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(

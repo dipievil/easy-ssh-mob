@@ -4,7 +4,7 @@ import '../models/ssh_credentials.dart';
 
 class SecureStorageService {
   static const String _credentialsKey = 'ssh_credentials';
-  
+
   static const FlutterSecureStorage _secureStorage = FlutterSecureStorage(
     aOptions: AndroidOptions(
       encryptedSharedPreferences: true,
