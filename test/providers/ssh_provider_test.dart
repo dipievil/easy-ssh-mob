@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../src/lib/providers/ssh_provider.dart';
 import '../../src/lib/models/ssh_connection_state.dart';
 import '../../src/lib/models/ssh_file.dart';
-import '../../src/lib/models/execution_result.dart';
 
 void main() {
   group('SshProvider', () {
