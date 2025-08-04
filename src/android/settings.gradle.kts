@@ -23,3 +23,4 @@ plugins {
 }
 
 include(":app")
+project(":app").projectDir = file("app")

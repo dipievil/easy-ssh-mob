@@ -1,0 +1,64 @@
+//src\android\build.gradle.kts
+import java.util.Properties
+import java.io.FileInputStream
+
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+val newBuildDir: Directory = rootProject.layout.buildDirectory.dir("../../build").get()
+rootProject.layout.buildDirectory.value(newBuildDir)
+
+subprojects {
+    val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
+    project.layout.buildDirectory.value(newSubprojectBuildDir)
+    project.evaluationDependsOn(":app")
+}
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
+android {
+    compileSdk = 33 // Ajuste conforme necessário
+    namespace = "com.android.easyssh"
+
+    defaultConfig {
+        applicationId = "com.android.easyssh"
+        minSdk = 21
+        targetSdk = 33
+        versionCode = 1
+        versionName = "1.0.0"
+    }
+
+    signingConfigs {
+        create("test") {
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+            storeFile = keystoreProperties["storeFile"]?.let { file(it) }
+            storePassword = keystoreProperties["storePassword"] as String
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName("test")
+        }
+    }
+
+    sourceSets {
+        getByName("main") {
+            manifest.srcFile("app/src/main/AndroidManifest.xml")
+        }
+    }
+}
