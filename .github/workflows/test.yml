@@ -81,6 +81,7 @@ jobs:
       - name: Generate mocks
         run: |
           cd src
+          flutter pub add build_runner
           flutter packages pub run build_runner build --delete-conflicting-outputs
 
       - name: Run unit tests
