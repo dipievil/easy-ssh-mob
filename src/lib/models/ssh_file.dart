@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/file_icon_manager.dart';
+import '../services/file_icon_manager.dart';
 
 /// Enum representing different file types based on ls -F output
 enum FileType {

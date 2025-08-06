@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../../src/lib/services/notification_service.dart';
+import '../../../src/lib/services/notification_service.dart';
 
 void main() {
   group('NotificationService Tests', () {
@@ -12,7 +12,7 @@ void main() {
     test('should be a singleton', () {
       final instance1 = NotificationService();
       final instance2 = NotificationService();
-      expect(instance1, equals(instance2));
+      expect(instance1, same(instance2));
     });
     
     test('should have default settings', () {

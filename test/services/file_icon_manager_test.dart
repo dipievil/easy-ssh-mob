@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../../src/lib/services/file_icon_manager.dart';
-import '../../src/lib/models/ssh_file.dart';
+import '../../../src/lib/services/file_icon_manager.dart';
+import '../../../src/lib/models/ssh_file.dart';
 
 void main() {
   group('FileIconManager Tests', () {

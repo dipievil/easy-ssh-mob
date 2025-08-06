@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../../src/lib/services/error_handler.dart';
+import '../../../src/lib/services/error_handler.dart';
 
 void main() {
   group('ErrorHandler Tests', () {

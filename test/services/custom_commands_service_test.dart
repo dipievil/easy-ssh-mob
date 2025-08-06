@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../src/lib/models/command_item.dart';
-import '../../src/lib/services/custom_commands_service.dart';
+import 'package:flutter/material.dart';
+import '../../../src/lib/models/command_item.dart';
+import '../../../src/lib/services/custom_commands_service.dart';
 
 void main() {
   group('CustomCommandsService', () {
@@ -24,7 +24,7 @@ void main() {
       const command = CommandItem(
         'Test Command',
         'echo "test"',
-        FontAwesomeIcons.terminal,
+        Icons.terminal,
         'Test description',
       );
 
@@ -40,7 +40,7 @@ void main() {
       const command = CommandItem(
         'Test Command',
         'echo "test"',
-        FontAwesomeIcons.terminal,
+        Icons.terminal,
       );
 
       await CustomCommandsService.addCustomCommand(command);
@@ -56,7 +56,7 @@ void main() {
       const command = CommandItem(
         'Test Command',
         'echo "test"',
-        FontAwesomeIcons.terminal,
+        Icons.terminal,
       );
 
       await CustomCommandsService.addCustomCommand(command);
@@ -70,12 +70,12 @@ void main() {
       const oldCommand = CommandItem(
         'Old Command',
         'echo "old"',
-        FontAwesomeIcons.terminal,
+        Icons.terminal,
       );
       const newCommand = CommandItem(
         'New Command',
         'echo "new"',
-        FontAwesomeIcons.home,
+        Icons.home,
       );
 
       await CustomCommandsService.addCustomCommand(oldCommand);
@@ -88,8 +88,8 @@ void main() {
     });
 
     test('should export and import commands', () async {
-      const command1 = CommandItem('Command 1', 'echo "1"', FontAwesomeIcons.terminal);
-      const command2 = CommandItem('Command 2', 'echo "2"', FontAwesomeIcons.home);
+      const command1 = CommandItem('Command 1', 'echo "1"', Icons.terminal);
+      const command2 = CommandItem('Command 2', 'echo "2"', Icons.home);
 
       await CustomCommandsService.addCustomCommand(command1);
       await CustomCommandsService.addCustomCommand(command2);
@@ -108,7 +108,7 @@ void main() {
     test('should check if has custom commands', () async {
       expect(await CustomCommandsService.hasCustomCommands(), isFalse);
 
-      const command = CommandItem('Test', 'echo "test"', FontAwesomeIcons.terminal);
+      const command = CommandItem('Test', 'echo "test"', Icons.terminal);
       await CustomCommandsService.addCustomCommand(command);
 
       expect(await CustomCommandsService.hasCustomCommands(), isTrue);
