@@ -125,7 +125,9 @@ class _NotificationSettingsScreenState
                       const SizedBox(width: 8),
                       Text(
                         'Configurações de Som',
-                        style: Theme.of(context).textTheme.titleMedium
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -176,7 +178,9 @@ class _NotificationSettingsScreenState
                       const SizedBox(width: 8),
                       Text(
                         'Configurações de Vibração',
-                        style: Theme.of(context).textTheme.titleMedium
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -212,7 +216,9 @@ class _NotificationSettingsScreenState
                       const SizedBox(width: 8),
                       Text(
                         'Testar Notificações',
-                        style: Theme.of(context).textTheme.titleMedium
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -252,9 +258,9 @@ class _NotificationSettingsScreenState
                       Text(
                         'Tipos de Notificação',
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue.shade800,
-                        ),
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue.shade800,
+                            ),
                       ),
                     ],
                   ),

@@ -55,9 +55,8 @@ class SshFile {
     }
 
     // Construct full path
-    String fullPath = currentPath.endsWith('/')
-        ? '$currentPath$name'
-        : '$currentPath/$name';
+    String fullPath =
+        currentPath.endsWith('/') ? '$currentPath$name' : '$currentPath/$name';
 
     return SshFile(
       name: name,

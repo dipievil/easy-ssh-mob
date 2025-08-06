@@ -448,19 +448,22 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
                       file.isTextFile
                           ? '${file.typeDescription} • Arquivo de texto'
                           : file.isExecutable || file.mightBeExecutable
-                          ? '${file.typeDescription} • ${file.executionHint}'
-                          : file.typeDescription,
+                              ? '${file.typeDescription} • ${file.executionHint}'
+                              : file.typeDescription,
                     ),
                     trailing: file.isDirectory
                         ? const Icon(Icons.arrow_forward_ios)
                         : file.isTextFile
-                        ? const Icon(Icons.description, color: Colors.blue)
-                        : (file.isExecutable || file.mightBeExecutable)
-                        ? Icon(
-                            Icons.play_arrow,
-                            color: isExecuting ? Colors.grey : Colors.green,
-                          )
-                        : const Icon(Icons.info_outline, color: Colors.grey),
+                            ? const Icon(Icons.description, color: Colors.blue)
+                            : (file.isExecutable || file.mightBeExecutable)
+                                ? Icon(
+                                    Icons.play_arrow,
+                                    color: isExecuting
+                                        ? Colors.grey
+                                        : Colors.green,
+                                  )
+                                : const Icon(Icons.info_outline,
+                                    color: Colors.grey),
                     onTap: isExecuting
                         ? null // Disable tap while executing
                         : () => _handleFileTap(file),

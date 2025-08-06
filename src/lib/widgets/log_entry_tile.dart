@@ -102,7 +102,6 @@ class LogEntryTile extends StatelessWidget {
           _buildDetailRow('Duração', entry.durationFormatted),
           if (entry.exitCode != null)
             _buildDetailRow('Código de Saída', '${entry.exitCode}'),
-
           if (entry.stdout.isNotEmpty) ...[
             const SizedBox(height: 12),
             Text(
@@ -126,15 +125,14 @@ class LogEntryTile extends StatelessWidget {
               ),
             ),
           ],
-
           if (entry.stderr.isNotEmpty) ...[
             const SizedBox(height: 12),
             Text(
               'STDERR:',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.red,
-              ),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
             ),
             const SizedBox(height: 4),
             Container(
@@ -155,7 +153,6 @@ class LogEntryTile extends StatelessWidget {
               ),
             ),
           ],
-
           if (entry.metadata != null && entry.metadata!.isNotEmpty) ...[
             const SizedBox(height: 12),
             Text(

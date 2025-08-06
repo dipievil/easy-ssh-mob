@@ -13,19 +13,19 @@ class SlideRoute extends PageRouteBuilder {
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.easeInOut,
   }) : super(
-         pageBuilder: (context, animation, secondaryAnimation) => page,
-         transitionDuration: duration,
-         reverseTransitionDuration: duration,
-         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-           final offset = _getOffset(direction);
-           final tween = Tween(begin: offset, end: Offset.zero);
-           final offsetAnimation = animation.drive(
-             tween.chain(CurveTween(curve: curve)),
-           );
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionDuration: duration,
+          reverseTransitionDuration: duration,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            final offset = _getOffset(direction);
+            final tween = Tween(begin: offset, end: Offset.zero);
+            final offsetAnimation = animation.drive(
+              tween.chain(CurveTween(curve: curve)),
+            );
 
-           return SlideTransition(position: offsetAnimation, child: child);
-         },
-       );
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        );
 
   static Offset _getOffset(AxisDirection direction) {
     switch (direction) {
@@ -50,12 +50,12 @@ class FadeRoute extends PageRouteBuilder {
     required this.page,
     this.duration = const Duration(milliseconds: 300),
   }) : super(
-         pageBuilder: (context, animation, secondaryAnimation) => page,
-         transitionDuration: duration,
-         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-           return FadeTransition(opacity: animation, child: child);
-         },
-       );
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionDuration: duration,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        );
 }
 
 /// Scale route transition
@@ -69,18 +69,18 @@ class ScaleRoute extends PageRouteBuilder {
     this.duration = const Duration(milliseconds: 300),
     this.alignment = Alignment.center,
   }) : super(
-         pageBuilder: (context, animation, secondaryAnimation) => page,
-         transitionDuration: duration,
-         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-           return ScaleTransition(
-             scale: Tween<double>(begin: 0.0, end: 1.0).animate(
-               CurvedAnimation(parent: animation, curve: Curves.fastOutSlowIn),
-             ),
-             alignment: alignment,
-             child: child,
-           );
-         },
-       );
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionDuration: duration,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return ScaleTransition(
+              scale: Tween<double>(begin: 0.0, end: 1.0).animate(
+                CurvedAnimation(parent: animation, curve: Curves.fastOutSlowIn),
+              ),
+              alignment: alignment,
+              child: child,
+            );
+          },
+        );
 }
 
 /// Bouncy scale animation widget
@@ -323,8 +323,7 @@ class _ShimmerAnimationState extends State<ShimmerAnimation>
     final theme = Theme.of(context);
     final baseColor =
         widget.baseColor ?? theme.colorScheme.surfaceContainerHighest;
-    final highlightColor =
-        widget.highlightColor ??
+    final highlightColor = widget.highlightColor ??
         theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
 
     return AnimatedBuilder(

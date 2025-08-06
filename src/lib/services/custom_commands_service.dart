@@ -127,9 +127,8 @@ class CustomCommandsService {
   }) async {
     try {
       final List<dynamic> commandsList = jsonDecode(jsonString);
-      final importedCommands = commandsList
-          .map((json) => CommandItem.fromJson(json))
-          .toList();
+      final importedCommands =
+          commandsList.map((json) => CommandItem.fromJson(json)).toList();
 
       List<CommandItem> existingCommands = [];
       if (!replaceExisting) {
@@ -137,12 +136,10 @@ class CustomCommandsService {
       }
 
       // Merge commands, avoiding duplicates
-      final Set<String> existingNames = existingCommands
-          .map((c) => c.name)
-          .toSet();
-      final Set<String> existingcommandsSet = existingCommands
-          .map((c) => c.command)
-          .toSet();
+      final Set<String> existingNames =
+          existingCommands.map((c) => c.name).toSet();
+      final Set<String> existingcommandsSet =
+          existingCommands.map((c) => c.command).toSet();
 
       for (final command in importedCommands) {
         if (!existingNames.contains(command.name) &&

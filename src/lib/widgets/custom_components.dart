@@ -93,8 +93,7 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors:
-              gradientColors ??
+          colors: gradientColors ??
               [
                 colorScheme.primary,
                 colorScheme.primary.withValues(alpha: 0.8),
@@ -143,8 +142,8 @@ class SshLoadingIndicator extends StatelessWidget {
             Text(
               message!,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
+                    color: colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -269,18 +268,18 @@ class StatusCard extends StatelessWidget {
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
                 if (subtitle != null) ...[
                   const SizedBox(height: 4),
                   Text(
                     subtitle!,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.7),
-                    ),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.7),
+                        ),
                   ),
                 ],
               ],
@@ -343,8 +342,7 @@ class SshListTile extends StatelessWidget {
         enableFeedback: enableFeedback,
         borderRadius: BorderRadius.circular(8),
         child: Padding(
-          padding:
-              contentPadding ??
+          padding: contentPadding ??
               (dense
                   ? const EdgeInsets.symmetric(horizontal: 16, vertical: 8)
                   : const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
@@ -358,18 +356,18 @@ class SshListTile extends StatelessWidget {
                   children: [
                     DefaultTextStyle(
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
+                            fontWeight: FontWeight.w500,
+                          ),
                       child: title,
                     ),
                     if (subtitle != null) ...[
                       const SizedBox(height: 2),
                       DefaultTextStyle(
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.7),
-                        ),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.7),
+                            ),
                         child: subtitle!,
                       ),
                     ],
