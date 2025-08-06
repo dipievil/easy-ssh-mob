@@ -194,8 +194,13 @@ void main() {
     });
 
     testWidgets('should call connect method with correct parameters', (WidgetTester tester) async {
-      when(mockProvider.connect(any, any, any, any, saveCredentials: anyNamed('saveCredentials')))
-          .thenAnswer((_) async => true);
+      when(mockProvider.connect(
+        host: anyNamed('host'), 
+        port: anyNamed('port'), 
+        username: anyNamed('username'), 
+        password: anyNamed('password'), 
+        saveCredentials: anyNamed('saveCredentials')
+      )).thenAnswer((_) async => true);
 
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
@@ -221,10 +226,10 @@ void main() {
 
       // Verificar se o método connect foi chamado com os parâmetros corretos
       verify(mockProvider.connect(
-        'test-host',
-        '22',
-        'test-user',
-        'test-pass',
+        host: 'test-host',
+        port: 22,
+        username: 'test-user',
+        password: 'test-pass',
         saveCredentials: true,
       )).called(1);
     });
