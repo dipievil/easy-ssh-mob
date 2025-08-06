@@ -19,7 +19,6 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
   FileContent? _fileContent;
   bool _isLoading = true;
   String? _errorMessage;
-  String _searchQuery = '';
   final List<int> _searchMatches = [];
   int _currentMatchIndex = -1;
   final TextEditingController _searchController = TextEditingController();
@@ -145,7 +144,6 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
     if (query.isEmpty || _fileContent == null) return;
 
     setState(() {
-      _searchQuery = query;
       _searchMatches.clear();
       _currentMatchIndex = -1;
     });
@@ -194,8 +192,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
     if (_searchMatches.isEmpty) return;
 
     setState(() {
-      _currentMatchIndex =
-          (_currentMatchIndex - 1 + _searchMatches.length) %
+      _currentMatchIndex = (_currentMatchIndex - 1 + _searchMatches.length) %
           _searchMatches.length;
     });
     _scrollToMatch();
@@ -287,7 +284,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(12),
-            color: Colors.orange.withOpacity(0.1),
+            color: Colors.orange.withValues(alpha: 0.1),
             child: Row(
               children: [
                 const Icon(Icons.info_outline, color: Colors.orange),
@@ -307,7 +304,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(8),
-            color: Theme.of(context).primaryColor.withOpacity(0.1),
+            color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
             child: Row(
               children: [
                 Text(

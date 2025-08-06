@@ -29,7 +29,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            icon: const Icon(FontAwesomeIcons.search),
+            icon: const Icon(FontAwesomeIcons.magnifyingGlass),
             onPressed: _showSearchDialog,
             tooltip: 'Buscar comandos',
           ),
@@ -55,7 +55,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
               const PopupMenuItem(
                 value: 'save_txt',
                 child: ListTile(
-                  leading: Icon(FontAwesomeIcons.fileAlt),
+                  leading: Icon(FontAwesomeIcons.fileLines),
                   title: Text('Salvar como TXT'),
                   contentPadding: EdgeInsets.zero,
                 ),
@@ -101,7 +101,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _saveLogToServer,
         tooltip: 'Salvar log no servidor',
-        child: const Icon(FontAwesomeIcons.save),
+        child: const Icon(FontAwesomeIcons.floppyDisk),
       ),
     );
   }
@@ -220,7 +220,8 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(FontAwesomeIcons.history, size: 64, color: Colors.grey[400]),
+          Icon(FontAwesomeIcons.clockRotateLeft,
+              size: 64, color: Colors.grey[400]),
           const SizedBox(height: 16),
           Text(
             message,
@@ -248,7 +249,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
         content: TextField(
           decoration: const InputDecoration(
             hintText: 'Digite o termo de busca...',
-            prefixIcon: Icon(FontAwesomeIcons.search),
+            prefixIcon: Icon(FontAwesomeIcons.magnifyingGlass),
           ),
           onChanged: (value) {
             setState(() {
@@ -360,16 +361,15 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
                 'Duração da sessão',
                 _formatDuration(stats['sessionDuration']),
               ),
-
               const SizedBox(height: 16),
               const Text(
                 'Comandos por tipo:',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               ...((stats['commandsByType'] as Map<String, int>).entries.map(
-                (entry) => _buildStatRow('  ${entry.key}', '${entry.value}'),
-              )),
-
+                    (entry) =>
+                        _buildStatRow('  ${entry.key}', '${entry.value}'),
+                  )),
               const SizedBox(height: 16),
               const Text(
                 'Comandos mais usados:',
@@ -480,8 +480,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       final fileName = 'easyssh_log_$timestamp.$format';
 
       // Create temporary file content
-      final tempCommand =
-          '''
+      final tempCommand = '''
 cat > /tmp/$fileName << 'EOF'
 $content
 EOF

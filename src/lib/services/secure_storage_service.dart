@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/ssh_credentials.dart';
 
@@ -31,7 +32,7 @@ class SecureStorageService {
       return true;
     } catch (e) {
       // Log error in production, you might want to use a logging service
-      print('Error saving credentials: $e');
+      debugPrint('Error saving credentials: $e');
       return false;
     }
   }
@@ -48,7 +49,7 @@ class SecureStorageService {
       return SSHCredentials.fromJson(jsonMap);
     } catch (e) {
       // Log error in production
-      print('Error loading credentials: $e');
+      debugPrint('Error loading credentials: $e');
       return null;
     }
   }
@@ -60,7 +61,7 @@ class SecureStorageService {
       return true;
     } catch (e) {
       // Log error in production
-      print('Error deleting credentials: $e');
+      debugPrint('Error deleting credentials: $e');
       return false;
     }
   }
@@ -72,7 +73,7 @@ class SecureStorageService {
       return value != null && value.isNotEmpty;
     } catch (e) {
       // Log error in production
-      print('Error checking stored credentials: $e');
+      debugPrint('Error checking stored credentials: $e');
       return false;
     }
   }
@@ -84,7 +85,7 @@ class SecureStorageService {
       return true;
     } catch (e) {
       // Log error in production
-      print('Error clearing all storage: $e');
+      debugPrint('Error clearing all storage: $e');
       return false;
     }
   }

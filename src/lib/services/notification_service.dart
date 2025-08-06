@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'sound_manager.dart';
@@ -90,7 +91,7 @@ class NotificationService {
         vibrateEnabled = vibrateEnabledStr.toLowerCase() == 'true';
       }
     } catch (e) {
-      print('Error loading notification preferences: $e');
+      debugPrint('Error loading notification preferences: $e');
     }
   }
 
@@ -110,7 +111,7 @@ class NotificationService {
         value: vibrateEnabled.toString(),
       );
     } catch (e) {
-      print('Error saving notification preferences: $e');
+      debugPrint('Error saving notification preferences: $e');
     }
   }
 
@@ -177,7 +178,7 @@ class NotificationService {
     try {
       await HapticFeedback.heavyImpact();
     } catch (e) {
-      print('Vibration not supported: $e');
+      debugPrint('Vibration not supported: $e');
     }
   }
 

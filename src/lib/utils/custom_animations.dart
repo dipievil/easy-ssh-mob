@@ -325,7 +325,7 @@ class _ShimmerAnimationState extends State<ShimmerAnimation>
         widget.baseColor ?? theme.colorScheme.surfaceContainerHighest;
     final highlightColor =
         widget.highlightColor ??
-        theme.colorScheme.surfaceContainerHighest.withOpacity(0.5);
+        theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
 
     return AnimatedBuilder(
       animation: _animation,

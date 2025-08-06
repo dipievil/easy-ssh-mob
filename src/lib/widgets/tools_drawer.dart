@@ -93,7 +93,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
               ),
               ListTile(
                 leading: const Icon(
-                  FontAwesomeIcons.history,
+                  FontAwesomeIcons.clockRotateLeft,
                   size: 20,
                   color: Colors.blue,
                 ),
@@ -265,7 +265,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
                   value: 'edit',
                   child: Row(
                     children: [
-                      Icon(FontAwesomeIcons.edit, size: 16),
+                      Icon(FontAwesomeIcons.penToSquare, size: 16),
                       SizedBox(width: 8),
                       Text('Editar'),
                     ],
@@ -479,19 +479,23 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
       try {
         await CustomCommandsService.removeCustomCommand(command);
         _loadCustomCommands();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Comando excluído com sucesso'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Comando excluído com sucesso'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erro ao excluir comando: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao excluir comando: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     }
   }
@@ -502,44 +506,48 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
     try {
       final exported = await CustomCommandsService.exportCustomCommands();
       // In a real app, you would use a file picker or share dialog
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
-            'Comandos exportados (funcionalidade de arquivo em desenvolvimento)',
-          ),
-          action: SnackBarAction(
-            label: 'Ver JSON',
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Comandos Exportados'),
-                  content: SizedBox(
-                    width: double.maxFinite,
-                    height: 300,
-                    child: SingleChildScrollView(
-                      child: SelectableText(exported),
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              'Comandos exportados (funcionalidade de arquivo em desenvolvimento)',
+            ),
+            action: SnackBarAction(
+              label: 'Ver JSON',
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Comandos Exportados'),
+                    content: SizedBox(
+                      width: double.maxFinite,
+                      height: 300,
+                      child: SingleChildScrollView(
+                        child: SelectableText(exported),
+                      ),
                     ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Fechar'),
+                      ),
+                    ],
                   ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Fechar'),
-                    ),
-                  ],
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-      );
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erro ao exportar: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao exportar: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

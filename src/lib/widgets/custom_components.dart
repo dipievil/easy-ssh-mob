@@ -29,7 +29,7 @@ class SshCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         hoverColor: enableHover
-            ? Theme.of(context).colorScheme.primary.withOpacity(0.04)
+            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.04)
             : null,
         child: Padding(
           padding: padding ?? const EdgeInsets.all(16),
@@ -97,8 +97,8 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
               gradientColors ??
               [
                 colorScheme.primary,
-                colorScheme.primary.withOpacity(0.8),
-                colorScheme.secondary.withOpacity(0.6),
+                colorScheme.primary.withValues(alpha: 0.8),
+                colorScheme.secondary.withValues(alpha: 0.6),
               ],
         ),
       ),
@@ -143,7 +143,7 @@ class SshLoadingIndicator extends StatelessWidget {
             Text(
               message!,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurface.withOpacity(0.7),
+                color: colorScheme.onSurface.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),
@@ -256,7 +256,7 @@ class StatusCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -279,7 +279,7 @@ class StatusCard extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.7),
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -297,11 +297,11 @@ class StatusCard extends StatelessWidget {
       case StatusType.success:
         return (FontAwesomeIcons.check, Colors.green);
       case StatusType.error:
-        return (FontAwesomeIcons.times, Colors.red);
+        return (FontAwesomeIcons.xmark, Colors.red);
       case StatusType.warning:
-        return (FontAwesomeIcons.exclamationTriangle, Colors.orange);
+        return (FontAwesomeIcons.triangleExclamation, Colors.orange);
       case StatusType.info:
-        return (FontAwesomeIcons.infoCircle, Colors.blue);
+        return (FontAwesomeIcons.circleInfo, Colors.blue);
     }
   }
 }
@@ -368,7 +368,7 @@ class SshListTile extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.7),
+                          ).colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                         child: subtitle!,
                       ),
@@ -495,7 +495,7 @@ class _ShimmerPlaceholderState extends State<ShimmerPlaceholder>
               end: Alignment.centerRight,
               colors: [
                 colorScheme.surfaceContainerHighest,
-                colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                 colorScheme.surfaceContainerHighest,
               ],
               stops: [

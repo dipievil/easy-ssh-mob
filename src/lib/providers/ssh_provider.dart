@@ -67,7 +67,7 @@ class SshProvider extends ChangeNotifier {
       _currentCredentials = await SecureStorageService.loadCredentials();
       notifyListeners();
     } catch (e) {
-      print('Error initializing SSH provider: $e');
+      debugPrint('Error initializing SSH provider: $e');
     }
   }
 
@@ -469,12 +469,10 @@ class SshProvider extends ChangeNotifier {
       final session = await _sshClient!.execute(command);
 
       // Set up timeout and capture streams
-      final Future<String> stdoutFuture = utf8.decoder
-          .bind(session.stdout)
-          .join();
-      final Future<String> stderrFuture = utf8.decoder
-          .bind(session.stderr)
-          .join();
+      final Future<String> stdoutFuture =
+          utf8.decoder.bind(session.stdout).join();
+      final Future<String> stderrFuture =
+          utf8.decoder.bind(session.stderr).join();
       final int? exitCode = session.exitCode;
 
       // Wait for all with timeout
@@ -569,8 +567,8 @@ class SshProvider extends ChangeNotifier {
           status: exitCode != 0
               ? CommandStatus.error
               : (stderr.isNotEmpty
-                    ? CommandStatus.partial
-                    : CommandStatus.success),
+                  ? CommandStatus.partial
+                  : CommandStatus.success),
         );
         _addLogEntry(logEntry);
       }
@@ -836,9 +834,8 @@ class SshProvider extends ChangeNotifier {
     final lineCountSession = await _sshClient!.execute(
       'wc -l "${file.fullPath}"',
     );
-    final lineCountOutput = await utf8.decoder
-        .bind(lineCountSession.stdout)
-        .join();
+    final lineCountOutput =
+        await utf8.decoder.bind(lineCountSession.stdout).join();
     final totalLines = int.tryParse(lineCountOutput.split(' ').first) ?? 0;
 
     final lines = content.split('\n');
@@ -1088,9 +1085,8 @@ class SshProvider extends ChangeNotifier {
 
     final mostUsedCommands = mostUsed.take(5).map((e) => e.key).toList();
 
-    final successRate = totalCommands > 0
-        ? successfulCommands / totalCommands
-        : 0.0;
+    final successRate =
+        totalCommands > 0 ? successfulCommands / totalCommands : 0.0;
 
     return {
       'totalCommands': totalCommands,
@@ -1130,9 +1126,12 @@ class SshProvider extends ChangeNotifier {
       }
 
       // Filter by date range
-      if (startDate != null && entry.timestamp.isBefore(startDate))
+      if (startDate != null && entry.timestamp.isBefore(startDate)) {
         return false;
-      if (endDate != null && entry.timestamp.isAfter(endDate)) return false;
+      }
+      if (endDate != null && entry.timestamp.isAfter(endDate)) {
+        return false;
+      }
 
       return true;
     }).toList();

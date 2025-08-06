@@ -58,13 +58,13 @@ class PredefinedCommands {
       CommandItem(
         'Processos',
         'ps aux | head -20',
-        FontAwesomeIcons.tasks,
+        FontAwesomeIcons.listCheck,
         'Lista de processos em execução',
       ),
       CommandItem(
         'Top Processos',
         'top -n 1 -b | head -20',
-        FontAwesomeIcons.tachometerAlt,
+        FontAwesomeIcons.gaugeHigh,
         'Processos que mais consomem recursos',
       ),
     ],
@@ -98,7 +98,7 @@ class PredefinedCommands {
       CommandItem(
         'Syslog',
         'tail -20 /var/log/syslog',
-        FontAwesomeIcons.fileAlt,
+        FontAwesomeIcons.fileLines,
         'Últimas entradas do log do sistema',
       ),
       CommandItem(
@@ -116,7 +116,7 @@ class PredefinedCommands {
       CommandItem(
         'Últimos Logins',
         'last -10',
-        FontAwesomeIcons.signInAlt,
+        FontAwesomeIcons.rightToBracket,
         'Últimos logins no sistema',
       ),
     ],

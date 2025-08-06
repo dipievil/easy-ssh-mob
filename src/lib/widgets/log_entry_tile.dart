@@ -215,9 +215,9 @@ class LogEntryTile extends StatelessWidget {
       case CommandType.execution:
         return FontAwesomeIcons.play;
       case CommandType.fileView:
-        return FontAwesomeIcons.fileAlt;
+        return FontAwesomeIcons.fileLines;
       case CommandType.system:
-        return FontAwesomeIcons.cog;
+        return FontAwesomeIcons.gear;
       case CommandType.custom:
         return FontAwesomeIcons.terminal;
       case CommandType.unknown:
@@ -228,15 +228,15 @@ class LogEntryTile extends StatelessWidget {
   IconData _getStatusIcon(CommandStatus status) {
     switch (status) {
       case CommandStatus.success:
-        return FontAwesomeIcons.checkCircle;
+        return FontAwesomeIcons.circleCheck;
       case CommandStatus.error:
-        return FontAwesomeIcons.exclamationTriangle;
+        return FontAwesomeIcons.triangleExclamation;
       case CommandStatus.timeout:
         return FontAwesomeIcons.clock;
       case CommandStatus.cancelled:
         return FontAwesomeIcons.ban;
       case CommandStatus.partial:
-        return FontAwesomeIcons.exclamationCircle;
+        return FontAwesomeIcons.circleExclamation;
     }
   }
 

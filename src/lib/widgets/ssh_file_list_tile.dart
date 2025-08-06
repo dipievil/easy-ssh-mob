@@ -23,28 +23,10 @@ class SshFileListTile extends StatefulWidget {
   State<SshFileListTile> createState() => _SshFileListTileState();
 }
 
-class _SshFileListTileState extends State<SshFileListTile>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-  bool _isPressed = false;
-
+class _SshFileListTileState extends State<SshFileListTile> {
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
   }
 
   /// Get appropriate subtitle text
@@ -80,32 +62,6 @@ class _SshFileListTileState extends State<SshFileListTile>
   /// Get enhanced icon color with improved detection
   Color _getEnhancedIconColor(BuildContext context) {
     return FileIconManager.getColorForFile(widget.file, context);
-  }
-
-  void _handleTapDown(TapDownDetails details) {
-    if (!widget.isLoading) {
-      setState(() {
-        _isPressed = true;
-      });
-      _animationController.forward();
-    }
-  }
-
-  void _handleTapUp(TapUpDetails details) {
-    _handleTapEnd();
-  }
-
-  void _handleTapCancel() {
-    _handleTapEnd();
-  }
-
-  void _handleTapEnd() {
-    if (_isPressed) {
-      setState(() {
-        _isPressed = false;
-      });
-      _animationController.reverse();
-    }
   }
 
   @override

@@ -242,7 +242,7 @@ class AdaptiveList extends StatelessWidget {
   Widget build(BuildContext context) {
     final shouldUseGrid =
         (ResponsiveBreakpoints.isTablet(context) && useGridOnTablet) ||
-        (ResponsiveBreakpoints.isDesktop(context) && useGridOnDesktop);
+            (ResponsiveBreakpoints.isDesktop(context) && useGridOnDesktop);
 
     if (shouldUseGrid) {
       return ResponsiveGrid(
@@ -294,8 +294,7 @@ class ResponsiveText extends StatelessWidget {
 
     final theme = Theme.of(context);
     final effectiveStyle = (baseStyle ?? theme.textTheme.bodyMedium!).copyWith(
-      fontSize:
-          (baseStyle?.fontSize ?? theme.textTheme.bodyMedium!.fontSize!) *
+      fontSize: (baseStyle?.fontSize ?? theme.textTheme.bodyMedium!.fontSize!) *
           scale,
     );
 
@@ -342,7 +341,7 @@ class ResponsiveSpacing extends StatelessWidget {
 
 /// Helper extension for responsive values
 extension ResponsiveValue<T> on BuildContext {
-  T responsive<T>({required T mobile, T? tablet, T? desktop}) {
+  R responsive<R>({required R mobile, R? tablet, R? desktop}) {
     if (ResponsiveBreakpoints.isDesktop(this)) {
       return desktop ?? tablet ?? mobile;
     } else if (ResponsiveBreakpoints.isTablet(this)) {

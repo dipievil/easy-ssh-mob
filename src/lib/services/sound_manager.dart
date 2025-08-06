@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'notification_service.dart';
 
@@ -27,7 +28,7 @@ class SoundManager {
         player.dispose();
       }
     } catch (e) {
-      print('Error playing notification sound: $e');
+      debugPrint('Error playing notification sound: $e');
       // Fallback to system beep or default notification sound
       await _playFallbackSound();
     }
@@ -43,7 +44,7 @@ class SoundManager {
       await player.play(AssetSource('sounds/error_beep.mp3'));
       player.dispose();
     } catch (e) {
-      print('Fallback sound also failed: $e');
+      debugPrint('Fallback sound also failed: $e');
       // At this point, we just fail silently
     }
   }

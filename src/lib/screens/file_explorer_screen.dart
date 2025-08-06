@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../providers/ssh_provider.dart';
 import '../models/ssh_file.dart';
-import '../widgets/ssh_file_list_tile.dart';
 import '../widgets/execution_result_dialog.dart';
 import '../widgets/file_type_indicator.dart';
 import '../widgets/error_widgets.dart';
@@ -13,7 +12,6 @@ import '../utils/custom_animations.dart';
 import '../utils/responsive_breakpoints.dart';
 import 'terminal_screen.dart';
 import 'file_viewer_screen.dart';
-import 'login_screen.dart';
 
 class FileExplorerScreen extends StatefulWidget {
   const FileExplorerScreen({super.key});
@@ -24,7 +22,6 @@ class FileExplorerScreen extends StatefulWidget {
 
 class _FileExplorerScreenState extends State<FileExplorerScreen> {
   bool _isLoading = false;
-  String _loadingFilePath = '';
   final Map<String, bool> _executingFiles = {};
   SshProvider? _lastSshProvider;
 
@@ -79,7 +76,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
       }
     } catch (e) {
       // Error handling is done by the provider
-      print('Error loading directory: $e');
+      debugPrint('Error loading directory: $e');
     } finally {
       setState(() {
         _isLoading = false;
@@ -157,12 +154,23 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
 
             return SlideInAnimation(
               delay: Duration(milliseconds: index * 50),
-              child: SshCard(
-                padding: const EdgeInsets.all(0),
-                onTap: () => _handleFileTap(file),
-                child: SshFileListTile(
-                  file: file,
-                  isLoading: _loadingFilePath == file.fullPath,
+              child: Card(
+                child: ListTile(
+                  leading: FileTypeIndicator(
+                    file: file,
+                    showExecutionHint: true,
+                  ),
+                  title: Text(file.name),
+                  subtitle: Text(file.typeDescription),
+                  trailing: file.isDirectory
+                      ? const Icon(Icons.arrow_forward_ios)
+                      : file.isTextFile
+                          ? const Icon(Icons.description, color: Colors.blue)
+                          : (file.isExecutable || file.mightBeExecutable)
+                              ? const Icon(Icons.play_arrow,
+                                  color: Colors.green)
+                              : const Icon(Icons.info_outline,
+                                  color: Colors.grey),
                   onTap: () => _handleFileTap(file),
                   onLongPress: () => _showFileOptions(context, file),
                 ),
@@ -178,10 +186,8 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
   Widget _buildBackButton() {
     return SlideInAnimation(
       delay: Duration.zero,
-      child: SshCard(
-        padding: const EdgeInsets.all(0),
-        onTap: () => _navigateToParent(),
-        child: SshListTile(
+      child: Card(
+        child: ListTile(
           leading: Icon(
             FontAwesomeIcons.arrowLeft,
             color: Theme.of(context).colorScheme.primary,
@@ -195,7 +201,8 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
           trailing: Icon(
             Icons.arrow_forward_ios,
             size: 16,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+            color:
+                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
           ),
           onTap: () => _navigateToParent(),
           dense: true,
@@ -204,10 +211,130 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     );
   }
 
+  /// Navigate back in history
+  Future<void> _navigateBack(SshProvider sshProvider) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await sshProvider.navigateBack();
+    } catch (e) {
+      _showErrorMessage('Erro ao voltar: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// Navigate to home directory
+  void _goHome() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final sshProvider = Provider.of<SshProvider>(context, listen: false);
+
+    try {
+      await sshProvider.navigateToHome();
+    } catch (e) {
+      _showErrorMessage('Erro ao navegar para home: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// Check if we are at the home directory
+  bool _isAtHome() {
+    final sshProvider = Provider.of<SshProvider>(context, listen: false);
+    final currentPath = sshProvider.currentPath;
+    final username = sshProvider.currentCredentials?.username;
+
+    // Check if we're at root home directories
+    if (currentPath == '/' ||
+        currentPath == '/home' ||
+        currentPath == '/root') {
+      return true;
+    }
+
+    // Check if we're at user home directory
+    if (username != null && currentPath == '/home/$username') {
+      return true;
+    }
+
+    return false;
+  }
+
+  /// Show tools drawer
+  void _showTools() {
+    // Open the drawer instead of showing a modal bottom sheet
+    Scaffold.of(context).openEndDrawer();
+  }
+
+  /// Build breadcrumb navigation widget
+  Widget _buildBreadcrumb(String currentPath) {
+    if (currentPath.isEmpty) {
+      return const Text('Easy SSH');
+    }
+
+    // Split path into components
+    final components =
+        currentPath.split('/').where((c) => c.isNotEmpty).toList();
+
+    if (components.isEmpty) {
+      return GestureDetector(
+        onTap: () => _navigateToDirectory('/'),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.home, size: 18),
+            SizedBox(width: 4),
+            Text('/', style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          // Home icon
+          GestureDetector(
+            onTap: () => _navigateToDirectory('/'),
+            child: const Icon(Icons.home, size: 18),
+          ),
+
+          // Path components
+          for (int i = 0; i < components.length; i++) ...[
+            const Icon(Icons.chevron_right, size: 16),
+            GestureDetector(
+              onTap: () {
+                final targetPath = '/${components.take(i + 1).join('/')}';
+                _navigateToDirectory(targetPath);
+              },
+              child: Text(
+                components[i],
+                style: TextStyle(
+                  fontWeight: i == components.length - 1
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   /// Navigate to directory with loading state
   Future<void> _navigateToDirectory(String path) async {
     setState(() {
-      _loadingFilePath = path;
+      _isLoading = true;
     });
 
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
@@ -218,7 +345,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
       _showErrorMessage('Erro ao navegar: $e');
     } finally {
       setState(() {
-        _loadingFilePath = '';
+        _isLoading = false;
       });
     }
   }
@@ -242,106 +369,122 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     }
   }
 
-  /// Navigate back in history
-  Future<void> _navigateBack(SshProvider sshProvider) async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      await sshProvider.navigateBack();
-    } catch (e) {
-      _showErrorMessage('Erro ao voltar: $e');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
+  void _showErrorMessage(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: Colors.red),
+      );
     }
   }
 
-  void _goHome() async {
-    setState(() {
-      _isLoading = true;
-    });
+  /// Build simple breadcrumb text for the AppBar title
+  String _buildBreadcrumbText(String currentPath) {
+    if (currentPath.isEmpty || currentPath == '/') {
+      return 'EasySSH';
+    }
 
-    final sshProvider = Provider.of<SshProvider>(context, listen: false);
+    final components =
+        currentPath.split('/').where((c) => c.isNotEmpty).toList();
+    if (components.isEmpty) {
+      return 'EasySSH';
+    }
 
-    try {
-      await sshProvider.navigateToHome();
-    } catch (e) {
-      _showErrorMessage('Erro ao navegar para home: $e');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
+    // Show only the last two components to save space
+    if (components.length <= 2) {
+      return '/${components.join('/')}';
+    } else {
+      return '.../${components[components.length - 2]}/${components.last}';
     }
   }
 
-  bool _isAtHome() {
-    final sshProvider = Provider.of<SshProvider>(context, listen: false);
-    final currentPath = sshProvider.currentPath;
-    final username = sshProvider.currentCredentials?.username;
-
-    // Check if we're at root home directories
-    if (currentPath == '/' ||
-        currentPath == '/home' ||
-        currentPath == '/root') {
-      return true;
-    }
-
-    // Check if we're at user home directory
-    if (username != null && currentPath == '/home/$username') {
-      return true;
-    }
-
-    return false;
-  }
-
-  void _showTools() {
-    // Open the drawer instead of showing a modal bottom sheet
-    Scaffold.of(context).openEndDrawer();
-  }
-
-  Future<void> _showLogoutDialog(BuildContext context) async {
-    final result = await showDialog<bool>(
+  /// Show file options context menu
+  void _showFileOptions(BuildContext context, SshFile file) {
+    showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Logout'),
-          content: const Text(
-            'Deseja desconectar e esquecer as credenciais salvas?',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(null),
-              child: const Text('Logout sem esquecer'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).colorScheme.error,
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                file.displayName,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              child: const Text('Logout e esquecer'),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Text(
+                'Tipo: ${file.typeDescription}',
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+              ),
+              Text(
+                'Caminho: ${file.fullPath}',
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+              ),
+              const Divider(height: 24),
+              // Directory options
+              if (file.isDirectory) ...[
+                ListTile(
+                  leading: const Icon(Icons.folder_open),
+                  title: const Text('Abrir'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _handleFileTap(file);
+                  },
+                ),
+              ],
+              // Executable options
+              if (file.isExecutable) ...[
+                ListTile(
+                  leading: const Icon(Icons.play_arrow, color: Colors.green),
+                  title: const Text('Executar'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _executeFile(file);
+                  },
+                ),
+              ],
+              // Regular file options
+              if (file.isRegularFile) ...[
+                ListTile(
+                  leading: const Icon(Icons.visibility),
+                  title: const Text('Visualizar'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _openFileViewer(file);
+                  },
+                ),
+              ],
+              // Common options for all files
+              ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: const Text('Propriedades'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showFileInfo(file);
+                },
+              ),
+            ],
+          ),
         );
       },
     );
+  }
 
-    if (result != null && context.mounted) {
-      final sshProvider = Provider.of<SshProvider>(context, listen: false);
-      await sshProvider.logout(forgetCredentials: result);
-
-      if (context.mounted) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-          (route) => false,
-        );
-      }
+  /// Handle file tap based on file type
+  void _handleFileTap(SshFile file) {
+    if (file.isDirectory) {
+      _navigateToDirectory(file.fullPath);
+    } else if (file.isTextFile) {
+      _openFileViewer(file);
+    } else if (file.isExecutable || file.mightBeExecutable) {
+      _executeFile(file);
+    } else {
+      // Show info for non-executable, non-text files
+      _showFileInfo(file);
     }
   }
 
@@ -419,228 +562,6 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     }
   }
 
-  void _showErrorMessage(String message) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), backgroundColor: Colors.red),
-      );
-    }
-  }
-
-  /// Build breadcrumb navigation for the AppBar
-  Widget _buildBreadcrumb(String currentPath) {
-    if (currentPath.isEmpty) {
-      return const Text('Easy SSH');
-    }
-
-    // Split path into components
-    final components = currentPath
-        .split('/')
-        .where((c) => c.isNotEmpty)
-        .toList();
-
-    if (components.isEmpty) {
-      return GestureDetector(
-        onTap: () => _navigateToDirectory('/'),
-        child: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.home, size: 18),
-            SizedBox(width: 4),
-            Text('/', style: TextStyle(fontWeight: FontWeight.bold)),
-          ],
-        ),
-      );
-    }
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          // Home icon
-          GestureDetector(
-            onTap: () => _navigateToDirectory('/'),
-            child: const Icon(Icons.home, size: 18),
-          ),
-
-          // Path components
-          for (int i = 0; i < components.length; i++) ...[
-            const Icon(Icons.chevron_right, size: 16),
-            GestureDetector(
-              onTap: () {
-                final targetPath = '/${components.take(i + 1).join('/')}';
-                _navigateToDirectory(targetPath);
-              },
-              child: Text(
-                components[i],
-                style: TextStyle(
-                  fontWeight: i == components.length - 1
-                      ? FontWeight.bold
-                      : FontWeight.normal,
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  /// Build simple breadcrumb text for the AppBar title
-  String _buildBreadcrumbText(String currentPath) {
-    if (currentPath.isEmpty || currentPath == '/') {
-      return 'EasySSH';
-    }
-
-    final components = currentPath
-        .split('/')
-        .where((c) => c.isNotEmpty)
-        .toList();
-    if (components.isEmpty) {
-      return 'EasySSH';
-    }
-
-    // Show only the last two components to save space
-    if (components.length <= 2) {
-      return '/${components.join('/')}';
-    } else {
-      return '.../${components[components.length - 2]}/${components.last}';
-    }
-  }
-
-  /// Show file options context menu
-  void _showFileOptions(BuildContext context, SshFile file) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                file.displayName,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Tipo: ${file.typeDescription}',
-                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
-              ),
-              Text(
-                'Caminho: ${file.fullPath}',
-                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
-              ),
-              const Divider(height: 24),
-              // Directory options
-              if (file.isDirectory) ...[
-                ListTile(
-                  leading: const Icon(Icons.folder_open),
-                  title: const Text('Abrir'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _handleFileTap(file);
-                  },
-                ),
-              ],
-              // Executable options
-              if (file.isExecutable) ...[
-                ListTile(
-                  leading: const Icon(Icons.play_arrow, color: Colors.green),
-                  title: const Text('Executar'),
-                  subtitle: const Text('(Disponível na Fase 3)'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showMessage('Execução será implementada na Fase 3');
-                  },
-                ),
-              ],
-              // Regular file options
-              if (file.isRegularFile) ...[
-                ListTile(
-                  leading: const Icon(Icons.visibility),
-                  title: const Text('Visualizar'),
-                  subtitle: const Text('(Disponível na Fase 3)'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showMessage('Visualização será implementada na Fase 3');
-                  },
-                ),
-                if (_isScript(file)) ...[
-                  ListTile(
-                    leading: const Icon(Icons.code, color: Colors.orange),
-                    title: const Text('Executar Script'),
-                    subtitle: const Text('(Disponível na Fase 3)'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      _showMessage(
-                        'Execução de scripts será implementada na Fase 3',
-                      );
-                    },
-                  ),
-                ],
-              ],
-              // Symlink options
-              if (file.isSymlink) ...[
-                ListTile(
-                  leading: const Icon(Icons.link, color: Colors.purple),
-                  title: const Text('Seguir Link'),
-                  subtitle: const Text('(Disponível na Fase 3)'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showMessage('Seguir links será implementado na Fase 3');
-                  },
-                ),
-              ],
-              // Common options for all files
-              ListTile(
-                leading: const Icon(Icons.info_outline),
-                title: const Text('Propriedades'),
-                subtitle: const Text('(Disponível na Fase 3)'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showMessage('Propriedades serão implementadas na Fase 3');
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  /// Check if file is a script
-  bool _isScript(SshFile file) {
-    final scriptExtensions = ['.sh', '.py', '.js', '.rb', '.pl', '.php'];
-    return scriptExtensions.any((ext) => file.name.toLowerCase().endsWith(ext));
-  }
-
-  void _showMessage(String message) {
-    if (mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
-    }
-  }
-
-  /// Handle file tap based on file type
-  void _handleFileTap(SshFile file) {
-    if (file.isDirectory) {
-      _navigateToDirectory(file.fullPath);
-    } else if (file.isTextFile) {
-      _openFileViewer(file);
-    } else if (file.isExecutable || file.mightBeExecutable) {
-      _executeFile(file);
-    } else {
-      // Show info for non-executable, non-text files
-      _showFileInfo(file);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<SshProvider>(
@@ -663,6 +584,14 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
                   },
                   icon: const Icon(FontAwesomeIcons.arrowLeft),
                   tooltip: 'Voltar',
+                ),
+
+              // Home button
+              if (!_isAtHome())
+                IconButton(
+                  onPressed: _isLoading ? null : () => _goHome(),
+                  icon: const Icon(FontAwesomeIcons.house),
+                  tooltip: 'Ir para Home',
                 ),
 
               // Refresh button
@@ -704,6 +633,13 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
                 },
                 icon: const Icon(FontAwesomeIcons.terminal),
                 tooltip: 'Terminal',
+              ),
+
+              // Tools button
+              IconButton(
+                onPressed: () => _showTools(),
+                icon: const Icon(FontAwesomeIcons.gear),
+                tooltip: 'Ferramentas',
               ),
             ],
           ),
@@ -784,55 +720,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
               }
 
               if (sshProvider.currentFiles.isNotEmpty) {
-                return ListView.builder(
-                  itemCount: sshProvider.currentFiles.length,
-                  padding: const EdgeInsets.all(8),
-                  itemBuilder: (context, index) {
-                    final file = sshProvider.currentFiles[index];
-                    final isExecuting = _executingFiles[file.fullPath] == true;
-
-                    return Card(
-                      child: ListTile(
-                        leading: isExecuting
-                            ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : FileTypeIndicator(
-                                file: file,
-                                showExecutionHint: true,
-                              ),
-                        title: Text(file.name),
-                        subtitle: Text(
-                          file.isTextFile
-                              ? '${file.typeDescription} • Arquivo de texto'
-                              : file.isExecutable || file.mightBeExecutable
-                              ? '${file.typeDescription} • ${file.executionHint}'
-                              : file.typeDescription,
-                        ),
-                        trailing: file.isDirectory
-                            ? const Icon(Icons.arrow_forward_ios)
-                            : file.isTextFile
-                            ? const Icon(Icons.description, color: Colors.blue)
-                            : (file.isExecutable || file.mightBeExecutable)
-                            ? Icon(
-                                Icons.play_arrow,
-                                color: isExecuting ? Colors.grey : Colors.green,
-                              )
-                            : const Icon(
-                                Icons.info_outline,
-                                color: Colors.grey,
-                              ),
-                        onTap: isExecuting
-                            ? null // Disable tap while executing
-                            : () => _handleFileTap(file),
-                      ),
-                    );
-                  },
-                );
+                return _buildFileList();
               }
 
               // Empty directory
@@ -844,13 +732,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
                     const SizedBox(height: 16),
                     Consumer<SshProvider>(
                       builder: (context, sshProvider, child) {
-                        return Text(
-                          'Diretório: ${sshProvider.currentPath}',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        );
+                        return _buildBreadcrumb(sshProvider.currentPath);
                       },
                     ),
                     const SizedBox(height: 8),

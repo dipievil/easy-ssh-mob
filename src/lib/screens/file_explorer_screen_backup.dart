@@ -41,7 +41,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
       }
     } catch (e) {
       // Error handling is done by the provider
-      print('Error loading directory: $e');
+      debugPrint('Error loading directory: $e');
     } finally {
       setState(() {
         _isLoading = false;

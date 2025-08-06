@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 class AppTheme {
   // Base colors for the app
   static const Color _primarySeedColor = Color(0xFF2196F3); // Material Blue
-  static const Color _secondarySeedColor = Color(0xFF03DAC6); // Material Teal
 
   /// Light theme configuration
   static ThemeData lightTheme = ThemeData(
