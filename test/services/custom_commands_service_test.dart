@@ -44,7 +44,7 @@ void main() {
       );
 
       await CustomCommandsService.addCustomCommand(command);
-      
+
       // Try to add the same command again
       expect(
         () => CustomCommandsService.addCustomCommand(command),
@@ -61,7 +61,7 @@ void main() {
 
       await CustomCommandsService.addCustomCommand(command);
       await CustomCommandsService.removeCustomCommand(command);
-      
+
       final commands = await CustomCommandsService.loadCustomCommands();
       expect(commands, isEmpty);
     });
@@ -80,7 +80,7 @@ void main() {
 
       await CustomCommandsService.addCustomCommand(oldCommand);
       await CustomCommandsService.updateCustomCommand(oldCommand, newCommand);
-      
+
       final commands = await CustomCommandsService.loadCustomCommands();
       expect(commands, hasLength(1));
       expect(commands.first.name, 'New Command');

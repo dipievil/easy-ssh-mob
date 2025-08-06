@@ -10,6 +10,11 @@ void main() {
       FlutterSecureStorage.setMockInitialValues({});
     });
 
+    tearDown(() async {
+      // Limpar dados após cada teste
+      await SecureStorageService.clearAll();
+    });
+
     test('should save valid credentials successfully', () async {
       const credentials = SSHCredentials(
         host: 'localhost',
@@ -19,7 +24,7 @@ void main() {
       );
 
       final result = await SecureStorageService.saveCredentials(credentials);
-      
+
       expect(result, true);
     });
 
@@ -31,8 +36,9 @@ void main() {
         password: 'testpass',
       );
 
-      final result = await SecureStorageService.saveCredentials(invalidCredentials);
-      
+      final result =
+          await SecureStorageService.saveCredentials(invalidCredentials);
+
       expect(result, false);
     });
 
@@ -46,10 +52,10 @@ void main() {
 
       // Salvar primeiro
       await SecureStorageService.saveCredentials(originalCredentials);
-      
+
       // Carregar
       final loadedCredentials = await SecureStorageService.loadCredentials();
-      
+
       expect(loadedCredentials, isNotNull);
       expect(loadedCredentials!.host, originalCredentials.host);
       expect(loadedCredentials.port, originalCredentials.port);
@@ -59,14 +65,14 @@ void main() {
 
     test('should return null when no credentials are stored', () async {
       final credentials = await SecureStorageService.loadCredentials();
-      
+
       expect(credentials, isNull);
     });
 
     test('should detect if credentials are stored', () async {
       // Inicialmente não deve ter credenciais
       expect(await SecureStorageService.hasStoredCredentials(), false);
-      
+
       // Salvar credenciais
       const credentials = SSHCredentials(
         host: 'test-host',
@@ -75,7 +81,7 @@ void main() {
         password: 'test-pass',
       );
       await SecureStorageService.saveCredentials(credentials);
-      
+
       // Agora deve detectar que tem credenciais
       expect(await SecureStorageService.hasStoredCredentials(), true);
     });
@@ -89,14 +95,14 @@ void main() {
         password: 'test-pass',
       );
       await SecureStorageService.saveCredentials(credentials);
-      
+
       // Verificar que estão salvas
       expect(await SecureStorageService.hasStoredCredentials(), true);
-      
+
       // Deletar
       final result = await SecureStorageService.deleteCredentials();
       expect(result, true);
-      
+
       // Verificar que foram deletadas
       expect(await SecureStorageService.hasStoredCredentials(), false);
       expect(await SecureStorageService.loadCredentials(), isNull);
@@ -111,14 +117,14 @@ void main() {
         password: 'test-pass',
       );
       await SecureStorageService.saveCredentials(credentials);
-      
+
       // Verificar que estão salvas
       expect(await SecureStorageService.hasStoredCredentials(), true);
-      
+
       // Limpar tudo
       final result = await SecureStorageService.clearAll();
       expect(result, true);
-      
+
       // Verificar que tudo foi limpo
       expect(await SecureStorageService.hasStoredCredentials(), false);
       expect(await SecureStorageService.loadCredentials(), isNull);
@@ -134,7 +140,7 @@ void main() {
       // Tentar carregar deve retornar null sem crash
       final credentials = await SecureStorageService.loadCredentials();
       expect(credentials, isNull);
-      
+
       // hasStoredCredentials ainda deve retornar true pois há dados (mesmo corrompidos)
       expect(await SecureStorageService.hasStoredCredentials(), true);
     });
@@ -149,7 +155,7 @@ void main() {
       // Deve retornar null para string vazia
       final credentials = await SecureStorageService.loadCredentials();
       expect(credentials, isNull);
-      
+
       // hasStoredCredentials deve retornar false para string vazia
       expect(await SecureStorageService.hasStoredCredentials(), false);
     });
@@ -163,12 +169,13 @@ void main() {
       );
 
       // Salvar
-      final saveResult = await SecureStorageService.saveCredentials(credentials);
+      final saveResult =
+          await SecureStorageService.saveCredentials(credentials);
       expect(saveResult, true);
-      
+
       // Carregar
       final loadedCredentials = await SecureStorageService.loadCredentials();
-      
+
       expect(loadedCredentials, isNotNull);
       expect(loadedCredentials!.host, credentials.host);
       expect(loadedCredentials.port, credentials.port);
@@ -185,12 +192,13 @@ void main() {
       );
 
       // Salvar
-      final saveResult = await SecureStorageService.saveCredentials(credentials);
+      final saveResult =
+          await SecureStorageService.saveCredentials(credentials);
       expect(saveResult, true);
-      
+
       // Carregar
       final loadedCredentials = await SecureStorageService.loadCredentials();
-      
+
       expect(loadedCredentials, isNotNull);
       expect(loadedCredentials!.host, credentials.host);
       expect(loadedCredentials.port, credentials.port);
