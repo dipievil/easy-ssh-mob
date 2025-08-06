@@ -16,6 +16,8 @@ Always follow projects's architecture and best practices.
 
 Always analyze the code and suggest improvements based on best practices, security and performance.
 
+Always run `dart analyze` and `dart format` before suggesting code.
+
 # style
 
 Use the same style as the project, which is Dart and flutter.
