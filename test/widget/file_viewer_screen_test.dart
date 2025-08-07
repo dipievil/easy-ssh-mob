@@ -42,7 +42,7 @@ void main() {
 
     testWidgets('should display loading indicator initially', (WidgetTester tester) async {
       // Mock para simular carregamento
-      when(mockProvider.getFileContent(any)).thenAnswer((_) async {
+      when(mockProvider.readFile(any)).thenAnswer((_) async {
         await Future.delayed(const Duration(seconds: 1));
         return FileContent(
           filePath: testFile.fullPath,
@@ -60,7 +60,7 @@ void main() {
 
     testWidgets('should display file content when loaded', (WidgetTester tester) async {
       const fileContent = 'Hello, this is test file content\nLine 2\nLine 3';
-      when(mockProvider.getFileContent(any)).thenAnswer((_) async {
+      when(mockProvider.readFile(any)).thenAnswer((_) async {
         return FileContent(
           filePath: testFile.fullPath,
           content: fileContent,
@@ -78,7 +78,7 @@ void main() {
     });
 
     testWidgets('should display error message when file loading fails', (WidgetTester tester) async {
-      when(mockProvider.getFileContent(any)).thenThrow(Exception('File not found'));
+      when(mockProvider.readFile(any)).thenThrow(Exception('File not found'));
 
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
@@ -89,7 +89,7 @@ void main() {
     });
 
     testWidgets('should show file name in app bar', (WidgetTester tester) async {
-      when(mockProvider.getFileContent(any)).thenAnswer((_) async {
+      when(mockProvider.readFile(any)).thenAnswer((_) async {
         return FileContent(
           filePath: testFile.fullPath,
           content: 'test content',
@@ -107,7 +107,7 @@ void main() {
 
     testWidgets('should display search functionality', (WidgetTester tester) async {
       const fileContent = 'Hello world\nThis is a test file\nHello again\nWorld ending';
-      when(mockProvider.getFileContent(any)).thenAnswer((_) async {
+      when(mockProvider.readFile(any)).thenAnswer((_) async {
         return FileContent(
           filePath: testFile.fullPath,
           content: fileContent,
@@ -138,7 +138,7 @@ void main() {
 
     testWidgets('should navigate between search results', (WidgetTester tester) async {
       const fileContent = 'Hello world\nThis is a test file\nHello again\nWorld ending';
-      when(mockProvider.getFileContent(any)).thenAnswer((_) async {
+      when(mockProvider.readFile(any)).thenAnswer((_) async {
         return FileContent(
           filePath: testFile.fullPath,
           content: fileContent,
@@ -175,7 +175,7 @@ void main() {
 
     testWidgets('should show file size and modification date', (WidgetTester tester) async {
       final modTime = DateTime(2024, 1, 15, 10, 30);
-      when(mockProvider.getFileContent(any)).thenAnswer((_) async {
+      when(mockProvider.readFile(any)).thenAnswer((_) async {
         return FileContent(
           filePath: testFile.fullPath,
           content: 'test content',
@@ -193,7 +193,7 @@ void main() {
     });
 
     testWidgets('should handle empty file content', (WidgetTester tester) async {
-      when(mockProvider.getFileContent(any)).thenAnswer((_) async {
+      when(mockProvider.readFile(any)).thenAnswer((_) async {
         return FileContent(
           filePath: testFile.fullPath,
           content: '',
@@ -211,7 +211,7 @@ void main() {
 
     testWidgets('should handle large file content with scrolling', (WidgetTester tester) async {
       final largeContent = List.generate(100, (i) => 'Line ${i + 1}: This is a long line with some content').join('\n');
-      when(mockProvider.getFileContent(any)).thenAnswer((_) async {
+      when(mockProvider.readFile(any)).thenAnswer((_) async {
         return FileContent(
           filePath: testFile.fullPath,
           content: largeContent,
@@ -233,7 +233,7 @@ void main() {
 
     testWidgets('should copy content to clipboard', (WidgetTester tester) async {
       const fileContent = 'Content to copy';
-      when(mockProvider.getFileContent(any)).thenAnswer((_) async {
+      when(mockProvider.readFile(any)).thenAnswer((_) async {
         return FileContent(
           filePath: testFile.fullPath,
           content: fileContent,
@@ -260,7 +260,7 @@ void main() {
       const initialContent = 'Initial content';
       const updatedContent = 'Updated content';
       
-      when(mockProvider.getFileContent(any))
+      when(mockProvider.readFile(any))
           .thenAnswer((_) async {
             return FileContent(
               filePath: testFile.fullPath,
@@ -276,7 +276,7 @@ void main() {
       expect(find.text(initialContent), findsOneWidget);
 
       // Alterar o mock para retornar conteúdo atualizado
-      when(mockProvider.getFileContent(any))
+      when(mockProvider.readFile(any))
           .thenAnswer((_) async {
             return FileContent(
               filePath: testFile.fullPath,
@@ -305,7 +305,7 @@ void main() {
         displayName: 'binary.exe',
       );
 
-      when(mockProvider.getFileContent(any)).thenThrow(
+      when(mockProvider.readFile(any)).thenThrow(
         Exception('Cannot display binary file'),
       );
 

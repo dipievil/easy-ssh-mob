@@ -21,25 +21,37 @@ void main() {
       mockProvider = MockSshProvider();
       mockLogEntries = [
         LogEntry(
+          id: '1',
           command: 'ls -la',
           type: CommandType.navigation,
+          workingDirectory: '/home/user',
           timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
           status: CommandStatus.success,
-          output: 'total 10\ndrwxr-xr-x 2 user user 4096 Jan 15 10:30 .',
+          stdout: 'total 10\ndrwxr-xr-x 2 user user 4096 Jan 15 10:30 .',
+          stderr: '',
+          duration: const Duration(milliseconds: 100),
         ),
         LogEntry(
+          id: '2',
           command: 'cat file.txt',
-          type: CommandType.viewing,
+          type: CommandType.fileView,
+          workingDirectory: '/home/user',
           timestamp: DateTime.now().subtract(const Duration(minutes: 3)),
           status: CommandStatus.success,
-          output: 'Hello World',
+          stdout: 'Hello World',
+          stderr: '',
+          duration: const Duration(milliseconds: 50),
         ),
         LogEntry(
+          id: '3',
           command: 'rm nonexistent.txt',
-          type: CommandType.operation,
+          type: CommandType.execution,
+          workingDirectory: '/home/user',
           timestamp: DateTime.now().subtract(const Duration(minutes: 1)),
           status: CommandStatus.error,
-          output: 'rm: cannot remove \'nonexistent.txt\': No such file or directory',
+          stdout: '',
+          stderr: 'rm: cannot remove \'nonexistent.txt\': No such file or directory',
+          duration: const Duration(milliseconds: 30),
         ),
       ];
 
@@ -249,8 +261,8 @@ void main() {
 
       // Verificar se existem ícones diferentes para diferentes tipos
       expect(find.byIcon(Icons.folder), findsWidgets); // Navigation
-      expect(find.byIcon(Icons.visibility), findsWidgets); // Viewing
-      expect(find.byIcon(Icons.build), findsWidgets); // Operation
+      expect(find.byIcon(Icons.visibility), findsWidgets); // FileView
+      expect(find.byIcon(Icons.build), findsWidgets); // Execution
     });
 
     testWidgets('should show command status indicators', (WidgetTester tester) async {
@@ -265,11 +277,15 @@ void main() {
     testWidgets('should scroll through long log list', (WidgetTester tester) async {
       // Criar lista longa de logs
       final longLogList = List.generate(50, (index) => LogEntry(
+        id: 'log_$index',
         command: 'command_$index',
-        type: CommandType.operation,
+        type: CommandType.execution,
+        workingDirectory: '/home/user',
         timestamp: DateTime.now().subtract(Duration(minutes: index)),
         status: CommandStatus.success,
-        output: 'output $index',
+        stdout: 'output $index',
+        stderr: '',
+        duration: const Duration(milliseconds: 100),
       ));
       
       when(mockProvider.sessionLog).thenReturn(longLogList);
