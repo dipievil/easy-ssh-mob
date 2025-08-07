@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../../src/lib/services/file_icon_manager.dart';
-import '../../src/lib/models/ssh_file.dart';
+import '../../../src/lib/services/file_icon_manager.dart';
+import '../../../src/lib/models/ssh_file.dart';
 
 void main() {
   group('FileIconManager Tests', () {
@@ -18,21 +18,21 @@ void main() {
           type: FileType.directory,
           displayName: 'folder/',
         );
-        
+
         const executable = SshFile(
           name: 'script.sh',
           fullPath: '/script.sh',
           type: FileType.executable,
           displayName: 'script.sh*',
         );
-        
+
         const regular = SshFile(
           name: 'file.txt',
           fullPath: '/file.txt',
           type: FileType.regular,
           displayName: 'file.txt',
         );
-        
+
         const symlink = SshFile(
           name: 'link',
           fullPath: '/link',
@@ -52,18 +52,18 @@ void main() {
           ('document.pdf', Icons.picture_as_pdf),
           ('text.md', Icons.notes),
           ('sheet.xlsx', Icons.table_chart),
-          
+
           // Código
           ('script.py', Icons.code),
           ('web.html', Icons.web),
           ('style.css', Icons.palette),
           ('data.json', Icons.data_object),
-          
+
           // Mídia
           ('photo.jpg', Icons.image),
           ('video.mp4', Icons.videocam),
           ('song.mp3', Icons.audiotrack),
-          
+
           // Arquivos
           ('archive.zip', Icons.archive),
           ('system.log', Icons.list_alt),
@@ -76,7 +76,7 @@ void main() {
             type: FileType.regular,
             displayName: filename,
           );
-          
+
           expect(
             FileIconManager.getIconForFile(file),
             expectedIcon,
@@ -103,7 +103,7 @@ void main() {
             type: FileType.directory,
             displayName: '$dirName/',
           );
-          
+
           expect(
             FileIconManager.getIconForFile(dir),
             expectedIcon,
@@ -130,7 +130,7 @@ void main() {
             type: FileType.regular,
             displayName: fileName,
           );
-          
+
           expect(
             FileIconManager.getIconForFile(file),
             expectedIcon,
@@ -141,7 +141,8 @@ void main() {
     });
 
     group('Color Selection', () {
-      testWidgets('should return appropriate colors for file types', (WidgetTester tester) async {
+      testWidgets('should return appropriate colors for file types',
+          (WidgetTester tester) async {
         await tester.pumpWidget(
           MaterialApp(
             theme: ThemeData.light(),
@@ -153,7 +154,7 @@ void main() {
                   type: FileType.directory,
                   displayName: 'folder/',
                 );
-                
+
                 const executable = SshFile(
                   name: 'script.sh',
                   fullPath: '/script.sh',
@@ -161,8 +162,10 @@ void main() {
                   displayName: 'script.sh*',
                 );
 
-                final dirColor = FileIconManager.getColorForFile(directory, context);
-                final execColor = FileIconManager.getColorForFile(executable, context);
+                final dirColor =
+                    FileIconManager.getColorForFile(directory, context);
+                final execColor =
+                    FileIconManager.getColorForFile(executable, context);
 
                 // Verificar se cores são apropriadas
                 expect(dirColor, Theme.of(context).colorScheme.primary);
@@ -175,7 +178,8 @@ void main() {
         );
       });
 
-      testWidgets('should return different colors for light and dark themes', (WidgetTester tester) async {
+      testWidgets('should return different colors for light and dark themes',
+          (WidgetTester tester) async {
         const file = SshFile(
           name: 'test.txt',
           fullPath: '/test.txt',
@@ -217,7 +221,8 @@ void main() {
         // As cores podem ser iguais ou diferentes dependendo da implementação
       });
 
-      testWidgets('should return specific colors for file extensions', (WidgetTester tester) async {
+      testWidgets('should return specific colors for file extensions',
+          (WidgetTester tester) async {
         await tester.pumpWidget(
           MaterialApp(
             theme: ThemeData.light(),
@@ -241,8 +246,9 @@ void main() {
                     type: FileType.regular,
                     displayName: filename,
                   );
-                  
-                  final actualColor = FileIconManager.getColorForFile(file, context);
+
+                  final actualColor =
+                      FileIconManager.getColorForFile(file, context);
                   expect(
                     actualColor,
                     expectedColor,
@@ -270,7 +276,7 @@ void main() {
         // Primeira chamada
         final icon1 = FileIconManager.getIconForFile(file);
         final stats1 = FileIconManager.getCacheStats();
-        
+
         // Segunda chamada (deve usar cache)
         final icon2 = FileIconManager.getIconForFile(file);
         final stats2 = FileIconManager.getCacheStats();
@@ -280,7 +286,8 @@ void main() {
         expect(stats2['iconCacheSize'], 1); // Não deve aumentar
       });
 
-      testWidgets('should cache colors for better performance', (WidgetTester tester) async {
+      testWidgets('should cache colors for better performance',
+          (WidgetTester tester) async {
         const file = SshFile(
           name: 'test.txt',
           fullPath: '/test.txt',
@@ -296,14 +303,15 @@ void main() {
                 // Primeira chamada
                 final color1 = FileIconManager.getColorForFile(file, context);
                 final stats1 = FileIconManager.getCacheStats();
-                
+
                 // Segunda chamada (deve usar cache)
                 final color2 = FileIconManager.getColorForFile(file, context);
                 final stats2 = FileIconManager.getCacheStats();
 
                 expect(color1, color2);
                 expect(stats1['colorCacheSize'], greaterThanOrEqualTo(1));
-                expect(stats2['colorCacheSize'], stats1['colorCacheSize']); // Não deve aumentar
+                expect(stats2['colorCacheSize'],
+                    stats1['colorCacheSize']); // Não deve aumentar
 
                 return Container();
               },
@@ -339,7 +347,7 @@ void main() {
 
         // Precarregar ícones comuns
         FileIconManager.preloadCommonIcons();
-        
+
         // Cache deve ter ícones agora
         final afterPreloadStats = FileIconManager.getCacheStats();
         expect(afterPreloadStats['iconCacheSize'], greaterThan(0));
@@ -392,14 +400,14 @@ void main() {
           type: FileType.regular,
           displayName: 'test.txt',
         );
-        
+
         const upperCase = SshFile(
           name: 'TEST.TXT',
           fullPath: '/TEST.TXT',
           type: FileType.regular,
           displayName: 'TEST.TXT',
         );
-        
+
         const mixedCase = SshFile(
           name: 'Test.TxT',
           fullPath: '/Test.TxT',
@@ -433,7 +441,7 @@ void main() {
     group('Performance', () {
       test('should handle large number of files efficiently', () {
         final stopwatch = Stopwatch()..start();
-        
+
         // Gerar 1000 arquivos diferentes
         for (int i = 0; i < 1000; i++) {
           final file = SshFile(
@@ -442,12 +450,12 @@ void main() {
             type: FileType.regular,
             displayName: 'file_$i.txt',
           );
-          
+
           FileIconManager.getIconForFile(file);
         }
-        
+
         stopwatch.stop();
-        
+
         // Deve processar 1000 arquivos em menos de 1 segundo
         expect(stopwatch.elapsedMilliseconds, lessThan(1000));
       });
