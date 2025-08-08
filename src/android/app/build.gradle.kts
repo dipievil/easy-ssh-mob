@@ -14,7 +14,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.android.easy_ssh_mob"
+    namespace = "com.example.easy_ssh_mob_new"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -36,26 +36,32 @@ android {
     }
 
     signingConfigs {
-        getByName("debug") {
-            keyAlias = keystoreProperties["debugKeyAlias"] as String
-            keyPassword = keystoreProperties["debugKeyPassword"] as String
-            storeFile = keystoreProperties["debugStoreFile"]?.let { file(it) }
-            storePassword = keystoreProperties["debugStorePassword"] as String
-        }
-        create("release") {
-            keyAlias = keystoreProperties["releaseKeyAlias"] as String
-            keyPassword = keystoreProperties["releaseKeyPassword"] as String
-            storeFile = keystoreProperties["releaseStoreFile"]?.let { file(it) }
-            storePassword = keystoreProperties["releaseStorePassword"] as String
+        if (keystorePropertiesFile.exists()) {
+            getByName("debug") {
+                keyAlias = keystoreProperties["debugKeyAlias"] as String
+                keyPassword = keystoreProperties["debugKeyPassword"] as String
+                storeFile = keystoreProperties["debugStoreFile"]?.let { file(it) }
+                storePassword = keystoreProperties["debugStorePassword"] as String
+            }
+            create("release") {
+                keyAlias = keystoreProperties["releaseKeyAlias"] as String
+                keyPassword = keystoreProperties["releaseKeyPassword"] as String
+                storeFile = keystoreProperties["releaseStoreFile"]?.let { file(it) }
+                storePassword = keystoreProperties["releaseStorePassword"] as String
+            }
         }
     }
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
         debug {
-            signingConfig = signingConfigs.getByName("debug")
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("debug")
+            }
         }
     }
 
