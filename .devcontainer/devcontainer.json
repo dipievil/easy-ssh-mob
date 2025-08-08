@@ -1,0 +1,18 @@
+// For format details, see https://aka.ms/devcontainer.json.
+{
+  "name": "Flutter SSH",
+  "image": "ghcr.io/techiro/devcontainer-template/flutter:latest",  
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "Dart-Code.dart-code",
+        "Dart-Code.flutter"
+      ]
+    }
+  },
+  "postCreateCommand": "pwd;flutter pub get",
+  "remoteUser": "root",
+  "workspaceMount": "source=/mnt/c/Users/dipi/source/repos/easy-ssh-mob,target=/workspaces/easy-ssh-mob,type=bind",
+  "workspaceFolder": "/workspaces/easy-ssh-mob"
+}
