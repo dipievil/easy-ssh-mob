@@ -65,14 +65,6 @@ android {
         }
     }
 
-    // applicationVariants.all { variant ->
-    //     variant.assemble.doLast {
-    //     copy {
-    //         from "../../build/app/outputs/apk/${variant.flavorName}/${variant.buildType.name}/app-${variant.flavorName}-${variant.buildType.name}.apk";
-    //         into '../../build/app/outputs/flutter-apk'
-    //         }
-    //     }
-    // }
 }
 
 flutter {
