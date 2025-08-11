@@ -1,0 +1,70 @@
+# .github/workflows/release.yml
+
+name: Build and Release to Play Store
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    name: Build and Release App Bundle
+    runs-on: self-hosted 
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > src/android/app/upload-keystore.jks
+
+      - name: Get dependencies
+        run: |
+          cd src
+          flutter pub get
+      
+      - name: Clean project
+        run: |
+          cd src
+          flutter clean
+
+      - name: Extract version info from tag
+        run: |
+          # Remove o 'v' do início da tag
+          VERSION_NAME=${GITHUB_REF#refs/tags/v}
+          # Usa um contador de commits como build number para ser sempre único
+          BUILD_NUMBER=${{ github.run_number }}
+          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_ENV
+
+      - name: Build App Bundle
+        run: |
+          cd src
+          flutter build appbundle --release \
+            --build-name=${{ env.VERSION_NAME }} \
+            --build-number=${{ env.BUILD_NUMBER }}
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Upload to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_API_KEY }}
+          packageName: com.dipi.android.easy_ssh_mob 
+          releaseFiles: src/build/app/outputs/bundle/release/app-release.aab
+          track: internal 
