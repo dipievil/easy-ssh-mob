@@ -1,464 +1,546 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../models/ssh_file.dart';
+import '../themes/app_theme.dart';
 
-/// Service for managing file icons and colors efficiently with caching
+/// Advanced file icon management system with comprehensive file type support
 class FileIconManager {
-  static final Map<String, IconData> _iconCache = <String, IconData>{};
-  static final Map<String, Color> _colorCache = <String, Color>{};
+  /// Mapping of file extensions to specific FontAwesome icons
+  static const Map<String, IconData> _extensionIcons = {
+    // Documents
+    '.pdf': FontAwesomeIcons.filePdf,
+    '.doc': FontAwesomeIcons.fileWord,
+    '.docx': FontAwesomeIcons.fileWord,
+    '.xls': FontAwesomeIcons.fileExcel,
+    '.xlsx': FontAwesomeIcons.fileExcel,
+    '.csv': FontAwesomeIcons.fileExcel,
+    '.ppt': FontAwesomeIcons.filePowerpoint,
+    '.pptx': FontAwesomeIcons.filePowerpoint,
+    '.txt': FontAwesomeIcons.fileLines,
+    '.rtf': FontAwesomeIcons.fileLines,
+    '.odt': FontAwesomeIcons.fileLines,
+    '.ods': FontAwesomeIcons.fileExcel,
+    '.odp': FontAwesomeIcons.filePowerpoint,
 
-  /// Get appropriate icon for a file based on its type and extension
+    // Code files
+    '.py': FontAwesomeIcons.python,
+    '.js': FontAwesomeIcons.js,
+    '.ts': FontAwesomeIcons.js,
+    '.html': FontAwesomeIcons.html5,
+    '.htm': FontAwesomeIcons.html5,
+    '.css': FontAwesomeIcons.css3Alt,
+    '.scss': FontAwesomeIcons.sass,
+    '.sass': FontAwesomeIcons.sass,
+    '.less': FontAwesomeIcons.css3Alt,
+    '.java': FontAwesomeIcons.java,
+    '.php': FontAwesomeIcons.php,
+    '.cpp': FontAwesomeIcons.fileCode,
+    '.c': FontAwesomeIcons.fileCode,
+    '.h': FontAwesomeIcons.fileCode,
+    '.hpp': FontAwesomeIcons.fileCode,
+    '.cs': FontAwesomeIcons.fileCode,
+    '.sh': FontAwesomeIcons.terminal,
+    '.bash': FontAwesomeIcons.terminal,
+    '.zsh': FontAwesomeIcons.terminal,
+    '.fish': FontAwesomeIcons.terminal,
+    '.sql': FontAwesomeIcons.database,
+    '.json': FontAwesomeIcons.fileCode,
+    '.xml': FontAwesomeIcons.fileCode,
+    '.yaml': FontAwesomeIcons.fileCode,
+    '.yml': FontAwesomeIcons.fileCode,
+    '.toml': FontAwesomeIcons.fileCode,
+    '.ini': FontAwesomeIcons.gear,
+    '.cfg': FontAwesomeIcons.gear,
+    '.conf': FontAwesomeIcons.gear,
+    '.config': FontAwesomeIcons.gear,
+    '.rb': FontAwesomeIcons.gem,
+    '.go': FontAwesomeIcons.fileCode,
+    '.rust': FontAwesomeIcons.fileCode,
+    '.rs': FontAwesomeIcons.fileCode,
+    '.kt': FontAwesomeIcons.fileCode,
+    '.swift': FontAwesomeIcons.fileCode,
+    '.dart': FontAwesomeIcons.fileCode,
+    '.vue': FontAwesomeIcons.vuejs,
+    '.jsx': FontAwesomeIcons.react,
+    '.tsx': FontAwesomeIcons.react,
+    '.r': FontAwesomeIcons.chartLine,
+    '.m': FontAwesomeIcons.fileCode,
+    '.mm': FontAwesomeIcons.fileCode,
+    '.pl': FontAwesomeIcons.fileCode,
+    '.pm': FontAwesomeIcons.fileCode,
+    '.scala': FontAwesomeIcons.fileCode,
+    '.clj': FontAwesomeIcons.fileCode,
+    '.lisp': FontAwesomeIcons.fileCode,
+    '.hs': FontAwesomeIcons.fileCode,
+    '.elm': FontAwesomeIcons.fileCode,
+    '.lua': FontAwesomeIcons.fileCode,
+    '.tcl': FontAwesomeIcons.fileCode,
+    '.asm': FontAwesomeIcons.microchip,
+    '.s': FontAwesomeIcons.microchip,
+
+    // Images
+    '.jpg': FontAwesomeIcons.fileImage,
+    '.jpeg': FontAwesomeIcons.fileImage,
+    '.png': FontAwesomeIcons.fileImage,
+    '.gif': FontAwesomeIcons.fileImage,
+    '.bmp': FontAwesomeIcons.fileImage,
+    '.svg': FontAwesomeIcons.fileImage,
+    '.webp': FontAwesomeIcons.fileImage,
+    '.ico': FontAwesomeIcons.fileImage,
+    '.tiff': FontAwesomeIcons.fileImage,
+    '.tif': FontAwesomeIcons.fileImage,
+    '.psd': FontAwesomeIcons.fileImage,
+    '.ai': FontAwesomeIcons.fileImage,
+    '.eps': FontAwesomeIcons.fileImage,
+    '.raw': FontAwesomeIcons.fileImage,
+    '.cr2': FontAwesomeIcons.fileImage,
+    '.nef': FontAwesomeIcons.fileImage,
+    '.orf': FontAwesomeIcons.fileImage,
+    '.sr2': FontAwesomeIcons.fileImage,
+
+    // Video files
+    '.mp4': FontAwesomeIcons.fileVideo,
+    '.avi': FontAwesomeIcons.fileVideo,
+    '.mkv': FontAwesomeIcons.fileVideo,
+    '.mov': FontAwesomeIcons.fileVideo,
+    '.wmv': FontAwesomeIcons.fileVideo,
+    '.flv': FontAwesomeIcons.fileVideo,
+    '.webm': FontAwesomeIcons.fileVideo,
+    '.m4v': FontAwesomeIcons.fileVideo,
+    '.3gp': FontAwesomeIcons.fileVideo,
+    '.3g2': FontAwesomeIcons.fileVideo,
+    '.f4v': FontAwesomeIcons.fileVideo,
+    '.asf': FontAwesomeIcons.fileVideo,
+    '.rm': FontAwesomeIcons.fileVideo,
+    '.rmvb': FontAwesomeIcons.fileVideo,
+    '.vob': FontAwesomeIcons.fileVideo,
+    '.ogv': FontAwesomeIcons.fileVideo,
+
+    // Audio files
+    '.mp3': FontAwesomeIcons.fileAudio,
+    '.wav': FontAwesomeIcons.fileAudio,
+    '.flac': FontAwesomeIcons.fileAudio,
+    '.ogg': FontAwesomeIcons.fileAudio,
+    '.m4a': FontAwesomeIcons.fileAudio,
+    '.aac': FontAwesomeIcons.fileAudio,
+    '.wma': FontAwesomeIcons.fileAudio,
+    '.opus': FontAwesomeIcons.fileAudio,
+    '.aiff': FontAwesomeIcons.fileAudio,
+    '.au': FontAwesomeIcons.fileAudio,
+    '.ra': FontAwesomeIcons.fileAudio,
+    '.3ga': FontAwesomeIcons.fileAudio,
+    '.amr': FontAwesomeIcons.fileAudio,
+
+    // Archive files
+    '.zip': FontAwesomeIcons.fileZipper,
+    '.rar': FontAwesomeIcons.fileZipper,
+    '.tar': FontAwesomeIcons.fileZipper,
+    '.gz': FontAwesomeIcons.fileZipper,
+    '.bz2': FontAwesomeIcons.fileZipper,
+    '.xz': FontAwesomeIcons.fileZipper,
+    '.7z': FontAwesomeIcons.fileZipper,
+    '.cab': FontAwesomeIcons.fileZipper,
+    '.arj': FontAwesomeIcons.fileZipper,
+    '.lzh': FontAwesomeIcons.fileZipper,
+    '.ace': FontAwesomeIcons.fileZipper,
+    '.iso': FontAwesomeIcons.compactDisc,
+    '.dmg': FontAwesomeIcons.compactDisc,
+    '.img': FontAwesomeIcons.compactDisc,
+    '.deb': FontAwesomeIcons.box,
+    '.rpm': FontAwesomeIcons.box,
+    '.pkg': FontAwesomeIcons.box,
+    '.msi': FontAwesomeIcons.box,
+    '.apk': FontAwesomeIcons.android,
+    '.ipa': FontAwesomeIcons.apple,
+
+    // System and config files
+    '.log': FontAwesomeIcons.fileLines,
+    '.env': FontAwesomeIcons.gear,
+    '.gitignore': FontAwesomeIcons.gitAlt,
+    '.gitconfig': FontAwesomeIcons.gitAlt,
+    '.gitmodules': FontAwesomeIcons.gitAlt,
+    '.gitattributes': FontAwesomeIcons.gitAlt,
+    '.editorconfig': FontAwesomeIcons.gear,
+    '.htaccess': FontAwesomeIcons.server,
+    '.htpasswd': FontAwesomeIcons.server,
+    '.nginx': FontAwesomeIcons.server,
+    '.apache': FontAwesomeIcons.server,
+
+    // Database files
+    '.db': FontAwesomeIcons.database,
+    '.sqlite': FontAwesomeIcons.database,
+    '.sqlite3': FontAwesomeIcons.database,
+    '.mdb': FontAwesomeIcons.database,
+    '.accdb': FontAwesomeIcons.database,
+
+    // Font files
+    '.ttf': FontAwesomeIcons.font,
+    '.otf': FontAwesomeIcons.font,
+    '.woff': FontAwesomeIcons.font,
+    '.woff2': FontAwesomeIcons.font,
+    '.eot': FontAwesomeIcons.font,
+
+    // Certificate and key files
+    '.pem': FontAwesomeIcons.key,
+    '.key': FontAwesomeIcons.key,
+    '.crt': FontAwesomeIcons.certificate,
+    '.cer': FontAwesomeIcons.certificate,
+    '.p12': FontAwesomeIcons.certificate,
+    '.pfx': FontAwesomeIcons.certificate,
+    '.jks': FontAwesomeIcons.certificate,
+    '.pub': FontAwesomeIcons.key,
+
+    // Executable files (Windows)
+    '.exe': FontAwesomeIcons.terminal,
+    '.bat': FontAwesomeIcons.terminal,
+    '.cmd': FontAwesomeIcons.terminal,
+    '.ps1': FontAwesomeIcons.terminal,
+    '.vbs': FontAwesomeIcons.terminal,
+
+    // Markup and documentation
+    '.md': FontAwesomeIcons.readme,
+    '.markdown': FontAwesomeIcons.readme,
+    '.rst': FontAwesomeIcons.readme,
+    '.adoc': FontAwesomeIcons.readme,
+    '.tex': FontAwesomeIcons.fileLines,
+    '.latex': FontAwesomeIcons.fileLines,
+  };
+
+  /// Mapping of file types to their icons
+  static const Map<FileType, IconData> _typeIcons = {
+    FileType.directory: FontAwesomeIcons.folder,
+    FileType.executable: FontAwesomeIcons.terminal,
+    FileType.symlink: FontAwesomeIcons.link,
+    FileType.fifo: FontAwesomeIcons.rightLeft,
+    FileType.socket: FontAwesomeIcons.plug,
+    FileType.regular: FontAwesomeIcons.file,
+    FileType.unknown: FontAwesomeIcons.question,
+  };
+
+  /// Special file names that get specific icons
+  static const Map<String, IconData> _specialFiles = {
+    'README': FontAwesomeIcons.readme,
+    'readme': FontAwesomeIcons.readme,
+    'README.md': FontAwesomeIcons.readme,
+    'readme.md': FontAwesomeIcons.readme,
+    'LICENSE': FontAwesomeIcons.certificate,
+    'license': FontAwesomeIcons.certificate,
+    'CHANGELOG': FontAwesomeIcons.fileLines,
+    'changelog': FontAwesomeIcons.fileLines,
+    'Makefile': FontAwesomeIcons.hammer,
+    'makefile': FontAwesomeIcons.hammer,
+    'Dockerfile': FontAwesomeIcons.docker,
+    'dockerfile': FontAwesomeIcons.docker,
+    'docker-compose.yml': FontAwesomeIcons.docker,
+    'docker-compose.yaml': FontAwesomeIcons.docker,
+    '.dockerignore': FontAwesomeIcons.docker,
+    'package.json': FontAwesomeIcons.npm,
+    'yarn.lock': FontAwesomeIcons.npm,
+    'composer.json': FontAwesomeIcons.php,
+    'requirements.txt': FontAwesomeIcons.python,
+    'Pipfile': FontAwesomeIcons.python,
+    'setup.py': FontAwesomeIcons.python,
+    'Cargo.toml': FontAwesomeIcons.fileCode,
+    'go.mod': FontAwesomeIcons.fileCode,
+    'pubspec.yaml': FontAwesomeIcons.fileCode,
+    'gemfile': FontAwesomeIcons.gem,
+    'Gemfile': FontAwesomeIcons.gem,
+    'pom.xml': FontAwesomeIcons.java,
+    'build.gradle': FontAwesomeIcons.java,
+    'CMakeLists.txt': FontAwesomeIcons.hammer,
+    'configure': FontAwesomeIcons.gear,
+    'install': FontAwesomeIcons.download,
+    'INSTALL': FontAwesomeIcons.download,
+  };
+
+  /// Get appropriate icon for a file
   static IconData getIconForFile(SshFile file) {
-    final cacheKey = _createCacheKey(file);
+    // First, check for special file types
+    if (file.type != FileType.regular) {
+      return _typeIcons[file.type] ?? FontAwesomeIcons.file;
+    }
 
-    return _iconCache.putIfAbsent(cacheKey, () {
-      return _determineIcon(file);
-    });
+    // Check for special file names
+    if (_specialFiles.containsKey(file.name)) {
+      return _specialFiles[file.name]!;
+    }
+
+    // Check by file extension
+    final extension = _getFileExtension(file.name).toLowerCase();
+    if (_extensionIcons.containsKey(extension)) {
+      return _extensionIcons[extension]!;
+    }
+
+    // Check for files without extension but common names
+    final lowerName = file.name.toLowerCase();
+    final noExtensionFiles = {
+      'readme': FontAwesomeIcons.readme,
+      'license': FontAwesomeIcons.certificate,
+      'changelog': FontAwesomeIcons.fileLines,
+      'makefile': FontAwesomeIcons.hammer,
+      'dockerfile': FontAwesomeIcons.docker,
+      'gemfile': FontAwesomeIcons.gem,
+      'vagrantfile': FontAwesomeIcons.server,
+      'jenkinsfile': FontAwesomeIcons.gear,
+      'gulpfile': FontAwesomeIcons.fileCode,
+      'gruntfile': FontAwesomeIcons.fileCode,
+      'webpack': FontAwesomeIcons.fileCode,
+      'rollup': FontAwesomeIcons.fileCode,
+      'babel': FontAwesomeIcons.fileCode,
+      'eslint': FontAwesomeIcons.fileCode,
+      'prettier': FontAwesomeIcons.fileCode,
+      'travis': FontAwesomeIcons.gear,
+      'appveyor': FontAwesomeIcons.gear,
+      'circleci': FontAwesomeIcons.gear,
+    };
+
+    for (final entry in noExtensionFiles.entries) {
+      if (lowerName.contains(entry.key)) {
+        return entry.value;
+      }
+    }
+
+    // Fallback to generic file icon
+    return FontAwesomeIcons.file;
   }
 
-  /// Get appropriate color for a file based on its type and theme
+  /// Get color for a file based on its type and extension
   static Color getColorForFile(SshFile file, BuildContext context) {
-    final theme = Theme.of(context);
-    final cacheKey = '${_createCacheKey(file)}_${theme.brightness.name}';
-
-    return _colorCache.putIfAbsent(cacheKey, () {
-      return _determineColor(file, theme);
-    });
-  }
-
-  /// Create cache key for file based on type and extension
-  static String _createCacheKey(SshFile file) {
-    final extension = _getFileExtension(file.name);
-    return '${file.type.name}_$extension';
-  }
-
-  /// Determine the appropriate icon for a file
-  static IconData _determineIcon(SshFile file) {
-    switch (file.type) {
-      case FileType.directory:
-        return _getDirectoryIcon(file.name);
-
-      case FileType.executable:
-        return _getExecutableIcon(file.name);
-
-      case FileType.symlink:
-        return Icons.link;
-
-      case FileType.fifo:
-        return Icons.linear_scale;
-
-      case FileType.socket:
-        return Icons.electrical_services;
-
-      case FileType.regular:
-      case FileType.unknown:
-        return _getRegularFileIcon(file.name);
-    }
-  }
-
-  /// Determine the appropriate color for a file
-  static Color _determineColor(SshFile file, ThemeData theme) {
-    final colorScheme = theme.colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
     switch (file.type) {
       case FileType.directory:
-        return colorScheme.primary;
-
+        return FileTypeColors.directory;
       case FileType.executable:
-        return Colors.green.shade600;
-
+        return FileTypeColors.executable;
       case FileType.symlink:
-        return Colors.cyan.shade600;
-
+        return FileTypeColors.symlink;
       case FileType.fifo:
-        return Colors.purple.shade600;
-
       case FileType.socket:
-        return Colors.orange.shade600;
-
-      case FileType.regular:
-      case FileType.unknown:
-        return _getRegularFileColor(file.name, colorScheme);
-    }
-  }
-
-  /// Get icon for directory based on name
-  static IconData _getDirectoryIcon(String name) {
-    final lowerName = name.toLowerCase();
-
-    // Diretórios especiais com ícones específicos
-    if (lowerName == 'documents' || lowerName == 'documentos') {
-      return Icons.folder_copy;
-    }
-    if (lowerName == 'downloads') {
-      return Icons.download;
-    }
-    if (lowerName == 'pictures' ||
-        lowerName == 'images' ||
-        lowerName == 'imagens') {
-      return Icons.photo_library;
-    }
-    if (lowerName == 'music' || lowerName == 'musicas') {
-      return Icons.library_music;
-    }
-    if (lowerName == 'videos') {
-      return Icons.video_library;
-    }
-    if (lowerName == 'desktop' || lowerName == 'area de trabalho') {
-      return Icons.desktop_windows;
-    }
-    if (lowerName.startsWith('.')) {
-      return Icons.folder_special; // Diretórios ocultos
-    }
-
-    return Icons.folder;
-  }
-
-  /// Get icon for executable file
-  static IconData _getExecutableIcon(String name) {
-    final extension = _getFileExtension(name);
-
-    switch (extension) {
-      case 'sh':
-      case 'bash':
-      case 'zsh':
-        return Icons.terminal;
-      case 'py':
-        return Icons.code;
-      case 'js':
-      case 'ts':
-        return Icons.javascript;
-      case 'exe':
-      case 'msi':
-        return Icons.desktop_windows;
-      case 'app':
-      case 'dmg':
-        return Icons.apps;
+        return colorScheme.secondary;
       default:
-        return Icons.play_arrow;
+        return _getColorByExtension(file.name, colorScheme);
     }
   }
 
-  /// Get icon for regular file based on extension
-  static IconData _getRegularFileIcon(String name) {
-    final extension = _getFileExtension(name);
+  /// Get color by file extension category
+  static Color _getColorByExtension(String fileName, ColorScheme colorScheme) {
+    final extension = _getFileExtension(fileName).toLowerCase();
 
-    switch (extension) {
-      // Documentos de texto
-      case 'txt':
-      case 'rtf':
-        return Icons.description;
-      case 'md':
-      case 'markdown':
-        return Icons.notes;
-      case 'pdf':
-        return Icons.picture_as_pdf;
-      case 'doc':
-      case 'docx':
-        return Icons.description;
-      case 'xls':
-      case 'xlsx':
-        return Icons.table_chart;
-      case 'ppt':
-      case 'pptx':
-        return Icons.slideshow;
+    // Define color categories
+    final Map<List<String>, Color> categoryColors = {
+      // Code files - Blue
+      [
+        '.py',
+        '.js',
+        '.ts',
+        '.html',
+        '.css',
+        '.java',
+        '.php',
+        '.cpp',
+        '.c',
+        '.sh',
+        '.dart',
+        '.go',
+        '.rs',
+        '.rb',
+        '.swift',
+        '.kt',
+      ]: FileTypeColors.code,
 
-      // Código e configuração
-      case 'html':
-      case 'htm':
-        return Icons.web;
-      case 'css':
-        return Icons.palette;
-      case 'js':
-      case 'ts':
-        return Icons.javascript;
-      case 'json':
-        return Icons.data_object;
-      case 'xml':
-        return Icons.code;
-      case 'yaml':
-      case 'yml':
-        return Icons.settings;
-      case 'ini':
-      case 'conf':
-      case 'config':
-        return Icons.settings;
-      case 'sql':
-        return Icons.storage;
-      case 'py':
-        return Icons.code;
-      case 'java':
-      case 'kt':
-      case 'swift':
-      case 'dart':
-      case 'go':
-      case 'rust':
-      case 'cpp':
-      case 'c':
-      case 'h':
-        return Icons.code;
+      // Documents - Purple
+      ['.pdf', '.doc', '.docx', '.txt', '.rtf', '.odt', '.md']:
+          FileTypeColors.document,
 
-      // Imagens
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
-      case 'gif':
-      case 'bmp':
-      case 'svg':
-      case 'webp':
-        return Icons.image;
-      case 'ico':
-        return Icons.image;
+      // Spreadsheets - Green
+      ['.xls', '.xlsx', '.csv', '.ods']: FileTypeColors.spreadsheet,
 
-      // Vídeos
-      case 'mp4':
-      case 'avi':
-      case 'mkv':
-      case 'mov':
-      case 'wmv':
-      case 'flv':
-      case 'webm':
-        return Icons.videocam;
+      // Presentations - Orange
+      ['.ppt', '.pptx', '.odp']: FileTypeColors.presentation,
 
-      // Áudio
-      case 'mp3':
-      case 'wav':
-      case 'flac':
-      case 'aac':
-      case 'ogg':
-      case 'm4a':
-        return Icons.audiotrack;
+      // Images - Pink
+      [
+        '.jpg',
+        '.jpeg',
+        '.png',
+        '.gif',
+        '.bmp',
+        '.svg',
+        '.webp',
+        '.ico',
+        '.tiff',
+        '.psd',
+      ]: FileTypeColors.image,
 
-      // Arquivos comprimidos
-      case 'zip':
-      case 'rar':
-      case '7z':
-      case 'tar':
-      case 'gz':
-      case 'bz2':
-      case 'xz':
-        return Icons.archive;
+      // Videos - Red
+      ['.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv', '.webm', '.m4v']:
+          FileTypeColors.video,
 
-      // Logs e dados
-      case 'log':
-        return Icons.list_alt;
-      case 'csv':
-        return Icons.table_chart;
-      case 'db':
-      case 'sqlite':
-        return Icons.storage;
+      // Audio - Purple
+      ['.mp3', '.wav', '.flac', '.ogg', '.m4a', '.aac', '.wma']:
+          FileTypeColors.audio,
 
-      // Arquivos de sistema
-      case 'so':
-      case 'dll':
-        return Icons.extension;
-      case 'iso':
-        return Icons.album;
+      // Archives - Brown
+      ['.zip', '.rar', '.tar', '.gz', '.7z', '.bz2', '.xz', '.iso', '.dmg']:
+          FileTypeColors.archive,
 
-      // Certificados e chaves
-      case 'pem':
-      case 'key':
-      case 'cert':
-      case 'crt':
-        return Icons.security;
+      // Configuration - Amber
+      [
+        '.conf',
+        '.cfg',
+        '.ini',
+        '.env',
+        '.json',
+        '.xml',
+        '.yaml',
+        '.yml',
+        '.toml',
+      ]: FileTypeColors.config,
 
-      // Arquivos especiais por nome
-      default:
-        return _getIconBySpecialName(name);
-    }
-  }
+      // Logs - Grey
+      ['.log']: FileTypeColors.log,
+    };
 
-  /// Get color for regular file based on extension
-  static Color _getRegularFileColor(String name, ColorScheme colorScheme) {
-    final extension = _getFileExtension(name);
-
-    switch (extension) {
-      // Documentos - azul
-      case 'txt':
-      case 'md':
-      case 'pdf':
-      case 'doc':
-      case 'docx':
-        return Colors.blue.shade600;
-
-      // Planilhas - verde
-      case 'xls':
-      case 'xlsx':
-      case 'csv':
-        return Colors.green.shade600;
-
-      // Apresentações - laranja
-      case 'ppt':
-      case 'pptx':
-        return Colors.orange.shade600;
-
-      // Código - roxo
-      case 'html':
-      case 'css':
-      case 'js':
-      case 'ts':
-      case 'json':
-      case 'xml':
-      case 'py':
-      case 'java':
-      case 'dart':
-        return Colors.purple.shade600;
-
-      // Imagens - rosa
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
-      case 'gif':
-      case 'svg':
-        return Colors.pink.shade600;
-
-      // Vídeos - vermelho
-      case 'mp4':
-      case 'avi':
-      case 'mkv':
-      case 'mov':
-        return Colors.red.shade600;
-
-      // Áudio - índigo
-      case 'mp3':
-      case 'wav':
-      case 'flac':
-        return Colors.indigo.shade600;
-
-      // Arquivos - amarelo escuro
-      case 'zip':
-      case 'rar':
-      case 'tar':
-      case 'gz':
-        return Colors.amber.shade700;
-
-      // Logs - cinza
-      case 'log':
-        return Colors.grey.shade600;
-
-      default:
-        return colorScheme.onSurface.withValues(alpha: 0.7);
-    }
-  }
-
-  /// Get icon for special file names (without extension)
-  static IconData _getIconBySpecialName(String name) {
-    final lowerName = name.toLowerCase();
-
-    if (lowerName == 'readme' || lowerName == 'leiame') {
-      return Icons.info;
-    }
-    if (lowerName == 'license' || lowerName == 'licenca') {
-      return Icons.gavel;
-    }
-    if (lowerName == 'changelog' || lowerName == 'changes') {
-      return Icons.history;
-    }
-    if (lowerName == 'makefile') {
-      return Icons.build;
-    }
-    if (lowerName == 'dockerfile') {
-      return Icons.developer_board;
-    }
-    if (lowerName.startsWith('.env')) {
-      return Icons.settings;
-    }
-    if (lowerName == '.gitignore' || lowerName == '.gitattributes') {
-      return Icons.source;
+    for (final category in categoryColors.entries) {
+      if (category.key.contains(extension)) {
+        return category.value;
+      }
     }
 
-    return Icons.insert_drive_file;
+    // Check for special file names
+    final lowerName = fileName.toLowerCase();
+    if (lowerName.contains('readme') ||
+        lowerName.contains('license') ||
+        lowerName.contains('changelog')) {
+      return FileTypeColors.document;
+    }
+
+    if (lowerName.contains('makefile') ||
+        lowerName.contains('dockerfile') ||
+        lowerName.contains('package.json')) {
+      return FileTypeColors.config;
+    }
+
+    // Default color
+    return FileTypeColors.unknown;
   }
 
   /// Extract file extension from filename
-  static String _getFileExtension(String filename) {
-    final parts = filename.split('.');
-    if (parts.length > 1) {
-      return parts.last.toLowerCase();
+  static String _getFileExtension(String fileName) {
+    final dotIndex = fileName.lastIndexOf('.');
+    if (dotIndex == -1 || dotIndex == fileName.length - 1) {
+      return '';
     }
-    return '';
+    return fileName.substring(dotIndex);
   }
 
-  /// Clear all caches (useful when theme changes)
-  static void clearCache() {
-    _iconCache.clear();
-    _colorCache.clear();
-  }
-
-  /// Get cache statistics for debugging
-  static Map<String, int> getCacheStats() {
-    return {
-      'iconCacheSize': _iconCache.length,
-      'colorCacheSize': _colorCache.length,
-    };
-  }
-
-  /// Preload common icons to improve performance
-  static void preloadCommonIcons() {
-    final commonFiles = [
-      const SshFile(
-        name: 'folder',
-        fullPath: '/folder',
-        type: FileType.directory,
-        displayName: 'folder/',
-      ),
-      const SshFile(
-        name: 'file.txt',
-        fullPath: '/file.txt',
-        type: FileType.regular,
-        displayName: 'file.txt',
-      ),
-      const SshFile(
-        name: 'script.sh',
-        fullPath: '/script.sh',
-        type: FileType.executable,
-        displayName: 'script.sh*',
-      ),
-      const SshFile(
-        name: 'link',
-        fullPath: '/link',
-        type: FileType.symlink,
-        displayName: 'link@',
-      ),
-      const SshFile(
-        name: 'image.jpg',
-        fullPath: '/image.jpg',
-        type: FileType.regular,
-        displayName: 'image.jpg',
-      ),
-      const SshFile(
-        name: 'video.mp4',
-        fullPath: '/video.mp4',
-        type: FileType.regular,
-        displayName: 'video.mp4',
-      ),
-      const SshFile(
-        name: 'audio.mp3',
-        fullPath: '/audio.mp3',
-        type: FileType.regular,
-        displayName: 'audio.mp3',
-      ),
-      const SshFile(
-        name: 'archive.zip',
-        fullPath: '/archive.zip',
-        type: FileType.regular,
-        displayName: 'archive.zip',
-      ),
-      const SshFile(
-        name: 'code.py',
-        fullPath: '/code.py',
-        type: FileType.regular,
-        displayName: 'code.py',
-      ),
-      const SshFile(
-        name: 'data.json',
-        fullPath: '/data.json',
-        type: FileType.regular,
-        displayName: 'data.json',
-      ),
+  /// Check if file is a code file
+  static bool isCodeFile(String fileName) {
+    final codeExtensions = [
+      '.py',
+      '.js',
+      '.ts',
+      '.html',
+      '.css',
+      '.java',
+      '.php',
+      '.cpp',
+      '.c',
+      '.h',
+      '.cs',
+      '.sh',
+      '.sql',
+      '.json',
+      '.xml',
+      '.yaml',
+      '.yml',
+      '.rb',
+      '.go',
+      '.rs',
+      '.dart',
+      '.swift',
+      '.kt',
+      '.scala',
+      '.clj',
+      '.hs',
+      '.lua',
+      '.r',
+      '.m',
+      '.pl',
     ];
 
-    for (final file in commonFiles) {
-      getIconForFile(file);
-    }
+    final extension = _getFileExtension(fileName).toLowerCase();
+    return codeExtensions.contains(extension);
+  }
+
+  /// Check if file is an image file
+  static bool isImageFile(String fileName) {
+    final imageExtensions = [
+      '.jpg',
+      '.jpeg',
+      '.png',
+      '.gif',
+      '.bmp',
+      '.svg',
+      '.webp',
+      '.ico',
+      '.tiff',
+      '.psd',
+    ];
+
+    final extension = _getFileExtension(fileName).toLowerCase();
+    return imageExtensions.contains(extension);
+  }
+
+  /// Check if file is a video file
+  static bool isVideoFile(String fileName) {
+    final videoExtensions = [
+      '.mp4',
+      '.avi',
+      '.mkv',
+      '.mov',
+      '.wmv',
+      '.flv',
+      '.webm',
+      '.m4v',
+    ];
+
+    final extension = _getFileExtension(fileName).toLowerCase();
+    return videoExtensions.contains(extension);
+  }
+
+  /// Check if file is an audio file
+  static bool isAudioFile(String fileName) {
+    final audioExtensions = [
+      '.mp3',
+      '.wav',
+      '.flac',
+      '.ogg',
+      '.m4a',
+      '.aac',
+      '.wma',
+    ];
+
+    final extension = _getFileExtension(fileName).toLowerCase();
+    return audioExtensions.contains(extension);
+  }
+
+  /// Check if file is an archive
+  static bool isArchiveFile(String fileName) {
+    final archiveExtensions = [
+      '.zip',
+      '.rar',
+      '.tar',
+      '.gz',
+      '.7z',
+      '.bz2',
+      '.xz',
+      '.iso',
+      '.dmg',
+    ];
+
+    final extension = _getFileExtension(fileName).toLowerCase();
+    return archiveExtensions.contains(extension);
   }
 }

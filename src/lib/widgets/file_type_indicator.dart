@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/ssh_file.dart';
-import '../utils/file_icon_manager.dart';
+import '../services/file_icon_manager.dart';
 
 /// Utility widget to display file type specific icons and information
 class FileTypeIndicator extends StatelessWidget {

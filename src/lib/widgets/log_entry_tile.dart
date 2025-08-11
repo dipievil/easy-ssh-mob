@@ -20,6 +20,7 @@ class LogEntryTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: ExpansionTile(
+        initiallyExpanded: showDetails,
         leading: Icon(
           _getCommandTypeIcon(entry.type),
           color: _getStatusColor(entry.status),
