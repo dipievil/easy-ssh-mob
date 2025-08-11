@@ -31,7 +31,7 @@ void main() {
 
       expect(result, null);
       expect(sshProvider.connectionState, SshConnectionState.error);
-      expect(sshProvider.errorMessage, 'Not connected to SSH server');
+      expect(sshProvider.errorMessage, 'Não conectado ao servidor SSH');
     });
 
     test('executeCommandWithResult should fail when not connected', () async {
@@ -39,7 +39,7 @@ void main() {
 
       expect(result, null);
       expect(sshProvider.connectionState, SshConnectionState.error);
-      expect(sshProvider.errorMessage, 'Not connected to SSH server');
+      expect(sshProvider.errorMessage, 'Não conectado ao servidor SSH');
     });
 
     test('clearError should reset error state', () async {
@@ -92,7 +92,7 @@ void main() {
         final result = await sshProvider.executeFile(testFile);
 
         expect(result.stdout, '');
-        expect(result.stderr, 'Not connected to SSH server');
+        expect(result.stderr, 'Não conectado ao servidor SSH');
         expect(result.exitCode, -1);
         expect(result.hasError, true);
       });
@@ -113,7 +113,7 @@ void main() {
 
         // Should complete quickly with error since not connected
         expect(result.hasError, true);
-        expect(result.stderr, 'Not connected to SSH server');
+        expect(result.stderr, 'Não conectado ao servidor SSH');
       });
     });
 
@@ -122,7 +122,7 @@ void main() {
         await sshProvider.listDirectory('/home');
 
         expect(sshProvider.connectionState, SshConnectionState.error);
-        expect(sshProvider.errorMessage, 'Not connected to SSH server');
+        expect(sshProvider.errorMessage, 'Não conectado ao servidor SSH');
         expect(sshProvider.currentFiles, isEmpty);
         expect(sshProvider.currentPath, isEmpty);
       });
@@ -131,7 +131,7 @@ void main() {
         await sshProvider.navigateToDirectory('/home');
 
         expect(sshProvider.connectionState, SshConnectionState.error);
-        expect(sshProvider.errorMessage, 'Not connected to SSH server');
+        expect(sshProvider.errorMessage, 'Não conectado ao servidor SSH');
         expect(sshProvider.currentPath, isEmpty);
       });
 
