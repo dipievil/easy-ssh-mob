@@ -84,22 +84,22 @@ jobs:
       - name: Run widget tests
         run: |
           cd src
-          flutter test test/widget/ --reporter=expanded
+          flutter test src/test/widget/ --reporter=expanded
 
       - name: Run service tests  
         run: |
           cd src
-          flutter test test/services/ --reporter=expanded
+          flutter test src/test/services/ --reporter=expanded
 
       - name: Run model tests
         run: |
           cd src
-          flutter test test/models/ --reporter=expanded
+          flutter test src/test/models/ --reporter=expanded
 
       - name: Run provider tests
         run: |
           cd src
-          flutter test test/providers/ --reporter=expanded
+          flutter test src/test/providers/ --reporter=expanded
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
@@ -133,7 +133,7 @@ jobs:
       - name: Run performance tests
         run: |
           cd src
-          flutter test test/performance/ --reporter=expanded
+          flutter test src/test/performance/ --reporter=expanded
 
   # Testes de acessibilidade
   accessibility:
@@ -161,7 +161,7 @@ jobs:
       - name: Run accessibility tests
         run: |
           cd src
-          flutter test test/accessibility/ --reporter=expanded
+          flutter test src/test/accessibility/ --reporter=expanded
 
   # Build para Android
   build-android:
