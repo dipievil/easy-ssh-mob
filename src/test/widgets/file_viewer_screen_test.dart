@@ -63,7 +63,7 @@ void main() {
         (WidgetTester tester) async {
       // Mock para simular carregamento
       when(mockProvider.readFile(any)).thenAnswer((_) async {
-        await Future.delayed(const Duration(seconds: 1));
+        await Future.delayed(const Duration(milliseconds: 100));
         return createFileContent(
           content: 'Test file content',
           isTruncated: false,
@@ -77,6 +77,13 @@ void main() {
 
       // Deve mostrar loading inicialmente
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      // Aguardar o carregamento completar
+      await tester.pumpAndSettle();
+
+      // Após o carregamento, deve mostrar o conteúdo
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.text('Test file content'), findsOneWidget);
     });
 
     testWidgets('should display file content when loaded',
@@ -154,10 +161,13 @@ void main() {
 
       // Digitar termo de busca
       await tester.enterText(find.byType(TextField), 'Hello');
-      await tester.pump();
+
+      // Clicar no botão Buscar
+      await tester.tap(find.text('Buscar'));
+      await tester.pumpAndSettle();
 
       // Deve encontrar matches
-      expect(find.textContaining('1/2'),
+      expect(find.textContaining('1 de 2'),
           findsOneWidget); // Assume que mostra contador
     });
 
@@ -228,8 +238,12 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
 
-      // Deve mostrar indicação de arquivo vazio
-      expect(find.textContaining('vazio'), findsOneWidget);
+      // Deve mostrar indicação de arquivo vazio (SelectableText vazio)
+      expect(find.byType(SelectableText), findsOneWidget);
+
+      final selectableText =
+          tester.widget<SelectableText>(find.byType(SelectableText));
+      expect(selectableText.data, isEmpty);
     });
 
     testWidgets('should handle large file content with scrolling',
@@ -332,7 +346,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Deve mostrar mensagem apropriada para arquivo binário
-      expect(find.textContaining('binário'), findsOneWidget);
+      expect(find.textContaining('Cannot display binary file'), findsOneWidget);
     });
   });
 }

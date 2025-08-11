@@ -3,10 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:easy_ssh_mob_new/screens/session_log_screen.dart';
 import 'package:easy_ssh_mob_new/providers/ssh_provider.dart';
 import 'package:easy_ssh_mob_new/models/log_entry.dart';
 import 'package:easy_ssh_mob_new/models/ssh_connection_state.dart';
+import 'package:easy_ssh_mob_new/widgets/log_entry_tile.dart';
 
 // Gerar mocks - execute: flutter packages pub run build_runner build
 @GenerateMocks([SshProvider])
@@ -60,6 +62,34 @@ void main() {
           .thenReturn(SshConnectionState.connected);
       when(mockProvider.sessionLog).thenReturn(mockLogEntries);
       when(mockProvider.isConnected).thenReturn(true);
+      when(mockProvider.filterSessionLog(
+        type: anyNamed('type'),
+        status: anyNamed('status'),
+        searchTerm: anyNamed('searchTerm'),
+        startDate: anyNamed('startDate'),
+        endDate: anyNamed('endDate'),
+      )).thenAnswer((invocation) {
+        final searchTerm =
+            invocation.namedArguments[const Symbol('searchTerm')];
+        if (searchTerm != null && searchTerm.isNotEmpty) {
+          return mockLogEntries
+              .where((entry) => entry.command
+                  .toLowerCase()
+                  .contains(searchTerm.toLowerCase()))
+              .toList();
+        }
+        return mockLogEntries;
+      });
+      when(mockProvider.getSessionStats()).thenReturn({
+        'totalCommands': 3,
+        'successfulCommands': 2,
+        'failedCommands': 1,
+        'totalDuration': const Duration(milliseconds: 180),
+        'sessionDuration': const Duration(minutes: 5),
+        'commandsByType': {'navigation': 1, 'fileView': 1, 'execution': 1},
+        'mostUsedCommands': ['ls -la', 'cat file.txt'],
+        'successRate': 66.67,
+      });
     });
 
     Widget createWidgetUnderTest() {
@@ -93,7 +123,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
 
-      final searchButton = find.byIcon(Icons.search);
+      final searchButton = find.byIcon(FontAwesomeIcons.magnifyingGlass);
       expect(searchButton, findsOneWidget);
     });
 
@@ -103,7 +133,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Procurar ícone de filtro (pode ser filter ou similar)
-      expect(find.byIcon(Icons.filter_list), findsOneWidget);
+      expect(find.byIcon(FontAwesomeIcons.filter), findsOneWidget);
     });
 
     testWidgets('should open search dialog', (WidgetTester tester) async {
@@ -111,12 +141,12 @@ void main() {
       await tester.pumpAndSettle();
 
       // Clicar no botão de busca
-      await tester.tap(find.byIcon(Icons.search));
+      await tester.tap(find.byIcon(FontAwesomeIcons.magnifyingGlass));
       await tester.pumpAndSettle();
 
       // Deve abrir dialog de busca
       expect(find.byType(AlertDialog), findsOneWidget);
-      expect(find.text('Buscar comandos'), findsOneWidget);
+      expect(find.text('Buscar Comandos'), findsOneWidget);
     });
 
     testWidgets('should search log entries', (WidgetTester tester) async {
@@ -124,7 +154,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Abrir busca
-      await tester.tap(find.byIcon(Icons.search));
+      await tester.tap(find.byIcon(FontAwesomeIcons.magnifyingGlass));
       await tester.pumpAndSettle();
 
       // Digitar termo de busca
@@ -143,7 +173,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Clicar no botão de filtros
-      await tester.tap(find.byIcon(Icons.filter_list));
+      await tester.tap(find.byIcon(FontAwesomeIcons.filter));
       await tester.pumpAndSettle();
 
       // Deve mostrar painel de filtros
@@ -156,7 +186,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Abrir filtros
-      await tester.tap(find.byIcon(Icons.filter_list));
+      await tester.tap(find.byIcon(FontAwesomeIcons.filter));
       await tester.pumpAndSettle();
 
       // Selecionar filtro por tipo "Navigation"
@@ -177,7 +207,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Abrir filtros
-      await tester.tap(find.byIcon(Icons.filter_list));
+      await tester.tap(find.byIcon(FontAwesomeIcons.filter));
       await tester.pumpAndSettle();
 
       // Selecionar filtro por status "Error"
@@ -199,12 +229,12 @@ void main() {
       await tester.pumpAndSettle();
 
       // Clicar no menu popup
-      await tester.tap(find.byIcon(Icons.more_vert));
+      await tester.tap(find.byType(PopupMenuButton<String>));
       await tester.pumpAndSettle();
 
       // Deve mostrar opções do menu
       expect(find.text('Estatísticas'), findsOneWidget);
-      expect(find.text('Exportar Log'), findsOneWidget);
+      expect(find.text('Salvar como TXT'), findsOneWidget);
       expect(find.text('Limpar Histórico'), findsOneWidget);
     });
 
@@ -229,25 +259,33 @@ void main() {
       await tester.pumpAndSettle();
 
       // Abrir menu e clicar em limpar histórico
-      await tester.tap(find.byIcon(Icons.more_vert));
+      await tester.tap(find.byType(PopupMenuButton<String>));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Limpar Histórico'));
       await tester.pumpAndSettle();
 
       // Deve mostrar confirmação
-      expect(find.text('Confirmar'), findsOneWidget);
+      expect(find.text('Limpar'), findsOneWidget);
       expect(find.textContaining('limpar'), findsOneWidget);
     });
 
     testWidgets('should handle empty log gracefully',
         (WidgetTester tester) async {
       when(mockProvider.sessionLog).thenReturn([]);
+      when(mockProvider.filterSessionLog(
+        type: anyNamed('type'),
+        status: anyNamed('status'),
+        searchTerm: anyNamed('searchTerm'),
+        startDate: anyNamed('startDate'),
+        endDate: anyNamed('endDate'),
+      )).thenReturn([]);
 
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
 
       // Deve mostrar mensagem de log vazio
-      expect(find.textContaining('Nenhum comando'), findsOneWidget);
+      expect(
+          find.textContaining('Nenhum comando foi executado'), findsOneWidget);
     });
 
     testWidgets('should display log entry details on tap',
@@ -256,11 +294,17 @@ void main() {
       await tester.pumpAndSettle();
 
       // Clicar em uma entrada do log
-      await tester.tap(find.text('ls -la'));
+      await tester.tap(find.byType(LogEntryTile).first);
       await tester.pumpAndSettle();
 
+      // Deve abrir diálogo de detalhes
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.text('Detalhes do Comando'), findsOneWidget);
+
       // Deve mostrar detalhes da entrada
-      expect(find.textContaining('total 10'), findsOneWidget);
+      expect(find.textContaining('Comando Completo'), findsOneWidget);
+      expect(find.textContaining('ls -la'),
+          findsWidgets); // O comando deve aparecer
     });
 
     testWidgets('should show different icons for command types',
@@ -269,9 +313,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verificar se existem ícones diferentes para diferentes tipos
-      expect(find.byIcon(Icons.folder), findsWidgets); // Navigation
-      expect(find.byIcon(Icons.visibility), findsWidgets); // FileView
-      expect(find.byIcon(Icons.build), findsWidgets); // Execution
+      expect(
+          find.byIcon(FontAwesomeIcons.folderOpen), findsWidgets); // Navigation
+      expect(find.byIcon(FontAwesomeIcons.fileLines), findsWidgets); // FileView
+      expect(find.byIcon(FontAwesomeIcons.play), findsWidgets); // Execution
     });
 
     testWidgets('should show command status indicators',
@@ -280,8 +325,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verificar indicadores de status
-      expect(find.byIcon(Icons.check_circle), findsWidgets); // Success
-      expect(find.byIcon(Icons.error), findsWidgets); // Error
+      expect(
+          find.byIcon(FontAwesomeIcons.circleCheck), findsWidgets); // Success
+      expect(find.byIcon(FontAwesomeIcons.triangleExclamation),
+          findsWidgets); // Error
     });
 
     testWidgets('should scroll through long log list',

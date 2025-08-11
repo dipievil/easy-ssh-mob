@@ -217,7 +217,7 @@ void main() {
 
         final csvRow = entry.toCsvRow();
         expect(csvRow,
-            contains('"echo "hello, world""')); // command should be escaped
+            contains('"echo ""hello, world"""')); // command should be escaped
         expect(csvRow, contains('"hello, world"')); // stdout should be escaped
       });
     });

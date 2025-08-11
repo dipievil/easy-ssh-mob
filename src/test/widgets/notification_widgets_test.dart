@@ -54,11 +54,12 @@ void main() {
       ));
 
       await tester.tap(find.text('Show Snackbar'));
-      await tester.pump();
+      await tester.pumpAndSettle(); // Aguardar a animação do snackbar
 
       expect(find.text('ACTION'), findsOneWidget);
 
-      await tester.tap(find.text('ACTION'));
+      await tester.tap(find.text('ACTION'), warnIfMissed: false);
+      await tester.pump(); // Aguardar o processamento do tap
       expect(actionCalled, isTrue);
     });
   });

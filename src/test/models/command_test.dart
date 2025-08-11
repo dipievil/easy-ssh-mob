@@ -1,5 +1,5 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:easy_ssh_mob_new/models/command_item.dart';
 import 'package:easy_ssh_mob_new/models/predefined_commands.dart';
 
@@ -9,13 +9,13 @@ void main() {
       const command = CommandItem(
         'Test Command',
         'echo "test"',
-        FontAwesomeIcons.terminal,
+        Icons.terminal,
         'Test description',
       );
 
       expect(command.name, 'Test Command');
       expect(command.command, 'echo "test"');
-      expect(command.icon, FontAwesomeIcons.terminal);
+      expect(command.icon, Icons.terminal);
       expect(command.description, 'Test description');
     });
 
@@ -23,7 +23,7 @@ void main() {
       const command = CommandItem(
         'Test Command',
         'echo "test"',
-        FontAwesomeIcons.terminal,
+        Icons.terminal, // Usar Icons.terminal ao invés de FontAwesome
         'Test description',
       );
 
@@ -33,19 +33,21 @@ void main() {
       expect(restored.name, command.name);
       expect(restored.command, command.command);
       expect(restored.description, command.description);
+      // Compare only codePoint for icon, since IconData may not serialize fully
       expect(restored.icon.codePoint, command.icon.codePoint);
+      expect(restored.icon.fontFamily, command.icon.fontFamily);
     });
 
     test('should handle equality correctly', () {
       const command1 = CommandItem(
         'Test Command',
         'echo "test"',
-        FontAwesomeIcons.terminal,
+        Icons.terminal,
       );
       const command2 = CommandItem(
         'Test Command',
         'echo "test"',
-        FontAwesomeIcons.houseUser,
+        Icons.home,
       );
 
       expect(command1, command2);

@@ -19,7 +19,7 @@ void main() {
       );
 
       errorResult = ExecutionResult(
-        stdout: 'Some output',
+        stdout: 'Some output\nAnother line',
         stderr: 'Error occurred\nSecond error line',
         exitCode: 1,
         duration: const Duration(milliseconds: 500),
@@ -116,7 +116,7 @@ void main() {
       expect(find.text('Erros (2 linhas)'), findsOneWidget);
 
       // Check stdout content (should be visible by default)
-      expect(find.text('Some output'), findsOneWidget);
+      expect(find.text('Some output\nAnother line'), findsOneWidget);
 
       // Tap on errors tab
       await tester.tap(find.text('Erros (2 linhas)'));
