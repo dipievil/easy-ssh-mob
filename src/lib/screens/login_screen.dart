@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../providers/ssh_provider.dart';
+import '../services/secure_storage_service.dart';
 import '../widgets/custom_components.dart';
 import '../utils/custom_animations.dart';
 import '../utils/responsive_breakpoints.dart';
@@ -48,17 +49,25 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    final sshProvider = Provider.of<SshProvider>(context, listen: false);
-    final credentials = sshProvider.currentCredentials;
+    try {
+      // Try loading credentials directly from secure storage first
+      // This ensures we get the most recent saved credentials
+      final savedCredentials = await SecureStorageService.loadCredentials();
 
-    if (credentials != null && credentials.isValid()) {
-      _hostController.text = credentials.host;
-      _portController.text = credentials.port.toString();
-      _usernameController.text = credentials.username;
-      _passwordController.text = credentials.password;
-      setState(() {
-        _rememberCredentials = true;
-      });
+      if (savedCredentials != null && savedCredentials.isValid()) {
+        _hostController.text = savedCredentials.host;
+        _portController.text = savedCredentials.port.toString();
+        _usernameController.text = savedCredentials.username;
+        _passwordController.text = savedCredentials.password;
+        setState(() {
+          _rememberCredentials = true;
+        });
+        debugPrint('Saved credentials loaded and applied to form fields');
+      } else {
+        debugPrint('No valid saved credentials found');
+      }
+    } catch (e) {
+      debugPrint('Error loading saved credentials: $e');
     }
 
     setState(() {
@@ -120,6 +129,17 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (success && mounted) {
+      // Show success message if credentials were saved
+      if (_rememberCredentials) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Conectado com sucesso! Credenciais salvas.'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+      
       Navigator.of(context).pushReplacement(
         SlideRoute(
           page: const FileExplorerScreen(),
