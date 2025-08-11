@@ -21,7 +21,8 @@ void main() {
       const command = CommandItem(
         'Test Command',
         'echo "test"',
-        Icons.terminal,
+        icon: Icons.terminal,
+        color: Colors.blue,
       );
 
       final json = command.toJson();
@@ -34,11 +35,11 @@ void main() {
     });
 
     test('should validate command structure', () {
-      const validCommand = CommandItem('Valid', 'ls -la', Icons.terminal);
+      const validCommand = CommandItem('Valid', 'ls -la');
       expect(validCommand.name, isNotEmpty);
       expect(validCommand.command, isNotEmpty);
 
-      const emptyCommand = CommandItem('', '', Icons.help);
+      const emptyCommand = CommandItem('', '');
       expect(emptyCommand.name, isEmpty);
       expect(emptyCommand.command, isEmpty);
     });
@@ -47,7 +48,7 @@ void main() {
       const command = CommandItem(
         'Special Chars',
         'echo "test with \\"quotes\\" and spaces"',
-        Icons.code,
+        icon: Icons.code,
       );
 
       final json = command.toJson();
@@ -56,6 +57,7 @@ void main() {
       expect(reconstructed.name, equals(command.name));
       expect(reconstructed.command, equals(command.command));
     });
+
     test('service methods should handle storage errors gracefully', () async {
       // Test that service methods don't crash even if storage is unavailable
       try {
@@ -66,7 +68,7 @@ void main() {
       }
 
       try {
-        const command = CommandItem('Test', 'echo test', Icons.code);
+        const command = CommandItem('Test', 'echo test');
         await CustomCommandsService.addCustomCommand(command);
       } catch (e) {
         // Storage errors are expected in test environment

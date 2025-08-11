@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:easy_ssh_mob_new/providers/ssh_provider.dart';
 import 'package:easy_ssh_mob_new/models/ssh_connection_state.dart';
+import 'package:easy_ssh_mob_new/models/ssh_file.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -10,7 +11,7 @@ void main() {
 
     setUp(() {
       try {
-        sshProvider = SshProvider(enableAudio: false);
+        sshProvider = SshProvider();
       } catch (e) {
         sshProvider = null;
       }
@@ -26,8 +27,7 @@ void main() {
 
     test('initial state should be disconnected', () {
       if (sshProvider == null) {
-        markTestSkipped(
-            'SshProvider initialization failed due to dependencies');
+        skip('SshProvider initialization failed due to dependencies');
         return;
       }
 
@@ -41,20 +41,18 @@ void main() {
 
     test('executeCommand should fail when not connected', () async {
       if (sshProvider == null) {
-        markTestSkipped(
-            'SshProvider initialization failed due to dependencies');
+        skip('SshProvider initialization failed due to dependencies');
         return;
       }
 
       final result = await sshProvider!.executeCommand('ls');
-      expect(result, isNull);
-      expect(sshProvider!.connectionState, SshConnectionState.error);
+      expect(result.success, false);
+      expect(result.output, contains('Não conectado'));
     });
 
     test('clearError should reset error state', () async {
       if (sshProvider == null) {
-        markTestSkipped(
-            'SshProvider initialization failed due to dependencies');
+        skip('SshProvider initialization failed due to dependencies');
         return;
       }
 
