@@ -45,10 +45,10 @@ void main() {
       const command2 = CommandItem(
         'Test Command',
         'echo "test"',
-        FontAwesomeIcons.home,
+        FontAwesomeIcons.houseUser,
       );
 
-      expect(command1, command2); // Should be equal based on name and command
+      expect(command1, command2);
     });
   });
 
