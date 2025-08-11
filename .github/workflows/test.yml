@@ -133,7 +133,7 @@ jobs:
       - name: Run performance tests
         run: |
           cd src
-          flutter test src/test/performance/ --reporter=expanded
+          flutter test test/performance/ --reporter=expanded
 
   # Testes de acessibilidade
   accessibility:
