@@ -31,7 +31,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    _loadSavedCredentials();
+    // Use a post-frame callback to ensure widget is fully initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadSavedCredentials();
+    });
   }
 
   @override
