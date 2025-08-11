@@ -1,17 +1,22 @@
 # .github/workflows/release.yml
 
-name: Build and Release to Play Store
+name: Create Release and Deploy to Play Store
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
+    paths:
+      - 'src/pubspec.yaml'
 
 jobs:
-  build-and-release:
-    name: Build and Release App Bundle
-    runs-on: self-hosted 
-    
+  build:
+    name: Build Flutter App
+    runs-on: self-hosted
+
+    outputs:
+      version_number: ${{ steps.get_version.outputs.version_number }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,44 +32,81 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Decode Keystore
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > src/android/app/upload-keystore.jks
-
-      - name: Get dependencies
+      - name: Get Flutter dependencies
         run: |
           cd src
           flutter pub get
+
+      - name: Extract Version from pubspec.yaml
+        id: get_version
+        run: |
+          VERSION=$(grep 'version:' src/pubspec.yaml | sed 's/version: //')
+          echo "Versão extraída: $VERSION"
+          echo "version_number=$VERSION" >> $GITHUB_OUTPUT
       
-      - name: Clean project
-        run: |
-          cd src
-          flutter clean
-
-      - name: Extract version info from tag
-        run: |
-          # Remove o 'v' do início da tag
-          VERSION_NAME=${GITHUB_REF#refs/tags/v}
-          # Usa um contador de commits como build number para ser sempre único
-          BUILD_NUMBER=${{ github.run_number }}
-          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
-          echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_ENV
-
       - name: Build App Bundle
         run: |
           cd src
           flutter build appbundle --release \
-            --build-name=${{ env.VERSION_NAME }} \
-            --build-number=${{ env.BUILD_NUMBER }}
+            --build-name=${{ steps.get_version.outputs.version_number }} \
+            --build-number=${{ github.run_number }}
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
+      - name: Upload App Bundle Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release-bundle
+          path: src/build/app/outputs/bundle/release/app-release.aab
+
+  deploy:
+    name: Deploy to Play Store
+    runs-on: ubuntu-latest
+    needs: build 
+    
+    steps:
+      - name: Download App Bundle Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: app-release-bundle
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > ${{ github.workspace }}/upload-keystore.jks
+
       - name: Upload to Play Store
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_API_KEY }}
-          packageName: com.dipi.android.easy_ssh_mob 
-          releaseFiles: src/build/app/outputs/bundle/release/app-release.aab
-          track: internal 
+          packageName: com.dipi.android.easy_ssh_mob
+          releaseFiles: app-release.aab
+          track: internal
+          
+  tag_and_release:
+    name: Create GitHub Tag and Release
+    runs-on: ubuntu-latest
+    needs: deploy 
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create and Push Git Tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag v${{ needs.build.outputs.version_number }}
+          git push origin v${{ needs.build.outputs.version_number }}
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ needs.build.outputs.version_number }}
+          release_name: Release v${{ needs.build.outputs.version_number }}
+          body: "Deploy da versão ${{ needs.build.outputs.version_number }} realizado com sucesso na Play Store."
