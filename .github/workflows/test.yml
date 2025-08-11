@@ -161,7 +161,7 @@ jobs:
       - name: Run accessibility tests
         run: |
           cd src
-          flutter test src/test/accessibility/ --reporter=expanded
+          flutter test test/accessibility/ --reporter=expanded
 
   # Build para Android
   build-android:
