@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
           create: (context) {
             final provider = SshProvider();
             // Initialize the provider to load saved credentials
+            // Note: This is fire-and-forget, but the provider will notify listeners when ready
             provider.initialize();
             return provider;
           },
