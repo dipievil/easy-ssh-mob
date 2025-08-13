@@ -11,9 +11,16 @@ val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
 val keyStoreFileExists = keystorePropertiesFile.exists()
 
+
+logger.quiet("key.properties existe? $keyStoreFileExists")
+
 if (keyStoreFileExists) {
+    logger.info("key.properties carregado com sucesso.")
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+} else {
+    logger.warn("Arquivo key.properties não encontrado.")
 }
+
 
 android {
     namespace = "com.example.easy_ssh_mob_new"
@@ -56,12 +63,12 @@ android {
 
     buildTypes {
         release {
-            if (keystorePropertiesFile) {
+            if (keyStoreFileExists) {
                 signingConfig = signingConfigs.getByName("release")
             }
         }
         debug {
-            if (keystorePropertiesFile) {
+            if (keyStoreFileExists) {
                 signingConfig = signingConfigs.getByName("debug")
             }
         }

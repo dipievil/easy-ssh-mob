@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/login_screen.dart';
+import 'screens/settings_screen.dart';
+import 'screens/file_explorer_screen.dart';
 import 'providers/ssh_provider.dart';
 import 'themes/app_theme.dart';
 
@@ -32,6 +34,10 @@ class MyApp extends StatelessWidget {
         themeMode:
             ThemeMode.system, // Automatically switch based on system preference
         home: const LoginScreen(),
+        routes: {
+          '/settings': (context) => const SettingsScreen(),
+          '/file-explorer': (context) => const FileExplorerScreen(),
+        },
       ),
     );
   }

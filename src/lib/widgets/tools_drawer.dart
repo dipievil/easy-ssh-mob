@@ -6,6 +6,7 @@ import '../models/predefined_commands.dart';
 import '../providers/ssh_provider.dart';
 import '../services/custom_commands_service.dart';
 import '../screens/session_log_screen.dart';
+import '../screens/settings_screen.dart';
 import 'add_custom_command_dialog.dart';
 
 class ToolsDrawer extends StatefulWidget {
@@ -319,6 +320,22 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
             ],
           ),
           const SizedBox(height: 8),
+
+          // Settings button
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close drawer
+                Navigator.of(context).pushNamed('/settings');
+              },
+              icon: const Icon(FontAwesomeIcons.gear, size: 16),
+              label: const Text('Configurações'),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Theme.of(context).primaryColor),
+              ),
+            ),
+          ),
           Text(
             'Easy SSH Mob v1.0.0',
             style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
