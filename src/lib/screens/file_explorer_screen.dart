@@ -273,11 +273,11 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
   void _showTools() {
     try {
       debugPrint('🔧 _showTools() chamado');
-      
+
       // Use GlobalKey to get scaffold state safely
       final scaffoldState = _scaffoldKey.currentState;
       debugPrint('📱 Scaffold state: ${scaffoldState.toString()}');
-      
+
       if (scaffoldState != null && scaffoldState.hasEndDrawer) {
         debugPrint('✅ hasEndDrawer = true, abrindo drawer...');
         scaffoldState.openEndDrawer();
@@ -301,7 +301,9 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
         ),
       );
     }
-  }  /// Build breadcrumb navigation widget
+  }
+
+  /// Build breadcrumb navigation widget
   Widget _buildBreadcrumb(String currentPath) {
     if (currentPath.isEmpty) {
       return const Text('Easy SSH');
