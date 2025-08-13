@@ -18,7 +18,8 @@ jobs:
       version: ${{ steps.release.outputs.version }}
       changelog: ${{ steps.release.outputs.changelog }}
     steps:
-      - uses: googleapis/release-please-action@v4
+      - name: Automate release
+        uses: googleapis/release-please-action@v4
         id: release
         
         with:
