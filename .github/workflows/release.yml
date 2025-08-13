@@ -8,6 +8,7 @@ on:
       - main
     paths:
       - 'src/pubspec.yaml'
+  workflow_dispatch:
 
 jobs:
   release-please:
