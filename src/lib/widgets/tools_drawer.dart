@@ -6,7 +6,6 @@ import '../models/predefined_commands.dart';
 import '../providers/ssh_provider.dart';
 import '../services/custom_commands_service.dart';
 import '../screens/session_log_screen.dart';
-import '../screens/settings_screen.dart';
 import 'add_custom_command_dialog.dart';
 
 class ToolsDrawer extends StatefulWidget {
