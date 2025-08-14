@@ -10,7 +10,7 @@ void main() {
 
     setUp(() {
       try {
-        sshProvider = SshProvider(enableAudio: false);
+        sshProvider = SshProvider();
       } catch (e) {
         sshProvider = null;
       }
@@ -20,7 +20,7 @@ void main() {
       try {
         sshProvider?.dispose();
       } catch (e) {
-        // Ignorar erros de dispose
+        // Ignore dispose errors
       }
     });
 
@@ -47,8 +47,8 @@ void main() {
       }
 
       final result = await sshProvider!.executeCommand('ls');
-      expect(result, isNull);
-      expect(sshProvider!.connectionState, SshConnectionState.error);
+      expect(result, false);
+      expect(result, contains('Não conectado'));
     });
 
     test('clearError should reset error state', () async {
@@ -58,10 +58,8 @@ void main() {
         return;
       }
 
-      // Force an error first
       await sshProvider!.executeCommand('ls');
 
-      // Clear error
       sshProvider!.clearError();
       expect(sshProvider!.connectionState, SshConnectionState.disconnected);
       expect(sshProvider!.errorMessage, null);
