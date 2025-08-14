@@ -84,7 +84,7 @@ jobs:
       - name: Run widget tests
         run: |
           cd src
-          flutter test src/test/widget/ --reporter=expanded
+          flutter test test/widget/ --reporter=expanded
 
       - name: Run service tests  
         run: |
