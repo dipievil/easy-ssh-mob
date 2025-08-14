@@ -89,7 +89,7 @@ jobs:
       - name: Run service tests  
         run: |
           cd src
-          flutter test src/test/services/ --reporter=expanded
+          flutter test test/services/ --reporter=expanded
 
       - name: Run model tests
         run: |
