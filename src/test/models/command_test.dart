@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:easy_ssh_mob_new/models/command_item.dart';
 import 'package:easy_ssh_mob_new/models/predefined_commands.dart';
@@ -33,7 +34,6 @@ void main() {
       expect(restored.name, command.name);
       expect(restored.command, command.command);
       expect(restored.description, command.description);
-      // Compare only codePoint for icon, since IconData may not serialize fully
       expect(restored.icon.codePoint, command.icon.codePoint);
       expect(restored.icon.fontFamily, command.icon.fontFamily);
     });
