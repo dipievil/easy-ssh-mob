@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:easy_ssh_mob_new/models/command_item.dart';
 import 'package:easy_ssh_mob_new/services/custom_commands_service.dart';
 
@@ -18,11 +18,8 @@ void main() {
     });
 
     test('CommandItem model should serialize correctly', () {
-      const command = CommandItem(
-        'Test Command',
-        'echo "test"',
-        Icons.terminal,
-      );
+      const command =
+          CommandItem('Test Command', 'echo "test"', FontAwesomeIcons.terminal);
 
       final json = command.toJson();
       expect(json['name'], equals('Test Command'));
@@ -34,11 +31,12 @@ void main() {
     });
 
     test('should validate command structure', () {
-      const validCommand = CommandItem('Valid', 'ls -la', Icons.terminal);
+      const validCommand =
+          CommandItem('Valid', 'ls -la', FontAwesomeIcons.terminal);
       expect(validCommand.name, isNotEmpty);
       expect(validCommand.command, isNotEmpty);
 
-      const emptyCommand = CommandItem('', '', Icons.help);
+      const emptyCommand = CommandItem('', '', FontAwesomeIcons.terminal);
       expect(emptyCommand.name, isEmpty);
       expect(emptyCommand.command, isEmpty);
     });
@@ -47,7 +45,7 @@ void main() {
       const command = CommandItem(
         'Special Chars',
         'echo "test with \\"quotes\\" and spaces"',
-        Icons.code,
+        FontAwesomeIcons.code,
       );
 
       final json = command.toJson();
@@ -56,6 +54,7 @@ void main() {
       expect(reconstructed.name, equals(command.name));
       expect(reconstructed.command, equals(command.command));
     });
+
     test('service methods should handle storage errors gracefully', () async {
       // Test that service methods don't crash even if storage is unavailable
       try {
@@ -66,7 +65,8 @@ void main() {
       }
 
       try {
-        const command = CommandItem('Test', 'echo test', Icons.code);
+        const command =
+            CommandItem('Test', 'echo test', FontAwesomeIcons.terminal);
         await CustomCommandsService.addCustomCommand(command);
       } catch (e) {
         // Storage errors are expected in test environment
