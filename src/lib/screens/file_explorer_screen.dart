@@ -22,6 +22,7 @@ class FileExplorerScreen extends StatefulWidget {
 
 class _FileExplorerScreenState extends State<FileExplorerScreen> {
   bool _isLoading = false;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final Map<String, bool> _executingFiles = {};
   SshProvider? _lastSshProvider;
 
@@ -270,8 +271,36 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
 
   /// Show tools drawer
   void _showTools() {
-    // Open the drawer instead of showing a modal bottom sheet
-    Scaffold.of(context).openEndDrawer();
+    try {
+      debugPrint('🔧 _showTools() chamado');
+
+      // Use GlobalKey to get scaffold state safely
+      final scaffoldState = _scaffoldKey.currentState;
+      debugPrint('📱 Scaffold state: ${scaffoldState.toString()}');
+
+      if (scaffoldState != null && scaffoldState.hasEndDrawer) {
+        debugPrint('✅ hasEndDrawer = true, abrindo drawer...');
+        scaffoldState.openEndDrawer();
+        debugPrint('🚀 openEndDrawer() executado');
+      } else {
+        debugPrint('❌ Scaffold state é null ou não tem endDrawer!');
+        // Fallback: mostrar snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Erro: Drawer não disponível'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('💥 Erro em _showTools(): $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao abrir drawer: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   /// Build breadcrumb navigation widget
@@ -567,6 +596,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     return Consumer<SshProvider>(
       builder: (context, sshProvider, child) {
         return Scaffold(
+          key: _scaffoldKey,
           appBar: GradientAppBar(
             title: _buildBreadcrumbText(sshProvider.currentPath),
             actions: [

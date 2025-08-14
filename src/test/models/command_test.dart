@@ -47,7 +47,7 @@ void main() {
       const command2 = CommandItem(
         'Test Command',
         'echo "test"',
-        Icons.home,
+        FontAwesomeIcons.house,
       );
 
       expect(command1, command2);
