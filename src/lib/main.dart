@@ -5,9 +5,17 @@ import 'screens/settings_screen.dart';
 import 'screens/file_explorer_screen.dart';
 import 'providers/ssh_provider.dart';
 import 'themes/app_theme.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = dotenv.env['SENTRY_DSN'];
+      
+      options.tracesSampleRate = 0.2;
+    },
+    appRunner: () => runApp(SentryWidget(child: const MyApp())),
+  );
 }
 
 class MyApp extends StatelessWidget {
