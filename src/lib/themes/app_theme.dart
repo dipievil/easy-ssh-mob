@@ -23,9 +23,10 @@ class AppTheme {
     ),
 
     // Card theme with rounded corners
-    cardTheme: CardThemeData(
+    cardTheme: const CardTheme(
       elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12))),
       clipBehavior: Clip.antiAlias,
     ),
 
@@ -87,9 +88,10 @@ class AppTheme {
     ),
 
     // Dialog theme
-    dialogTheme: DialogThemeData(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      actionsPadding: const EdgeInsets.all(16),
+    dialogTheme: const DialogTheme(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16))),
+      actionsPadding: EdgeInsets.all(16),
     ),
 
     // Bottom sheet theme
@@ -119,9 +121,10 @@ class AppTheme {
     ),
 
     // Card theme with rounded corners
-    cardTheme: CardThemeData(
+    cardTheme: const CardTheme(
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12))),
       clipBehavior: Clip.antiAlias,
     ),
 
@@ -183,9 +186,10 @@ class AppTheme {
     ),
 
     // Dialog theme
-    dialogTheme: DialogThemeData(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      actionsPadding: const EdgeInsets.all(16),
+    dialogTheme: const DialogTheme(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16))),
+      actionsPadding: EdgeInsets.all(16),
     ),
 
     // Bottom sheet theme
