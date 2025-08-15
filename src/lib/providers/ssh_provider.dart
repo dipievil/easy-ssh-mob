@@ -12,6 +12,7 @@ import '../models/log_entry.dart';
 import '../services/secure_storage_service.dart';
 import '../services/error_handler.dart';
 import '../services/notification_service.dart';
+import '../services/audio_factory.dart';
 
 class SshProvider extends ChangeNotifier {
   // Constants
@@ -29,7 +30,7 @@ class SshProvider extends ChangeNotifier {
 
   // Error handling properties
   SshError? _lastError;
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  final AudioPlayer _audioPlayer = audioPlayerFactory.create();
   bool _shouldPlayErrorSound = true;
   final NotificationService _notificationService = NotificationService();
 
@@ -113,7 +114,8 @@ class SshProvider extends ChangeNotifier {
 
       // Save credentials if requested
       if (saveCredentials) {
-        final saveSuccess = await SecureStorageService.saveCredentials(credentials);
+        final saveSuccess =
+            await SecureStorageService.saveCredentials(credentials);
         if (!saveSuccess) {
           debugPrint('Warning: Failed to save credentials to secure storage');
           // Note: We don't fail the connection for credential save failure
