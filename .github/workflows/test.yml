@@ -92,12 +92,10 @@ jobs:
           flutter test test/providers/ssh_provider_test.dart --reporter=compact
           flutter test test/models/ --reporter=compact
 
-      # - name: Upload coverage to Codecov
-      #   uses: codecov/codecov-action@v3
-      #   with:
-      #     file: ./src/coverage/lcov.info
-      #     fail_ci_if_error: false
-      #     verbose: true
+      - name: Upload coverage reports to Codecov
+          uses: codecov/codecov-action@v5
+          with:
+            token: ${{ secrets.CODECOV_TOKEN }}
 
   performance:
     name: Performance Tests
