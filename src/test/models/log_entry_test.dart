@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:easy_ssh_mob_new/models/log_entry.dart';
+
 void main() {
   group('LogEntry', () {
     group('constructor and basic properties', () {
@@ -170,13 +171,13 @@ void main() {
         );
         final csvRow = entry.toCsvRow();
         final fields = csvRow.split(',');
-        expect(fields[0], equals('2024-01-15 10:30:45')); 
-        expect(fields[1], equals('ls -la')); 
-        expect(fields[2], equals('Navigation')); 
-        expect(fields[3], equals('Success')); 
-        expect(fields[4], equals('120ms')); 
-        expect(fields[5], equals('/home/user')); 
-        expect(fields[6], equals('0')); 
+        expect(fields[0], equals('2024-01-15 10:30:45'));
+        expect(fields[1], equals('ls -la'));
+        expect(fields[2], equals('Navigation'));
+        expect(fields[3], equals('Success'));
+        expect(fields[4], equals('120ms'));
+        expect(fields[5], equals('/home/user'));
+        expect(fields[6], equals('0'));
       });
       test('should escape CSV fields with commas', () {
         final entry = LogEntry(
@@ -192,9 +193,8 @@ void main() {
           status: CommandStatus.success,
         );
         final csvRow = entry.toCsvRow();
-        expect(csvRow,
-            contains('"echo ""hello, world"""')); 
-        expect(csvRow, contains('"hello, world"')); 
+        expect(csvRow, contains('"echo ""hello, world"""'));
+        expect(csvRow, contains('"hello, world"'));
       });
     });
     group('text formatting', () {

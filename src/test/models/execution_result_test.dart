@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:easy_ssh_mob_new/models/execution_result.dart';
+
 void main() {
   group('ExecutionResult', () {
     test('should create ExecutionResult with required parameters', () {
@@ -144,10 +145,10 @@ void main() {
         exitCode: 1,
       );
       expect(modified.stdout, 'Modified stdout');
-      expect(modified.stderr, 'Original stderr'); 
+      expect(modified.stderr, 'Original stderr');
       expect(modified.exitCode, 1);
-      expect(modified.duration, original.duration); 
-      expect(modified.timestamp, original.timestamp); 
+      expect(modified.duration, original.duration);
+      expect(modified.timestamp, original.timestamp);
     });
     test('should support equality comparison', () {
       final timestamp = DateTime.now();
@@ -186,8 +187,8 @@ void main() {
       );
       final str = result.toString();
       expect(str, contains('ExecutionResult'));
-      expect(str, contains('11 chars')); 
-      expect(str, contains('10 chars')); 
+      expect(str, contains('11 chars'));
+      expect(str, contains('10 chars'));
       expect(str, contains('exitCode: 0'));
       expect(str, contains('250ms'));
     });

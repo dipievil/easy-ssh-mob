@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:easy_ssh_mob_new/models/ssh_connection_state.dart';
+
 void main() {
   group('SshConnectionState', () {
     test('should have correct values', () {

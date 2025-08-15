@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:easy_ssh_mob_new/widgets/optimized/optimized_file_list.dart';
 import 'package:easy_ssh_mob_new/models/ssh_file.dart';
+
 void main() {
   group('Performance Tests', () {
     testWidgets('should handle large file lists efficiently',
@@ -186,7 +187,7 @@ void main() {
       expect(stopwatch.elapsedMilliseconds, lessThan(2000));
       expect(find.textContaining('KB'), findsWidgets);
       expect(find.textContaining('MB'), findsWidgets);
-      expect(find.textContaining('/'), findsWidgets); 
+      expect(find.textContaining('/'), findsWidgets);
     });
     testWidgets('should efficiently reuse widgets with ValueKey',
         (WidgetTester tester) async {
@@ -245,7 +246,7 @@ void main() {
           fullPath: '/very/long/path/to/huge_file_$i.txt',
           type: FileType.regular,
           displayName: 'huge_file_$i.txt',
-          size: i * 1024 * 1024, 
+          size: i * 1024 * 1024,
           lastModified: DateTime.now().subtract(Duration(minutes: i)),
         ),
       );

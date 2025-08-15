@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:easy_ssh_mob_new/models/file_content.dart';
+
 void main() {
   group('FileContent', () {
     test('should create FileContent with all properties', () {
@@ -85,7 +86,7 @@ void main() {
         totalLines: 1,
         displayedLines: 1,
         mode: FileViewMode.full,
-        fileSize: 1536, 
+        fileSize: 1536,
       );
       const largeFile = FileContent(
         content: 'test',
@@ -93,7 +94,7 @@ void main() {
         totalLines: 1000,
         displayedLines: 100,
         mode: FileViewMode.head,
-        fileSize: 2097152, 
+        fileSize: 2097152,
       );
       expect(smallFile.fileSizeDescription, '512 B');
       expect(mediumFile.fileSizeDescription, '1.5 KB');
@@ -113,9 +114,9 @@ void main() {
       );
       expect(copy.content, 'modified');
       expect(copy.isTruncated, true);
-      expect(copy.totalLines, 1); 
-      expect(copy.displayedLines, 1); 
-      expect(copy.mode, FileViewMode.full); 
+      expect(copy.totalLines, 1);
+      expect(copy.displayedLines, 1);
+      expect(copy.mode, FileViewMode.full);
     });
     test('should implement equality correctly', () {
       const content1 = FileContent(

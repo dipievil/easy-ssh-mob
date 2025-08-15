@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:easy_ssh_mob_new/widgets/error_widgets.dart';
 import 'package:easy_ssh_mob_new/services/notification_service.dart';
+
 void main() {
   group('CustomSnackBar Tests', () {
     testWidgets('should show snackbar with correct content',
@@ -48,10 +49,10 @@ void main() {
         ),
       ));
       await tester.tap(find.text('Show Snackbar'));
-      await tester.pumpAndSettle(); 
+      await tester.pumpAndSettle();
       expect(find.text('ACTION'), findsOneWidget);
       await tester.tap(find.text('ACTION'), warnIfMissed: false);
-      await tester.pump(); 
+      await tester.pump();
       expect(actionCalled, isTrue);
     });
   });

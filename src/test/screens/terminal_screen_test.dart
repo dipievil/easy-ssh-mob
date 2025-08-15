@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:easy_ssh_mob_new/screens/terminal_screen.dart';
 import 'package:easy_ssh_mob_new/providers/ssh_provider.dart';
 import 'package:easy_ssh_mob_new/models/execution_result.dart';
+
 void main() {
   group('TerminalScreen', () {
     late SshProvider mockSshProvider;
@@ -162,10 +163,10 @@ void main() {
         result: result,
         isExecuting: false,
       );
-      expect(modified.command, 'ls'); 
-      expect(modified.result, result); 
-      expect(modified.timestamp, timestamp); 
-      expect(modified.isExecuting, false); 
+      expect(modified.command, 'ls');
+      expect(modified.result, result);
+      expect(modified.timestamp, timestamp);
+      expect(modified.isExecuting, false);
     });
   });
 }

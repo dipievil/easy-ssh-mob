@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'test_audio_setup.dart';
+
 void registerPlatformMocks() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setupTestAudio();

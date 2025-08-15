@@ -10,6 +10,7 @@ import 'package:easy_ssh_mob_new/models/file_content.dart';
 import 'package:easy_ssh_mob_new/models/ssh_connection_state.dart';
 @GenerateMocks([SshProvider])
 import 'file_viewer_screen_test.mocks.dart';
+
 void main() {
   group('FileViewerScreen Widget Tests', () {
     late MockSshProvider mockProvider;
@@ -34,6 +35,7 @@ void main() {
         ),
       );
     }
+
     FileContent createFileContent({
       String? content,
       bool? isTruncated,
@@ -51,6 +53,7 @@ void main() {
         fileSize: fileSize,
       );
     }
+
     testWidgets('should display loading indicator initially',
         (WidgetTester tester) async {
       when(mockProvider.readFile(any)).thenAnswer((_) async {
@@ -127,8 +130,7 @@ void main() {
       await tester.enterText(find.byType(TextField), 'Hello');
       await tester.tap(find.text('Buscar'));
       await tester.pumpAndSettle();
-      expect(find.textContaining('1 de 2'),
-          findsOneWidget); 
+      expect(find.textContaining('1 de 2'), findsOneWidget);
     });
     testWidgets('should navigate between search results',
         (WidgetTester tester) async {

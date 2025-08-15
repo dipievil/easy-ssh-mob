@@ -142,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
       }
-      
+
       Navigator.of(context).pushReplacement(
         SlideRoute(
           page: const FileExplorerScreen(),

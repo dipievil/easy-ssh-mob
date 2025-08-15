@@ -23,8 +23,9 @@ class SecureStorageService {
   /// Save SSH credentials securely
   static Future<bool> saveCredentials(SSHCredentials credentials) async {
     try {
-      debugPrint('Attempting to save credentials for host: ${credentials.host}');
-      
+      debugPrint(
+          'Attempting to save credentials for host: ${credentials.host}');
+
       if (!credentials.isValid()) {
         debugPrint('Error: Invalid credentials data - validation failed');
         throw ArgumentError('Invalid credentials data');
@@ -32,17 +33,18 @@ class SecureStorageService {
 
       final jsonString = jsonEncode(credentials.toJson());
       debugPrint('Credentials JSON encoded successfully');
-      
+
       await _secureStorage.write(key: _credentialsKey, value: jsonString);
       debugPrint('Credentials written to secure storage successfully');
-      
+
       // Verify the write by reading back
       final verification = await _secureStorage.read(key: _credentialsKey);
       if (verification == null || verification != jsonString) {
-        debugPrint('Error: Verification failed - credentials not properly saved');
+        debugPrint(
+            'Error: Verification failed - credentials not properly saved');
         return false;
       }
-      
+
       debugPrint('Credentials saved and verified successfully');
       return true;
     } catch (e) {
@@ -56,9 +58,9 @@ class SecureStorageService {
   static Future<SSHCredentials?> loadCredentials() async {
     try {
       debugPrint('Attempting to load credentials from secure storage');
-      
+
       final jsonString = await _secureStorage.read(key: _credentialsKey);
-      
+
       if (jsonString == null || jsonString.isEmpty) {
         debugPrint('No credentials found in secure storage');
         return null;
@@ -67,8 +69,9 @@ class SecureStorageService {
       debugPrint('Credentials JSON found, attempting to decode');
       final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
       final credentials = SSHCredentials.fromJson(jsonMap);
-      
-      debugPrint('Credentials loaded successfully for host: ${credentials.host}');
+
+      debugPrint(
+          'Credentials loaded successfully for host: ${credentials.host}');
       return credentials;
     } catch (e) {
       // Log error in production

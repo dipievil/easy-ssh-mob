@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:easy_ssh_mob_new/widgets/ssh_file_list_tile.dart';
 import 'package:easy_ssh_mob_new/models/ssh_file.dart';
+
 void main() {
   group('SshFileListTile', () {
     testWidgets('should display directory file correctly',
@@ -50,8 +51,7 @@ void main() {
       );
       expect(find.text('test_exec*'), findsOneWidget);
       expect(find.text('Executable'), findsOneWidget);
-      expect(find.byIcon(Icons.arrow_forward_ios),
-          findsNothing); 
+      expect(find.byIcon(Icons.arrow_forward_ios), findsNothing);
     });
     testWidgets('should display regular file correctly',
         (WidgetTester tester) async {
@@ -137,8 +137,7 @@ void main() {
         ),
       );
       await tester.tap(find.byType(SshFileListTile));
-      await tester
-          .pump(); 
+      await tester.pump();
       expect(tapped, isFalse);
     });
     testWidgets('should show scale animation on tap',
@@ -159,10 +158,8 @@ void main() {
           ),
         ),
       );
-      expect(find.byType(Transform),
-          findsWidgets); 
-      expect(find.byType(AnimatedBuilder),
-          findsWidgets); 
+      expect(find.byType(Transform), findsWidgets);
+      expect(find.byType(AnimatedBuilder), findsWidgets);
     });
     testWidgets('should handle long press', (WidgetTester tester) async {
       const file = SshFile(
@@ -209,8 +206,7 @@ void main() {
         ),
       );
       await tester.longPress(find.byType(SshFileListTile));
-      await tester
-          .pump(); 
+      await tester.pump();
       expect(longPressed, isFalse);
     });
   });

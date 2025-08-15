@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:easy_ssh_mob_new/services/file_icon_manager.dart';
 import 'package:easy_ssh_mob_new/models/ssh_file.dart';
+
 void main() {
   group('FileIconManager Tests', () {
     group('Icon Selection', () {
@@ -36,7 +37,7 @@ void main() {
         expect(FileIconManager.getIconForFile(executable),
             FontAwesomeIcons.terminal);
         expect(FileIconManager.getIconForFile(regular),
-            FontAwesomeIcons.fileLines); 
+            FontAwesomeIcons.fileLines);
         expect(FileIconManager.getIconForFile(symlink), FontAwesomeIcons.link);
       });
       test('should return specific icons for file extensions', () {
@@ -99,21 +100,12 @@ void main() {
       test('should return special icons for special file names', () {
         final specialFiles = [
           ('README', FontAwesomeIcons.readme.codePoint),
-          (
-            'LICENSE',
-            FontAwesomeIcons.certificate.codePoint
-          ), 
+          ('LICENSE', FontAwesomeIcons.certificate.codePoint),
           ('CHANGELOG', FontAwesomeIcons.fileLines.codePoint),
           ('Makefile', FontAwesomeIcons.hammer.codePoint),
           ('Dockerfile', FontAwesomeIcons.docker.codePoint),
-          (
-            '.env',
-            FontAwesomeIcons.gear.codePoint
-          ), 
-          (
-            '.gitignore',
-            FontAwesomeIcons.gitAlt.codePoint
-          ), 
+          ('.env', FontAwesomeIcons.gear.codePoint),
+          ('.gitignore', FontAwesomeIcons.gitAlt.codePoint),
         ];
         for (final (fileName, expectedCodePoint) in specialFiles) {
           final file = SshFile(
@@ -219,7 +211,7 @@ void main() {
         );
         final icon = FileIconManager.getIconForFile(file);
         expect(icon, isNotNull);
-        expect(icon, FontAwesomeIcons.file); 
+        expect(icon, FontAwesomeIcons.file);
       });
       test('should handle files with multiple dots', () {
         const file = SshFile(
@@ -229,8 +221,7 @@ void main() {
           displayName: 'file.backup.txt',
         );
         final icon = FileIconManager.getIconForFile(file);
-        expect(icon,
-            FontAwesomeIcons.fileLines); 
+        expect(icon, FontAwesomeIcons.fileLines);
       });
       test('should handle empty file names', () {
         const file = SshFile(
@@ -278,7 +269,7 @@ void main() {
         );
         final icon = FileIconManager.getIconForFile(unknownFile);
         expect(icon, isNotNull);
-        expect(icon, FontAwesomeIcons.question); 
+        expect(icon, FontAwesomeIcons.question);
       });
     });
     group('Utility Methods', () {

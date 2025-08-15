@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:easy_ssh_mob_new/services/secure_storage_service.dart';
 import 'package:easy_ssh_mob_new/models/ssh_credentials.dart';
+
 void main() {
   group('SecureStorageService Unit Tests', () {
     setUp(() {
@@ -22,7 +23,7 @@ void main() {
     });
     test('should not save invalid credentials', () async {
       const invalidCredentials = SSHCredentials(
-        host: '', 
+        host: '',
         port: 22,
         username: 'testuser',
         password: 'testpass',

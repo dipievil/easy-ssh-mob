@@ -8,6 +8,7 @@ import 'package:easy_ssh_mob_new/models/ssh_file.dart' as _i6;
 import 'package:easy_ssh_mob_new/providers/ssh_provider.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i7;
+
 class _FakeExecutionResult_0 extends _i1.SmartFake
     implements _i2.ExecutionResult {
   _FakeExecutionResult_0(
@@ -18,6 +19,7 @@ class _FakeExecutionResult_0 extends _i1.SmartFake
           parentInvocation,
         );
 }
+
 class _FakeFileContent_1 extends _i1.SmartFake implements _i3.FileContent {
   _FakeFileContent_1(
     Object parent,
@@ -27,6 +29,7 @@ class _FakeFileContent_1 extends _i1.SmartFake implements _i3.FileContent {
           parentInvocation,
         );
 }
+
 class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
   MockSshProvider() {
     _i1.throwOnMissingStub(this);

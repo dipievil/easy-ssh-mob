@@ -11,6 +11,7 @@ import 'package:easy_ssh_mob_new/models/ssh_connection_state.dart';
 import 'package:easy_ssh_mob_new/widgets/log_entry_tile.dart';
 @GenerateMocks([SshProvider])
 import 'session_log_screen_test.mocks.dart';
+
 void main() {
   group('SessionLogScreen Widget Tests', () {
     late MockSshProvider mockProvider;
@@ -94,6 +95,7 @@ void main() {
         ),
       );
     }
+
     testWidgets('should display screen title', (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
@@ -230,26 +232,22 @@ void main() {
       expect(find.byType(AlertDialog), findsOneWidget);
       expect(find.text('Detalhes do Comando'), findsOneWidget);
       expect(find.textContaining('Comando Completo'), findsOneWidget);
-      expect(find.textContaining('ls -la'),
-          findsWidgets); 
+      expect(find.textContaining('ls -la'), findsWidgets);
     });
     testWidgets('should show different icons for command types',
         (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-      expect(
-          find.byIcon(FontAwesomeIcons.folderOpen), findsWidgets); 
-      expect(find.byIcon(FontAwesomeIcons.fileLines), findsWidgets); 
-      expect(find.byIcon(FontAwesomeIcons.play), findsWidgets); 
+      expect(find.byIcon(FontAwesomeIcons.folderOpen), findsWidgets);
+      expect(find.byIcon(FontAwesomeIcons.fileLines), findsWidgets);
+      expect(find.byIcon(FontAwesomeIcons.play), findsWidgets);
     });
     testWidgets('should show command status indicators',
         (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-      expect(
-          find.byIcon(FontAwesomeIcons.circleCheck), findsWidgets); 
-      expect(find.byIcon(FontAwesomeIcons.triangleExclamation),
-          findsWidgets); 
+      expect(find.byIcon(FontAwesomeIcons.circleCheck), findsWidgets);
+      expect(find.byIcon(FontAwesomeIcons.triangleExclamation), findsWidgets);
     });
     testWidgets('should scroll through long log list',
         (WidgetTester tester) async {
@@ -277,7 +275,7 @@ void main() {
         (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-      expect(find.textContaining(':'), findsWidgets); 
+      expect(find.textContaining(':'), findsWidgets);
     });
   });
 }
