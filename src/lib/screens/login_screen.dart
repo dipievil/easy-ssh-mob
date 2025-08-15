@@ -147,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
       }
-      
+
       Navigator.of(context).pushReplacement(
         SlideRoute(
           page: const FileExplorerScreen(),
@@ -177,7 +177,8 @@ class _LoginScreenState extends State<LoginScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.credentialsRemovedSuccessfully),
+          content: Text(
+              AppLocalizations.of(context)!.credentialsRemovedSuccessfully),
           backgroundColor: Colors.green,
         ),
       );
@@ -187,7 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Scaffold(
       body: SafeArea(
         child: _isLoading

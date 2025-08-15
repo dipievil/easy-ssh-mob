@@ -13,7 +13,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.settings),
@@ -180,7 +180,7 @@ class SettingsScreen extends StatelessWidget {
 
   void _showAboutDialog(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     showAboutDialog(
       context: context,
       applicationName: l10n.appTitle,
@@ -201,7 +201,7 @@ class SettingsScreen extends StatelessWidget {
   void _showClearCredentialsDialog(
       BuildContext context, SshProvider sshProvider) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -235,7 +235,7 @@ class SettingsScreen extends StatelessWidget {
 
   void _showLogoutDialog(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

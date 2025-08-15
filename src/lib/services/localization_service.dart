@@ -7,7 +7,8 @@ class LocalizationService {
   static AppLocalizations of(BuildContext context) {
     final localizations = AppLocalizations.of(context);
     if (localizations == null) {
-      throw Exception('AppLocalizations not found! Make sure MaterialApp is configured with localization delegates.');
+      throw Exception(
+          'AppLocalizations not found! Make sure MaterialApp is configured with localization delegates.');
     }
     return localizations;
   }

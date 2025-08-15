@@ -113,7 +113,8 @@ class SshProvider extends ChangeNotifier {
 
       // Save credentials if requested
       if (saveCredentials) {
-        final saveSuccess = await SecureStorageService.saveCredentials(credentials);
+        final saveSuccess =
+            await SecureStorageService.saveCredentials(credentials);
         if (!saveSuccess) {
           debugPrint('Warning: Failed to save credentials to secure storage');
           // Note: We don't fail the connection for credential save failure

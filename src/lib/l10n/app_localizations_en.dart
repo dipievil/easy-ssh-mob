@@ -131,19 +131,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logout => 'Logout';
 
   @override
-  String get clearCredentialsConfirm => 'Are you sure you want to forget all saved credentials? You will need to enter login data again.';
+  String get clearCredentialsConfirm =>
+      'Are you sure you want to forget all saved credentials? You will need to enter login data again.';
 
   @override
-  String get credentialsRemovedSuccessfully => 'Credentials removed successfully';
+  String get credentialsRemovedSuccessfully =>
+      'Credentials removed successfully';
 
   @override
   String get clear => 'Clear';
 
   @override
-  String get logoutConfirm => 'Do you want to disconnect from the SSH server? You will return to the login screen.';
+  String get logoutConfirm =>
+      'Do you want to disconnect from the SSH server? You will return to the login screen.';
 
   @override
-  String get sshClientDescription => 'Simple and intuitive SSH client for mobile devices.';
+  String get sshClientDescription =>
+      'Simple and intuitive SSH client for mobile devices.';
 
   @override
   String get developedWithFlutter => 'Developed with Flutter 💙';
@@ -170,7 +174,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordRequired => 'Password is required';
 
   @override
-  String get connectedSuccessfully => 'Connected successfully! Credentials saved.';
+  String get connectedSuccessfully =>
+      'Connected successfully! Credentials saved.';
 
   @override
   String get hostIpHint => 'example.com or 192.168.1.100';
@@ -203,7 +208,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get testNotifications => 'Test Notifications';
 
   @override
-  String get testDifferentNotificationTypes => 'Test different notification types';
+  String get testDifferentNotificationTypes =>
+      'Test different notification types';
 
   @override
   String get soundSettings => 'Sound Settings';
