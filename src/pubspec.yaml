@@ -30,6 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   font_awesome_flutter: ^10.8.0
   dartssh2: ^2.13.0
   audioplayers: ^6.5.0
@@ -61,6 +64,9 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+
+  # Enable generation of localized Strings from arb files.
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

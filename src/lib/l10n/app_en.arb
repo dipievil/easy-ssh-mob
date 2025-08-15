@@ -1,0 +1,302 @@
+{
+  "@@locale": "en",
+  "appTitle": "EasySSH",
+  "@appTitle": {
+    "description": "The application title"
+  },
+  
+  "loginTitle": "SSH Connection",
+  "@loginTitle": {
+    "description": "Login screen title"
+  },
+  
+  "host": "Host",
+  "@host": {
+    "description": "Server host label"
+  },
+  
+  "port": "Port",
+  "@port": {
+    "description": "Server port label"
+  },
+  
+  "username": "Username",
+  "@username": {
+    "description": "Username label"
+  },
+  
+  "password": "Password",
+  "@password": {
+    "description": "Password label"
+  },
+  
+  "connect": "Connect",
+  "@connect": {
+    "description": "Connect button text"
+  },
+  
+  "rememberCredentials": "Remember credentials",
+  "@rememberCredentials": {
+    "description": "Remember credentials checkbox label"
+  },
+  
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings screen title"
+  },
+  
+  "currentConnection": "Current Connection",
+  "@currentConnection": {
+    "description": "Current connection section title"
+  },
+  
+  "disconnectFromServer": "Disconnect from server",
+  "@disconnectFromServer": {
+    "description": "Disconnect button text"
+  },
+  
+  "sessionLog": "Session Log",
+  "@sessionLog": {
+    "description": "Session log menu item"
+  },
+  
+  "notificationSettings": "Notification Settings",
+  "@notificationSettings": {
+    "description": "Notification settings menu item"
+  },
+  
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  
+  "save": "Save",
+  "@save": {
+    "description": "Save button text"
+  },
+  
+  "saveAs": "Save as",
+  "@saveAs": {
+    "description": "Save as menu text"
+  },
+  
+  "saveAsTxt": "Save as TXT",
+  "@saveAsTxt": {
+    "description": "Save as TXT option"
+  },
+  
+  "saveAsJson": "Save as JSON",
+  "@saveAsJson": {
+    "description": "Save as JSON option"
+  },
+  
+  "saveAsCsv": "Save as CSV",
+  "@saveAsCsv": {
+    "description": "Save as CSV option"
+  },
+  
+  "fileExplorer": "File Explorer",
+  "@fileExplorer": {
+    "description": "File explorer screen title"
+  },
+  
+  "terminal": "Terminal",
+  "@terminal": {
+    "description": "Terminal screen title"
+  },
+  
+  "notification": "Notification",
+  "@notification": {
+    "description": "Generic notification text"
+  },
+  
+  "info": "Info",
+  "@info": {
+    "description": "Info notification type"
+  },
+  
+  "success": "Success",
+  "@success": {
+    "description": "Success notification type"
+  },
+  
+  "warning": "Warning",
+  "@warning": {
+    "description": "Warning notification type"
+  },
+  
+  "error": "Error",
+  "@error": {
+    "description": "Error notification type"
+  },
+  
+  "critical": "Critical",
+  "@critical": {
+    "description": "Critical notification type"
+  },
+  
+  "connectionError": "Connection error",
+  "@connectionError": {
+    "description": "Connection error message"
+  },
+  
+  "connecting": "Connecting...",
+  "@connecting": {
+    "description": "Connecting status text"
+  },
+  
+  "connected": "Connected",
+  "@connected": {
+    "description": "Connected status text"
+  },
+  
+  "disconnected": "Disconnected",
+  "@disconnected": {
+    "description": "Disconnected status text"
+  },
+  
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry action button"
+  },
+  
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading text"
+  },
+  
+  "pleaseWait": "Please wait",
+  "@pleaseWait": {
+    "description": "Please wait message"
+  },
+  
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications menu item"
+  },
+  
+  "configureAlertsAndSounds": "Configure alerts and sounds",
+  "@configureAlertsAndSounds": {
+    "description": "Notifications subtitle"
+  },
+  
+  "viewCommandHistory": "View command history",
+  "@viewCommandHistory": {
+    "description": "Session log subtitle"
+  },
+  
+  "aboutApp": "About App",
+  "@aboutApp": {
+    "description": "About app menu item"
+  },
+  
+  "versionInfo": "Version information",
+  "@versionInfo": {
+    "description": "About app subtitle"
+  },
+  
+  "clearCredentials": "Clear Credentials",
+  "@clearCredentials": {
+    "description": "Clear credentials menu item"
+  },
+  
+  "forgetSavedLoginData": "Forget saved login data",
+  "@forgetSavedLoginData": {
+    "description": "Clear credentials subtitle"
+  },
+  
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout menu item"
+  },
+  
+  "clearCredentialsConfirm": "Are you sure you want to forget all saved credentials? You will need to enter login data again.",
+  "@clearCredentialsConfirm": {
+    "description": "Clear credentials confirmation message"
+  },
+  
+  "credentialsRemovedSuccessfully": "Credentials removed successfully",
+  "@credentialsRemovedSuccessfully": {
+    "description": "Success message after clearing credentials"
+  },
+  
+  "clear": "Clear",
+  "@clear": {
+    "description": "Clear button text"
+  },
+  
+  "logoutConfirm": "Do you want to disconnect from the SSH server? You will return to the login screen.",
+  "@logoutConfirm": {
+    "description": "Logout confirmation message"
+  },
+  
+  "sshClientDescription": "Simple and intuitive SSH client for mobile devices.",
+  "@sshClientDescription": {
+    "description": "App description in about dialog"
+  },
+  
+  "developedWithFlutter": "Developed with Flutter 💙",
+  "@developedWithFlutter": {
+    "description": "Flutter development credit"
+  },
+  
+  "connectToYourSshServer": "Connect to your SSH server",
+  "@connectToYourSshServer": {
+    "description": "Login screen subtitle"
+  },
+  
+  "hostIpRequired": "Host/IP is required",
+  "@hostIpRequired": {
+    "description": "Host validation message"
+  },
+  
+  "portRequired": "Port is required",
+  "@portRequired": {
+    "description": "Port validation message"
+  },
+  
+  "portMustBeNumber": "Port must be a number",
+  "@portMustBeNumber": {
+    "description": "Port number validation message"
+  },
+  
+  "portRange": "Port must be between 1 and 65535",
+  "@portRange": {
+    "description": "Port range validation message"
+  },
+  
+  "usernameRequired": "Username is required",
+  "@usernameRequired": {
+    "description": "Username validation message"
+  },
+  
+  "passwordRequired": "Password is required",
+  "@passwordRequired": {
+    "description": "Password validation message"
+  },
+  
+  "connectedSuccessfully": "Connected successfully! Credentials saved.",
+  "@connectedSuccessfully": {
+    "description": "Success connection message"
+  },
+  
+  "hostIpHint": "example.com or 192.168.1.100",
+  "@hostIpHint": {
+    "description": "Host field hint text"
+  },
+  
+  "userHint": "your_username",
+  "@userHint": {
+    "description": "Username field hint text"
+  },
+  
+  "passwordHint": "••••••••••••",
+  "@passwordHint": {
+    "description": "Password field hint text"
+  },
+  
+  "forget": "Forget",
+  "@forget": {
+    "description": "Forget credentials button"
+  }
+}

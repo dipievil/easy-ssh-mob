@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/file_explorer_screen.dart';
 import 'providers/ssh_provider.dart';
 import 'themes/app_theme.dart';
+import 'l10n/app_localizations.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,6 +31,16 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'EasySSH',
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('pt', 'BR'), // Portuguese (Brazil)
+          Locale('en', 'US'), // English (US)
+        ],
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode:

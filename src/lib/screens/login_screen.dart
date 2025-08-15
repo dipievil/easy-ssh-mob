@@ -7,6 +7,7 @@ import '../services/secure_storage_service.dart';
 import '../widgets/custom_components.dart';
 import '../utils/custom_animations.dart';
 import '../utils/responsive_breakpoints.dart';
+import '../l10n/app_localizations.dart';
 import 'file_explorer_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -79,39 +80,43 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   String? _validateHost(String? value) {
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.trim().isEmpty) {
-      return 'Host/IP é obrigatório';
+      return l10n.hostIpRequired;
     }
     return null;
   }
 
   String? _validatePort(String? value) {
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.trim().isEmpty) {
-      return 'Porta é obrigatória';
+      return l10n.portRequired;
     }
 
     final port = int.tryParse(value.trim());
     if (port == null) {
-      return 'Porta deve ser um número';
+      return l10n.portMustBeNumber;
     }
 
     if (port < 1 || port > 65535) {
-      return 'Porta deve estar entre 1 e 65535';
+      return l10n.portRange;
     }
 
     return null;
   }
 
   String? _validateUsername(String? value) {
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.trim().isEmpty) {
-      return 'Usuário é obrigatório';
+      return l10n.usernameRequired;
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.trim().isEmpty) {
-      return 'Senha é obrigatória';
+      return l10n.passwordRequired;
     }
     return null;
   }
@@ -135,10 +140,10 @@ class _LoginScreenState extends State<LoginScreen> {
       // Show success message if credentials were saved
       if (_rememberCredentials) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Conectado com sucesso! Credenciais salvas.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.connectedSuccessfully),
             backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -171,8 +176,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Credenciais removidas com sucesso'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.credentialsRemovedSuccessfully),
           backgroundColor: Colors.green,
         ),
       );
@@ -181,10 +186,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       body: SafeArea(
         child: _isLoading
-            ? const SshLoadingIndicator(message: 'Carregando credenciais...')
+            ? SshLoadingIndicator(message: l10n.loading)
             : ResponsiveContainer(
                 child: SlideInAnimation(
                   child: Form(
@@ -248,7 +255,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'EasySSH',
+                          l10n.appTitle,
                           textAlign: TextAlign.center,
                           style: Theme.of(context)
                               .textTheme
@@ -260,7 +267,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Conecte-se ao seu servidor SSH',
+                          l10n.connectToYourSshServer,
                           textAlign: TextAlign.center,
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -274,11 +281,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Host/IP field
                         TextFormField(
                           controller: _hostController,
-                          decoration: const InputDecoration(
-                            labelText: 'Host/IP',
-                            hintText: 'exemplo.com ou 192.168.1.100',
-                            prefixIcon: Icon(Icons.dns),
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            labelText: l10n.host,
+                            hintText: l10n.hostIpHint,
+                            prefixIcon: const Icon(Icons.dns),
+                            border: const OutlineInputBorder(),
                           ),
                           validator: _validateHost,
                           textInputAction: TextInputAction.next,
@@ -288,11 +295,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Port field
                         TextFormField(
                           controller: _portController,
-                          decoration: const InputDecoration(
-                            labelText: 'Porta',
+                          decoration: InputDecoration(
+                            labelText: l10n.port,
                             hintText: '22',
-                            prefixIcon: Icon(Icons.router),
-                            border: OutlineInputBorder(),
+                            prefixIcon: const Icon(Icons.router),
+                            border: const OutlineInputBorder(),
                           ),
                           keyboardType: TextInputType.number,
                           inputFormatters: [
@@ -307,11 +314,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Username field
                         TextFormField(
                           controller: _usernameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Usuário',
-                            hintText: 'seu_usuario',
-                            prefixIcon: Icon(Icons.person),
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            labelText: l10n.username,
+                            hintText: l10n.userHint,
+                            prefixIcon: const Icon(Icons.person),
+                            border: const OutlineInputBorder(),
                           ),
                           validator: _validateUsername,
                           textInputAction: TextInputAction.next,
@@ -322,8 +329,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextFormField(
                           controller: _passwordController,
                           decoration: InputDecoration(
-                            labelText: 'Senha',
-                            hintText: '••••••••••••',
+                            labelText: l10n.password,
+                            hintText: l10n.passwordHint,
                             prefixIcon: const Icon(Icons.lock),
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -360,7 +367,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'Lembrar credenciais',
+                                l10n.rememberCredentials,
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ),
@@ -374,7 +381,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Icons.delete_outline,
                                       size: 16,
                                     ),
-                                    label: const Text('Esquecer'),
+                                    label: Text(l10n.forget),
                                     style: TextButton.styleFrom(
                                       foregroundColor: Theme.of(
                                         context,
@@ -402,11 +409,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                               child: sshProvider.isConnecting
-                                  ? const Row(
+                                  ? Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 20,
                                           height: 20,
                                           child: CircularProgressIndicator(
@@ -414,17 +421,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                             color: Colors.white,
                                           ),
                                         ),
-                                        SizedBox(width: 12),
-                                        Text('Conectando...'),
+                                        const SizedBox(width: 12),
+                                        Text(l10n.connecting),
                                       ],
                                     )
-                                  : const Row(
+                                  : Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Icon(FontAwesomeIcons.plug),
-                                        SizedBox(width: 8),
-                                        Text('CONECTAR'),
+                                        const Icon(FontAwesomeIcons.plug),
+                                        const SizedBox(width: 8),
+                                        Text(l10n.connect.toUpperCase()),
                                       ],
                                     ),
                             );

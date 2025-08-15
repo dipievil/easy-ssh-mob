@@ -45,6 +45,11 @@ linked_*.ds
 unlinked.ds
 unlinked_spec.ds
 
+# Flutter Localization - Generated files
+# Uncomment these lines if using automatic generation
+# **/l10n/generated/
+# **/l10n/app_localizations*.dart
+
 # Android related
 **/android/**/gradle-wrapper.jar
 .gradle/

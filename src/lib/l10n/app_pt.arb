@@ -1,0 +1,122 @@
+{
+  "@@locale": "pt_BR",
+  "appTitle": "EasySSH",
+  
+  "loginTitle": "Conexão SSH",
+  
+  "host": "Host",
+  
+  "port": "Porta",
+  
+  "username": "Usuário",
+  
+  "password": "Senha",
+  
+  "connect": "Conectar",
+  
+  "rememberCredentials": "Lembrar credenciais",
+  
+  "settings": "Configurações",
+  
+  "currentConnection": "Conexão Atual",
+  
+  "disconnectFromServer": "Desconectar do servidor",
+  
+  "sessionLog": "Log da Sessão",
+  
+  "notificationSettings": "Configurações de Notificação",
+  
+  "cancel": "Cancelar",
+  
+  "save": "Salvar",
+  
+  "saveAs": "Salvar como",
+  
+  "saveAsTxt": "Salvar como TXT",
+  
+  "saveAsJson": "Salvar como JSON",
+  
+  "saveAsCsv": "Salvar como CSV",
+  
+  "fileExplorer": "Explorador de Arquivos",
+  
+  "terminal": "Terminal",
+  
+  "notification": "Notificação",
+  
+  "info": "Informação",
+  
+  "success": "Sucesso",
+  
+  "warning": "Aviso",
+  
+  "error": "Erro",
+  
+  "critical": "Crítico",
+  
+  "connectionError": "Erro de conexão",
+  
+  "connecting": "Conectando...",
+  
+  "connected": "Conectado",
+  
+  "disconnected": "Desconectado",
+  
+  "retry": "Tentar Novamente",
+  
+  "loading": "Carregando...",
+  
+  "pleaseWait": "Por favor, aguarde",
+  
+  "notifications": "Notificações",
+  
+  "configureAlertsAndSounds": "Configurar alertas e sons",
+  
+  "viewCommandHistory": "Ver histórico de comandos",
+  
+  "aboutApp": "Sobre o App",
+  
+  "versionInfo": "Informações da versão",
+  
+  "clearCredentials": "Limpar Credenciais",
+  
+  "forgetSavedLoginData": "Esquecer dados de login salvos",
+  
+  "logout": "Logout",
+  
+  "clearCredentialsConfirm": "Tem certeza de que deseja esquecer todas as credenciais salvas? Você precisará inserir os dados de login novamente.",
+  
+  "credentialsRemovedSuccessfully": "Credenciais removidas com sucesso",
+  
+  "clear": "Limpar",
+  
+  "logoutConfirm": "Deseja desconectar do servidor SSH? Você retornará à tela de login.",
+  
+  "sshClientDescription": "Cliente SSH simples e intuitivo para dispositivos móveis.",
+  
+  "developedWithFlutter": "Desenvolvido com Flutter 💙",
+  
+  "connectToYourSshServer": "Conecte-se ao seu servidor SSH",
+  
+  "hostIpRequired": "Host/IP é obrigatório",
+  
+  "portRequired": "Porta é obrigatória",
+  
+  "portMustBeNumber": "Porta deve ser um número",
+  
+  "portRange": "Porta deve estar entre 1 e 65535",
+  
+  "usernameRequired": "Usuário é obrigatório",
+  
+  "passwordRequired": "Senha é obrigatória",
+  
+  "connectedSuccessfully": "Conectado com sucesso! Credenciais salvas.",
+  
+  "hostIpHint": "exemplo.com ou 192.168.1.100",
+  
+  "userHint": "seu_usuario",
+  
+  "passwordHint": "••••••••••••",
+  
+  "forget": "Esquecer"
+}
