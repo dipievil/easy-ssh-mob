@@ -12,7 +12,7 @@ void main() {
         (WidgetTester tester) async {
       app.main();
       await tester.pump();
-      
+
       // Verify basic structure exists
       expect(find.byType(MaterialApp), findsOneWidget);
       expect(find.byType(Scaffold), findsAtLeastNWidgets(1));
@@ -21,7 +21,7 @@ void main() {
     testWidgets('can find basic UI elements', (WidgetTester tester) async {
       app.main();
       await tester.pump();
-      
+
       // Check for form fields and buttons
       expect(find.byType(TextFormField), findsWidgets);
       expect(find.byType(FilledButton), findsWidgets);

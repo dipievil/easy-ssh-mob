@@ -13,7 +13,8 @@ void main() {
   });
 
   group('TerminalScreen', () {
-    testWidgets('should create TerminalScreen widget', (WidgetTester tester) async {
+    testWidgets('should create TerminalScreen widget',
+        (WidgetTester tester) async {
       final mockSshProvider = SshProvider();
 
       await tester.pumpWidget(
@@ -53,4 +54,3 @@ void main() {
     });
   });
 }
-
