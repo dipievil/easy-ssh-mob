@@ -21,6 +21,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: 3.32.8
 
       - name: Check Flutter and Dart versions
         run: |
@@ -82,7 +83,7 @@ jobs:
       - name: Run additional unit tests (if they exist)
         run: |
           cd src
-          flutter test test/widget/ --reporter=compact
+          flutter test test/widgets/ --reporter=compact
           flutter test test/services/ --reporter=compact
 
       - name: Run working unit tests only
