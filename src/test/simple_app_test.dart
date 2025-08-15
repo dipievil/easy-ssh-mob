@@ -8,45 +8,23 @@ void main() {
     registerPlatformMocks();
   });
   group('Simple App Tests', () {
-    testWidgets('app loads and shows login screen',
+    testWidgets('app loads and shows basic structure',
         (WidgetTester tester) async {
       app.main();
-      await tester.pumpAndSettle();
-      print('Widgets found:');
-      final textFields = find.byType(TextFormField);
-      print('TextFormField widgets: ${textFields.evaluate().length}');
-      final connectButton = find.text('CONECTAR');
-      print('CONECTAR button: ${connectButton.evaluate().length}');
-      final hostLabel = find.text('Host/IP');
-      print('Host/IP label: ${hostLabel.evaluate().length}');
-      final allTexts = find.byType(Text);
-      final textWidgets = allTexts.evaluate();
-      print('All Text widgets (${textWidgets.length}):');
-      for (final textWidget in textWidgets) {
-        final widget = textWidget.widget as Text;
-        if (widget.data != null) {
-          print('  - "${widget.data}"');
-        }
-      }
+      await tester.pump();
+      
+      // Verify basic structure exists
+      expect(find.byType(MaterialApp), findsOneWidget);
+      expect(find.byType(Scaffold), findsAtLeastNWidgets(1));
     });
-    testWidgets('can find button without tapping', (WidgetTester tester) async {
+
+    testWidgets('can find basic UI elements', (WidgetTester tester) async {
       app.main();
-      await tester.pumpAndSettle();
-      final buttonByText = find.text('CONECTAR');
-      final buttonByType = find.byType(FilledButton);
-      print('Button by text: ${buttonByText.evaluate().length}');
-      print('Button by type: ${buttonByType.evaluate().length}');
-      if (buttonByText.evaluate().isNotEmpty) {
-        final buttonWidget = tester.widget(buttonByText);
-        print('Button widget type: ${buttonWidget.runtimeType}');
-        final filledButton = find.ancestor(
-            of: buttonByText, matching: find.byType(FilledButton));
-        if (filledButton.evaluate().isNotEmpty) {
-          final FilledButton button = tester.widget(filledButton);
-          print('Button enabled: ${button.onPressed != null}');
-        }
-      }
-      expect(true, true);
+      await tester.pump();
+      
+      // Check for form fields and buttons
+      expect(find.byType(TextFormField), findsWidgets);
+      expect(find.byType(FilledButton), findsWidgets);
     });
   });
 }

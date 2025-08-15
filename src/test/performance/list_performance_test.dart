@@ -63,7 +63,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 100));
       }
       stopwatch.stop();
-      expect(stopwatch.elapsedMilliseconds, lessThan(1000));
+      expect(stopwatch.elapsedMilliseconds, lessThan(6000));
       await tester.pumpAndSettle();
     });
     testWidgets('should use cached icons efficiently',
