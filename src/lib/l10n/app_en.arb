@@ -298,5 +298,45 @@
   "forget": "Forget",
   "@forget": {
     "description": "Forget credentials button"
+  },
+  
+  "alertSounds": "Alert Sounds",
+  "@alertSounds": {
+    "description": "Alert sounds setting"
+  },
+  
+  "playSoundsForNotifications": "Play sounds for notifications",
+  "@playSoundsForNotifications": {
+    "description": "Alert sounds subtitle"
+  },
+  
+  "soundVolume": "Sound Volume",
+  "@soundVolume": {
+    "description": "Sound volume setting"
+  },
+  
+  "vibration": "Vibration",
+  "@vibration": {
+    "description": "Vibration setting"
+  },
+  
+  "vibrateForNotifications": "Vibrate for notifications",
+  "@vibrateForNotifications": {
+    "description": "Vibration subtitle"
+  },
+  
+  "testNotifications": "Test Notifications",
+  "@testNotifications": {
+    "description": "Test notifications section"
+  },
+  
+  "testDifferentNotificationTypes": "Test different notification types",
+  "@testDifferentNotificationTypes": {
+    "description": "Test notifications subtitle"
+  },
+  
+  "soundSettings": "Sound Settings",
+  "@soundSettings": {
+    "description": "Sound settings section title"
   }
 }

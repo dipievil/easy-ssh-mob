@@ -395,6 +395,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Forget'**
   String get forget;
+
+  /// Alert sounds setting
+  ///
+  /// In en, this message translates to:
+  /// **'Alert Sounds'**
+  String get alertSounds;
+
+  /// Alert sounds subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Play sounds for notifications'**
+  String get playSoundsForNotifications;
+
+  /// Sound volume setting
+  ///
+  /// In en, this message translates to:
+  /// **'Sound Volume'**
+  String get soundVolume;
+
+  /// Vibration setting
+  ///
+  /// In en, this message translates to:
+  /// **'Vibration'**
+  String get vibration;
+
+  /// Vibration subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Vibrate for notifications'**
+  String get vibrateForNotifications;
+
+  /// Test notifications section
+  ///
+  /// In en, this message translates to:
+  /// **'Test Notifications'**
+  String get testNotifications;
+
+  /// Test notifications subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Test different notification types'**
+  String get testDifferentNotificationTypes;
+
+  /// Sound settings section title
+  ///
+  /// In en, this message translates to:
+  /// **'Sound Settings'**
+  String get soundSettings;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

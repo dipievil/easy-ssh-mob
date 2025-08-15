@@ -183,4 +183,28 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get forget => 'Esquecer';
+
+  @override
+  String get alertSounds => 'Sons de Alerta';
+
+  @override
+  String get playSoundsForNotifications => 'Tocar sons para notificações';
+
+  @override
+  String get soundVolume => 'Volume do Som';
+
+  @override
+  String get vibration => 'Vibração';
+
+  @override
+  String get vibrateForNotifications => 'Vibrar para notificações';
+
+  @override
+  String get testNotifications => 'Testar Notificações';
+
+  @override
+  String get testDifferentNotificationTypes => 'Testar diferentes tipos de notificação';
+
+  @override
+  String get soundSettings => 'Configurações de Som';
 }

@@ -118,5 +118,21 @@
   
   "passwordHint": "••••••••••••",
   
-  "forget": "Esquecer"
+  "forget": "Esquecer",
+  
+  "alertSounds": "Sons de Alerta",
+  
+  "playSoundsForNotifications": "Tocar sons para notificações",
+  
+  "soundVolume": "Volume do Som",
+  
+  "vibration": "Vibração",
+  
+  "vibrateForNotifications": "Vibrar para notificações",
+  
+  "testNotifications": "Testar Notificações",
+  
+  "testDifferentNotificationTypes": "Testar diferentes tipos de notificação",
+  
+  "soundSettings": "Configurações de Som"
 }

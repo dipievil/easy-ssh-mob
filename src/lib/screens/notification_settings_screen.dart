@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../services/notification_service.dart';
 import '../widgets/error_widgets.dart';
+import '../l10n/app_localizations.dart';
 
 /// Screen for configuring notification settings
 class NotificationSettingsScreen extends StatefulWidget {
@@ -94,16 +95,18 @@ class _NotificationSettingsScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Configurações de Notificação')),
+        appBar: AppBar(title: Text(l10n.notificationSettings)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Configurações de Notificação'),
+        title: Text(l10n.notificationSettings),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: ListView(
@@ -124,7 +127,7 @@ class _NotificationSettingsScreenState
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Configurações de Som',
+                        l10n.soundSettings,
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium
@@ -134,8 +137,8 @@ class _NotificationSettingsScreenState
                   ),
                   const SizedBox(height: 16),
                   SwitchListTile(
-                    title: const Text('Sons de Alerta'),
-                    subtitle: const Text('Tocar sons para notificações'),
+                    title: Text(l10n.alertSounds),
+                    subtitle: Text(l10n.playSoundsForNotifications),
                     value: _soundEnabled,
                     onChanged: _toggleSound,
                     contentPadding: EdgeInsets.zero,
@@ -143,7 +146,7 @@ class _NotificationSettingsScreenState
                   if (_soundEnabled) ...[
                     const SizedBox(height: 8),
                     Text(
-                      'Volume dos Alertas',
+                      l10n.soundVolume,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     Slider(
@@ -187,8 +190,8 @@ class _NotificationSettingsScreenState
                   ),
                   const SizedBox(height: 16),
                   SwitchListTile(
-                    title: const Text('Vibração'),
-                    subtitle: const Text('Vibrar para alertas importantes'),
+                    title: Text(l10n.vibration),
+                    subtitle: Text(l10n.vibrateForNotifications),
                     value: _vibrateEnabled,
                     onChanged: _toggleVibrate,
                     contentPadding: EdgeInsets.zero,
@@ -215,7 +218,7 @@ class _NotificationSettingsScreenState
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Testar Notificações',
+                        l10n.testNotifications,
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium
@@ -225,10 +228,8 @@ class _NotificationSettingsScreenState
                   ),
                   const SizedBox(height: 16),
                   ListTile(
-                    title: const Text('Testar Todos os Tipos'),
-                    subtitle: const Text(
-                      'Demonstra diferentes tipos de alerta',
-                    ),
+                    title: Text(l10n.testNotifications),
+                    subtitle: Text(l10n.testDifferentNotificationTypes),
                     trailing: const Icon(FontAwesomeIcons.play),
                     onTap: _showTestNotifications,
                     contentPadding: EdgeInsets.zero,
