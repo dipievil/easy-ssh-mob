@@ -151,57 +151,40 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v3
+      - name: Build Android APK 
+        uses: cedvdb/action-flutter-build-android@v1
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          keystore-base64: ${{ secrets.KEYSTORE_BASE64 }}
+          keystore-password: "${{ secrets.KEYSTORE_PASSWORD }}"
+          build-cmd: flutter build apk --release --flavor dev
+          working-directory: ./
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
+      # - name: Setup Java
+      #   uses: actions/setup-java@v3
+      #   with:
+      #     distribution: 'zulu'
+      #     java-version: '17'
 
-      - name: Get dependencies
-        run: |
-          cd src
-          flutter pub get
+      # - name: Setup Flutter
+      #   uses: subosito/flutter-action@v2
+      #   with:
+      #     channel: 'stable'
 
-      - name: Build APK
-        run: |
-          cd src
-          flutter build apk --release
+      # - name: Get dependencies
+      #   run: |
+      #     cd src
+      #     flutter pub get
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: app-release.apk
-          path: src/build/app/outputs/flutter-apk/app-release.apk
+      # - name: Build APK
+      #   run: |
+      #     cd src
+      #     flutter build apk --release
 
-  # Build para iOS (apenas se estiver no macOS)
-  build-ios:
-    name: Build iOS App
-    runs-on: self-hosted
-    needs: [analyze, test]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-
-      - name: Get dependencies
-        run: |
-          cd src
-          flutter pub get
-
-      - name: Build iOS (no codesign)
-        run: |
-          cd src
-          flutter build ios --no-codesign
-
+      # - name: Upload APK artifact
+      #   uses: actions/upload-artifact@v4.6.2
+      #   with:
+      #     name: app-release.apk
+      #     path: src/build/app/outputs/flutter-apk/app-release.apk
 
   coverage-report:
     name: Coverage Report
