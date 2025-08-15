@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:easy_ssh_mob_new/services/file_icon_manager.dart';
 import 'package:easy_ssh_mob_new/models/ssh_file.dart';
-
 void main() {
   group('FileIconManager Tests', () {
     group('Icon Selection', () {
@@ -14,63 +13,49 @@ void main() {
           type: FileType.directory,
           displayName: 'folder/',
         );
-
         const executable = SshFile(
           name: 'script.sh',
           fullPath: '/script.sh',
           type: FileType.executable,
           displayName: 'script.sh*',
         );
-
         const regular = SshFile(
           name: 'file.txt',
           fullPath: '/file.txt',
           type: FileType.regular,
           displayName: 'file.txt',
         );
-
         const symlink = SshFile(
           name: 'link',
           fullPath: '/link',
           type: FileType.symlink,
           displayName: 'link@',
         );
-
-        // Testando com FontAwesome icons que são realmente usados
         expect(
             FileIconManager.getIconForFile(directory), FontAwesomeIcons.folder);
         expect(FileIconManager.getIconForFile(executable),
             FontAwesomeIcons.terminal);
         expect(FileIconManager.getIconForFile(regular),
-            FontAwesomeIcons.fileLines); // .txt maps to fileLines
+            FontAwesomeIcons.fileLines); 
         expect(FileIconManager.getIconForFile(symlink), FontAwesomeIcons.link);
       });
-
       test('should return specific icons for file extensions', () {
         final testCases = [
-          // Documentos
           ('document.pdf', FontAwesomeIcons.filePdf),
           ('text.md', FontAwesomeIcons.readme),
           ('sheet.xlsx', FontAwesomeIcons.fileExcel),
           ('text.txt', FontAwesomeIcons.fileLines),
-
-          // Código
           ('script.py', FontAwesomeIcons.python),
           ('web.html', FontAwesomeIcons.html5),
           ('style.css', FontAwesomeIcons.css3Alt),
           ('data.json', FontAwesomeIcons.fileCode),
           ('app.js', FontAwesomeIcons.js),
-
-          // Mídia
           ('photo.jpg', FontAwesomeIcons.fileImage),
           ('video.mp4', FontAwesomeIcons.fileVideo),
           ('song.mp3', FontAwesomeIcons.fileAudio),
-
-          // Arquivos
           ('archive.zip', FontAwesomeIcons.fileZipper),
           ('system.log', FontAwesomeIcons.fileLines),
         ];
-
         for (final (filename, expectedIcon) in testCases) {
           final file = SshFile(
             name: filename,
@@ -78,7 +63,6 @@ void main() {
             type: FileType.regular,
             displayName: filename,
           );
-
           expect(
             FileIconManager.getIconForFile(file),
             expectedIcon,
@@ -86,9 +70,7 @@ void main() {
           );
         }
       });
-
       test('should return special icons for special directories', () {
-        // Note: This implementation currently returns FontAwesome folder for all directories
         final specialDirs = [
           ('Documents', FontAwesomeIcons.folder.codePoint),
           ('Downloads', FontAwesomeIcons.folder.codePoint),
@@ -98,7 +80,6 @@ void main() {
           ('Desktop', FontAwesomeIcons.folder.codePoint),
           ('.hidden', FontAwesomeIcons.folder.codePoint),
         ];
-
         for (final (dirName, expectedCodePoint) in specialDirs) {
           final dir = SshFile(
             name: dirName,
@@ -106,7 +87,6 @@ void main() {
             type: FileType.directory,
             displayName: '$dirName/',
           );
-
           final actualIcon = FileIconManager.getIconForFile(dir);
           expect(
             actualIcon.codePoint,
@@ -116,27 +96,25 @@ void main() {
           );
         }
       });
-
       test('should return special icons for special file names', () {
         final specialFiles = [
           ('README', FontAwesomeIcons.readme.codePoint),
           (
             'LICENSE',
             FontAwesomeIcons.certificate.codePoint
-          ), // Uses certificate instead of gavel
+          ), 
           ('CHANGELOG', FontAwesomeIcons.fileLines.codePoint),
           ('Makefile', FontAwesomeIcons.hammer.codePoint),
           ('Dockerfile', FontAwesomeIcons.docker.codePoint),
           (
             '.env',
             FontAwesomeIcons.gear.codePoint
-          ), // .env usa gear conforme FileIconManager
+          ), 
           (
             '.gitignore',
             FontAwesomeIcons.gitAlt.codePoint
-          ), // .gitignore usa gitAlt conforme FileIconManager
+          ), 
         ];
-
         for (final (fileName, expectedCodePoint) in specialFiles) {
           final file = SshFile(
             name: fileName,
@@ -144,7 +122,6 @@ void main() {
             type: FileType.regular,
             displayName: fileName,
           );
-
           final actualIcon = FileIconManager.getIconForFile(file);
           expect(
             actualIcon.codePoint,
@@ -155,7 +132,6 @@ void main() {
         }
       });
     });
-
     group('Color Selection', () {
       testWidgets('should return non-null colors for file types',
           (WidgetTester tester) async {
@@ -170,40 +146,33 @@ void main() {
                   type: FileType.directory,
                   displayName: 'folder/',
                 );
-
                 const executable = SshFile(
                   name: 'script.sh',
                   fullPath: '/script.sh',
                   type: FileType.executable,
                   displayName: 'script.sh*',
                 );
-
                 const textFile = SshFile(
                   name: 'test.txt',
                   fullPath: '/test.txt',
                   type: FileType.regular,
                   displayName: 'test.txt',
                 );
-
                 final dirColor =
                     FileIconManager.getColorForFile(directory, context);
                 final execColor =
                     FileIconManager.getColorForFile(executable, context);
                 final textColor =
                     FileIconManager.getColorForFile(textFile, context);
-
-                // Verificar se cores são válidas
                 expect(dirColor, isNotNull);
                 expect(execColor, isNotNull);
                 expect(textColor, isNotNull);
-
                 return Container();
               },
             ),
           ),
         );
       });
-
       testWidgets('should return colors for different themes',
           (WidgetTester tester) async {
         const file = SshFile(
@@ -212,8 +181,6 @@ void main() {
           type: FileType.regular,
           displayName: 'test.txt',
         );
-
-        // Test light theme
         await tester.pumpWidget(
           MaterialApp(
             theme: ThemeData.light(),
@@ -227,8 +194,6 @@ void main() {
             ),
           ),
         );
-
-        // Test dark theme
         await tester.pumpWidget(
           MaterialApp(
             theme: ThemeData.dark(),
@@ -244,7 +209,6 @@ void main() {
         );
       });
     });
-
     group('Edge Cases', () {
       test('should handle files without extensions', () {
         const file = SshFile(
@@ -253,12 +217,10 @@ void main() {
           type: FileType.regular,
           displayName: 'noextension',
         );
-
         final icon = FileIconManager.getIconForFile(file);
         expect(icon, isNotNull);
-        expect(icon, FontAwesomeIcons.file); // Ícone padrão FontAwesome
+        expect(icon, FontAwesomeIcons.file); 
       });
-
       test('should handle files with multiple dots', () {
         const file = SshFile(
           name: 'file.backup.txt',
@@ -266,12 +228,10 @@ void main() {
           type: FileType.regular,
           displayName: 'file.backup.txt',
         );
-
         final icon = FileIconManager.getIconForFile(file);
         expect(icon,
-            FontAwesomeIcons.fileLines); // Deve usar a última extensão (.txt)
+            FontAwesomeIcons.fileLines); 
       });
-
       test('should handle empty file names', () {
         const file = SshFile(
           name: '',
@@ -279,12 +239,10 @@ void main() {
           type: FileType.regular,
           displayName: '',
         );
-
         final icon = FileIconManager.getIconForFile(file);
         expect(icon, isNotNull);
         expect(icon, FontAwesomeIcons.file);
       });
-
       test('should handle case insensitive extensions', () {
         const lowerCase = SshFile(
           name: 'test.txt',
@@ -292,30 +250,25 @@ void main() {
           type: FileType.regular,
           displayName: 'test.txt',
         );
-
         const upperCase = SshFile(
           name: 'TEST.TXT',
           fullPath: '/TEST.TXT',
           type: FileType.regular,
           displayName: 'TEST.TXT',
         );
-
         const mixedCase = SshFile(
           name: 'Test.TxT',
           fullPath: '/Test.TxT',
           type: FileType.regular,
           displayName: 'Test.TxT',
         );
-
         final icon1 = FileIconManager.getIconForFile(lowerCase);
         final icon2 = FileIconManager.getIconForFile(upperCase);
         final icon3 = FileIconManager.getIconForFile(mixedCase);
-
         expect(icon1, icon2);
         expect(icon2, icon3);
         expect(icon1, FontAwesomeIcons.fileLines);
       });
-
       test('should handle unknown file types gracefully', () {
         const unknownFile = SshFile(
           name: 'test.unknownextension',
@@ -323,13 +276,11 @@ void main() {
           type: FileType.unknown,
           displayName: 'test.unknownextension',
         );
-
         final icon = FileIconManager.getIconForFile(unknownFile);
         expect(icon, isNotNull);
-        expect(icon, FontAwesomeIcons.question); // Unknown type icon
+        expect(icon, FontAwesomeIcons.question); 
       });
     });
-
     group('Utility Methods', () {
       test('should correctly identify code files', () {
         expect(FileIconManager.isCodeFile('script.py'), isTrue);
@@ -338,7 +289,6 @@ void main() {
         expect(FileIconManager.isCodeFile('document.pdf'), isFalse);
         expect(FileIconManager.isCodeFile('image.jpg'), isFalse);
       });
-
       test('should correctly identify image files', () {
         expect(FileIconManager.isImageFile('photo.jpg'), isTrue);
         expect(FileIconManager.isImageFile('logo.png'), isTrue);
@@ -346,7 +296,6 @@ void main() {
         expect(FileIconManager.isImageFile('script.py'), isFalse);
         expect(FileIconManager.isImageFile('document.pdf'), isFalse);
       });
-
       test('should correctly identify video files', () {
         expect(FileIconManager.isVideoFile('movie.mp4'), isTrue);
         expect(FileIconManager.isVideoFile('clip.avi'), isTrue);
@@ -354,7 +303,6 @@ void main() {
         expect(FileIconManager.isVideoFile('song.mp3'), isFalse);
         expect(FileIconManager.isVideoFile('photo.jpg'), isFalse);
       });
-
       test('should correctly identify audio files', () {
         expect(FileIconManager.isAudioFile('song.mp3'), isTrue);
         expect(FileIconManager.isAudioFile('track.wav'), isTrue);
@@ -362,7 +310,6 @@ void main() {
         expect(FileIconManager.isAudioFile('movie.mp4'), isFalse);
         expect(FileIconManager.isAudioFile('script.py'), isFalse);
       });
-
       test('should correctly identify archive files', () {
         expect(FileIconManager.isArchiveFile('data.zip'), isTrue);
         expect(FileIconManager.isArchiveFile('backup.tar'), isTrue);
@@ -371,12 +318,9 @@ void main() {
         expect(FileIconManager.isArchiveFile('script.py'), isFalse);
       });
     });
-
     group('Performance', () {
       test('should handle large number of files efficiently', () {
         final stopwatch = Stopwatch()..start();
-
-        // Gerar 1000 arquivos diferentes
         for (int i = 0; i < 1000; i++) {
           final file = SshFile(
             name: 'file_$i.txt',
@@ -384,13 +328,9 @@ void main() {
             type: FileType.regular,
             displayName: 'file_$i.txt',
           );
-
           FileIconManager.getIconForFile(file);
         }
-
         stopwatch.stop();
-
-        // Deve processar 1000 arquivos em menos de 1 segundo
         expect(stopwatch.elapsedMilliseconds, lessThan(1000));
       });
     });

@@ -1,13 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:easy_ssh_mob_new/models/log_entry.dart';
-
 void main() {
   group('LogEntry', () {
     group('constructor and basic properties', () {
       test('should create LogEntry with all properties', () {
         final timestamp = DateTime(2024, 1, 15, 10, 30, 0);
         const duration = Duration(milliseconds: 250);
-
         final entry = LogEntry(
           id: 'test_001',
           timestamp: timestamp,
@@ -20,7 +18,6 @@ void main() {
           duration: duration,
           status: CommandStatus.success,
         );
-
         expect(entry.id, equals('test_001'));
         expect(entry.command, equals('ls -la'));
         expect(entry.type, equals(CommandType.navigation));
@@ -31,7 +28,6 @@ void main() {
         expect(entry.duration, equals(duration));
         expect(entry.status, equals(CommandStatus.success));
       });
-
       test('should handle error command correctly', () {
         final entry = LogEntry(
           id: 'test_002',
@@ -45,14 +41,12 @@ void main() {
           duration: const Duration(milliseconds: 50),
           status: CommandStatus.error,
         );
-
         expect(entry.hasError, isTrue);
         expect(entry.wasSuccessful, isFalse);
         expect(entry.stderr, isNotEmpty);
         expect(entry.exitCode, equals(1));
       });
     });
-
     group('serialization', () {
       test('should convert to and from JSON correctly', () {
         final originalEntry = LogEntry(
@@ -68,10 +62,8 @@ void main() {
           status: CommandStatus.success,
           metadata: {'test': 'value'},
         );
-
         final json = originalEntry.toJson();
         final restoredEntry = LogEntry.fromJson(json);
-
         expect(restoredEntry.id, equals(originalEntry.id));
         expect(restoredEntry.timestamp, equals(originalEntry.timestamp));
         expect(restoredEntry.command, equals(originalEntry.command));
@@ -86,7 +78,6 @@ void main() {
         expect(restoredEntry.metadata, equals(originalEntry.metadata));
       });
     });
-
     group('formatting methods', () {
       test('should format duration correctly', () {
         final fastEntry = LogEntry(
@@ -100,9 +91,7 @@ void main() {
           duration: const Duration(milliseconds: 150),
           status: CommandStatus.success,
         );
-
         expect(fastEntry.durationFormatted, equals('150ms'));
-
         final slowEntry = LogEntry(
           id: 'slow',
           timestamp: DateTime.now(),
@@ -114,10 +103,8 @@ void main() {
           duration: const Duration(seconds: 2, milliseconds: 500),
           status: CommandStatus.success,
         );
-
         expect(slowEntry.durationFormatted, equals('2.500s'));
       });
-
       test('should create short command for display', () {
         final shortEntry = LogEntry(
           id: 'short',
@@ -130,9 +117,7 @@ void main() {
           duration: const Duration(milliseconds: 50),
           status: CommandStatus.success,
         );
-
         expect(shortEntry.shortCommand, equals('ls'));
-
         const longCommand =
             'find /home/user -type f -name "*.log" -exec grep "error" {} \\; | head -20';
         final longEntry = LogEntry(
@@ -146,11 +131,9 @@ void main() {
           duration: const Duration(milliseconds: 1000),
           status: CommandStatus.success,
         );
-
         expect(longEntry.shortCommand.length, equals(50));
         expect(longEntry.shortCommand, endsWith('...'));
       });
-
       test('should create stdout and stderr previews', () {
         final entry = LogEntry(
           id: 'preview_test',
@@ -165,15 +148,12 @@ void main() {
           duration: const Duration(seconds: 1),
           status: CommandStatus.partial,
         );
-
         expect(entry.stdoutPreview.length, lessThanOrEqualTo(100));
         expect(entry.stdoutPreview, endsWith('...'));
-
         expect(entry.stderrPreview.length, lessThanOrEqualTo(100));
         expect(entry.stderrPreview, contains('Warning'));
       });
     });
-
     group('CSV formatting', () {
       test('should format as CSV row correctly', () {
         final entry = LogEntry(
@@ -188,19 +168,16 @@ void main() {
           duration: const Duration(milliseconds: 120),
           status: CommandStatus.success,
         );
-
         final csvRow = entry.toCsvRow();
         final fields = csvRow.split(',');
-
-        expect(fields[0], equals('2024-01-15 10:30:45')); // timestamp
-        expect(fields[1], equals('ls -la')); // command
-        expect(fields[2], equals('Navigation')); // type
-        expect(fields[3], equals('Success')); // status
-        expect(fields[4], equals('120ms')); // duration
-        expect(fields[5], equals('/home/user')); // working directory
-        expect(fields[6], equals('0')); // exit code
+        expect(fields[0], equals('2024-01-15 10:30:45')); 
+        expect(fields[1], equals('ls -la')); 
+        expect(fields[2], equals('Navigation')); 
+        expect(fields[3], equals('Success')); 
+        expect(fields[4], equals('120ms')); 
+        expect(fields[5], equals('/home/user')); 
+        expect(fields[6], equals('0')); 
       });
-
       test('should escape CSV fields with commas', () {
         final entry = LogEntry(
           id: 'csv_escape_test',
@@ -214,14 +191,12 @@ void main() {
           duration: const Duration(milliseconds: 10),
           status: CommandStatus.success,
         );
-
         final csvRow = entry.toCsvRow();
         expect(csvRow,
-            contains('"echo ""hello, world"""')); // command should be escaped
-        expect(csvRow, contains('"hello, world"')); // stdout should be escaped
+            contains('"echo ""hello, world"""')); 
+        expect(csvRow, contains('"hello, world"')); 
       });
     });
-
     group('text formatting', () {
       test('should format as text with all sections', () {
         final entry = LogEntry(
@@ -237,9 +212,7 @@ void main() {
           status: CommandStatus.success,
           metadata: {'category': 'system_info'},
         );
-
         final textFormat = entry.toTextFormat();
-
         expect(textFormat, contains('=== Command Execution Log ==='));
         expect(textFormat, contains('ID: text_test'));
         expect(textFormat, contains('Command: ps aux'));
@@ -252,7 +225,6 @@ void main() {
         expect(textFormat, contains('category'));
       });
     });
-
     group('CommandType and CommandStatus enums', () {
       test('should have all expected CommandType values', () {
         expect(CommandType.values, hasLength(6));
@@ -263,7 +235,6 @@ void main() {
         expect(CommandType.values, contains(CommandType.custom));
         expect(CommandType.values, contains(CommandType.unknown));
       });
-
       test('should have all expected CommandStatus values', () {
         expect(CommandStatus.values, hasLength(5));
         expect(CommandStatus.values, contains(CommandStatus.success));

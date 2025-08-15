@@ -9,16 +9,12 @@ import 'package:easy_ssh_mob_new/providers/ssh_provider.dart';
 import 'package:easy_ssh_mob_new/models/log_entry.dart';
 import 'package:easy_ssh_mob_new/models/ssh_connection_state.dart';
 import 'package:easy_ssh_mob_new/widgets/log_entry_tile.dart';
-
-// Gerar mocks - execute: flutter packages pub run build_runner build
 @GenerateMocks([SshProvider])
 import 'session_log_screen_test.mocks.dart';
-
 void main() {
   group('SessionLogScreen Widget Tests', () {
     late MockSshProvider mockProvider;
     late List<LogEntry> mockLogEntries;
-
     setUp(() {
       mockProvider = MockSshProvider();
       mockLogEntries = [
@@ -57,7 +53,6 @@ void main() {
           duration: const Duration(milliseconds: 30),
         ),
       ];
-
       when(mockProvider.connectionState)
           .thenReturn(SshConnectionState.connected);
       when(mockProvider.sessionLog).thenReturn(mockLogEntries);
@@ -91,7 +86,6 @@ void main() {
         'successRate': 66.67,
       });
     });
-
     Widget createWidgetUnderTest() {
       return MaterialApp(
         home: ChangeNotifierProvider<SshProvider>.value(
@@ -100,175 +94,118 @@ void main() {
         ),
       );
     }
-
     testWidgets('should display screen title', (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
       expect(find.text('Histórico da Sessão'), findsOneWidget);
     });
-
     testWidgets('should display all log entries', (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Deve mostrar todos os comandos
       expect(find.text('ls -la'), findsOneWidget);
       expect(find.text('cat file.txt'), findsOneWidget);
       expect(find.text('rm nonexistent.txt'), findsOneWidget);
     });
-
     testWidgets('should show search action button',
         (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
       final searchButton = find.byIcon(FontAwesomeIcons.magnifyingGlass);
       expect(searchButton, findsOneWidget);
     });
-
     testWidgets('should show filter action button',
         (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Procurar ícone de filtro (pode ser filter ou similar)
       expect(find.byIcon(FontAwesomeIcons.filter), findsOneWidget);
     });
-
     testWidgets('should open search dialog', (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Clicar no botão de busca
       await tester.tap(find.byIcon(FontAwesomeIcons.magnifyingGlass));
       await tester.pumpAndSettle();
-
-      // Deve abrir dialog de busca
       expect(find.byType(AlertDialog), findsOneWidget);
       expect(find.text('Buscar Comandos'), findsOneWidget);
     });
-
     testWidgets('should search log entries', (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Abrir busca
       await tester.tap(find.byIcon(FontAwesomeIcons.magnifyingGlass));
       await tester.pumpAndSettle();
-
-      // Digitar termo de busca
       await tester.enterText(find.byType(TextField), 'cat');
       await tester.tap(find.text('Buscar'));
       await tester.pumpAndSettle();
-
-      // Deve filtrar para mostrar apenas comandos com "cat"
       expect(find.text('cat file.txt'), findsOneWidget);
       expect(find.text('ls -la'), findsNothing);
       expect(find.text('rm nonexistent.txt'), findsNothing);
     });
-
     testWidgets('should toggle filters panel', (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Clicar no botão de filtros
       await tester.tap(find.byIcon(FontAwesomeIcons.filter));
       await tester.pumpAndSettle();
-
-      // Deve mostrar painel de filtros
       expect(find.text('Tipo'), findsOneWidget);
       expect(find.text('Status'), findsOneWidget);
     });
-
     testWidgets('should filter by command type', (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Abrir filtros
       await tester.tap(find.byIcon(FontAwesomeIcons.filter));
       await tester.pumpAndSettle();
-
-      // Selecionar filtro por tipo "Navigation"
       final navigationFilter = find.text('Navigation');
       if (navigationFilter.evaluate().isNotEmpty) {
         await tester.tap(navigationFilter);
         await tester.pumpAndSettle();
-
-        // Deve mostrar apenas comandos de navegação
         expect(find.text('ls -la'), findsOneWidget);
         expect(find.text('cat file.txt'), findsNothing);
         expect(find.text('rm nonexistent.txt'), findsNothing);
       }
     });
-
     testWidgets('should filter by command status', (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Abrir filtros
       await tester.tap(find.byIcon(FontAwesomeIcons.filter));
       await tester.pumpAndSettle();
-
-      // Selecionar filtro por status "Error"
       final errorFilter = find.text('Error');
       if (errorFilter.evaluate().isNotEmpty) {
         await tester.tap(errorFilter);
         await tester.pumpAndSettle();
-
-        // Deve mostrar apenas comandos com erro
         expect(find.text('rm nonexistent.txt'), findsOneWidget);
         expect(find.text('ls -la'), findsNothing);
         expect(find.text('cat file.txt'), findsNothing);
       }
     });
-
     testWidgets('should show popup menu with options',
         (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Clicar no menu popup
       await tester.tap(find.byType(PopupMenuButton<String>));
       await tester.pumpAndSettle();
-
-      // Deve mostrar opções do menu
       expect(find.text('Estatísticas'), findsOneWidget);
       expect(find.text('Salvar como TXT'), findsOneWidget);
       expect(find.text('Limpar Histórico'), findsOneWidget);
     });
-
     testWidgets('should show statistics dialog', (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Abrir menu e clicar em estatísticas
       await tester.tap(find.byIcon(Icons.more_vert));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Estatísticas'));
       await tester.pumpAndSettle();
-
-      // Deve mostrar dialog de estatísticas
       expect(find.text('Estatísticas da Sessão'), findsOneWidget);
       expect(find.textContaining('comandos'), findsOneWidget);
     });
-
     testWidgets('should show clear history confirmation',
         (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Abrir menu e clicar em limpar histórico
       await tester.tap(find.byType(PopupMenuButton<String>));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Limpar Histórico'));
       await tester.pumpAndSettle();
-
-      // Deve mostrar confirmação
       expect(find.text('Limpar'), findsOneWidget);
       expect(find.textContaining('limpar'), findsOneWidget);
     });
-
     testWidgets('should handle empty log gracefully',
         (WidgetTester tester) async {
       when(mockProvider.sessionLog).thenReturn([]);
@@ -279,61 +216,43 @@ void main() {
         startDate: anyNamed('startDate'),
         endDate: anyNamed('endDate'),
       )).thenReturn([]);
-
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Deve mostrar mensagem de log vazio
       expect(
           find.textContaining('Nenhum comando foi executado'), findsOneWidget);
     });
-
     testWidgets('should display log entry details on tap',
         (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Clicar em uma entrada do log
       await tester.tap(find.byType(LogEntryTile).first);
       await tester.pumpAndSettle();
-
-      // Deve abrir diálogo de detalhes
       expect(find.byType(AlertDialog), findsOneWidget);
       expect(find.text('Detalhes do Comando'), findsOneWidget);
-
-      // Deve mostrar detalhes da entrada
       expect(find.textContaining('Comando Completo'), findsOneWidget);
       expect(find.textContaining('ls -la'),
-          findsWidgets); // O comando deve aparecer
+          findsWidgets); 
     });
-
     testWidgets('should show different icons for command types',
         (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Verificar se existem ícones diferentes para diferentes tipos
       expect(
-          find.byIcon(FontAwesomeIcons.folderOpen), findsWidgets); // Navigation
-      expect(find.byIcon(FontAwesomeIcons.fileLines), findsWidgets); // FileView
-      expect(find.byIcon(FontAwesomeIcons.play), findsWidgets); // Execution
+          find.byIcon(FontAwesomeIcons.folderOpen), findsWidgets); 
+      expect(find.byIcon(FontAwesomeIcons.fileLines), findsWidgets); 
+      expect(find.byIcon(FontAwesomeIcons.play), findsWidgets); 
     });
-
     testWidgets('should show command status indicators',
         (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Verificar indicadores de status
       expect(
-          find.byIcon(FontAwesomeIcons.circleCheck), findsWidgets); // Success
+          find.byIcon(FontAwesomeIcons.circleCheck), findsWidgets); 
       expect(find.byIcon(FontAwesomeIcons.triangleExclamation),
-          findsWidgets); // Error
+          findsWidgets); 
     });
-
     testWidgets('should scroll through long log list',
         (WidgetTester tester) async {
-      // Criar lista longa de logs
       final longLogList = List.generate(
           50,
           (index) => LogEntry(
@@ -347,27 +266,18 @@ void main() {
                 stderr: '',
                 duration: const Duration(milliseconds: 100),
               ));
-
       when(mockProvider.sessionLog).thenReturn(longLogList);
-
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Deve haver lista scrollável
       expect(find.byType(ListView), findsOneWidget);
-
-      // Testar scroll
       await tester.drag(find.byType(ListView), const Offset(0, -300));
       await tester.pumpAndSettle();
     });
-
     testWidgets('should format timestamps correctly',
         (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Verificar se timestamps estão formatados
-      expect(find.textContaining(':'), findsWidgets); // Formato de hora
+      expect(find.textContaining(':'), findsWidgets); 
     });
   });
 }
