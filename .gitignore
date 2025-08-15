@@ -125,3 +125,5 @@ flutter/
 .vscode/easy-ssh-mob.code-workspace
 
 .idea/
+
+src/.env
