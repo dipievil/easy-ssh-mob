@@ -38,12 +38,12 @@ jobs:
 
       - name: Verify formatting
         run: |
-          cd src
+          cd src/lib
           dart format --output=none --set-exit-if-changed .
 
       - name: Analyze project source
         run: |
-          cd src
+          cd src/lib
           flutter analyze
 
       - name: Check for outdated dependencies
