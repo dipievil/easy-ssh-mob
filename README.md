@@ -8,6 +8,7 @@
 [![Dart](https://img.shields.io/badge/Dart-0175C2?style=flat&logo=dart&logoColor=white)](https://dart.dev)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-green.svg)](https://flutter.dev/docs/deployment)
+[![Flutter Tests and Quality Checks](https://github.com/dipievil/easy-ssh-mob/actions/workflows/test.yml/badge.svg)](https://github.com/dipievil/easy-ssh-mob/actions/workflows/test.yml)
 
 </div>
 
