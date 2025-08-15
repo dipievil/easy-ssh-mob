@@ -83,7 +83,7 @@ class _SshFileListTileState extends State<SshFileListTile> {
         subtitle: Text(
           _getSubtitle(),
           style: TextStyle(
-            color: colorScheme.onSurface.withValues(alpha: 0.6),
+            color: colorScheme.onSurface.withOpacity(0.6),
             fontSize: 12,
           ),
         ),
@@ -96,7 +96,7 @@ class _SshFileListTileState extends State<SshFileListTile> {
             : Icon(
                 _getTrailingIcon(),
                 size: 16,
-                color: colorScheme.onSurface.withValues(alpha: 0.6),
+                color: colorScheme.onSurface.withOpacity(0.6),
               ),
         onTap: widget.isLoading ? null : widget.onTap,
         onLongPress: widget.isLoading ? null : widget.onLongPress,

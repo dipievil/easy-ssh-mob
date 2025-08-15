@@ -336,7 +336,7 @@ class FileIconManager {
         return Colors.grey.shade600;
 
       default:
-        return colorScheme.onSurface.withValues(alpha: 0.7);
+        return colorScheme.onSurface.withOpacity(0.7);
     }
   }
 

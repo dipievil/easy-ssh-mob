@@ -116,8 +116,8 @@ class OptimizedFileListTile extends StatelessWidget {
                           Text(
                             _formatFileSize(file.size),
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(
-                                alpha: 0.6,
+                              color: theme.colorScheme.onSurface.withOpacity(
+                                0.6,
                               ),
                             ),
                           ),
@@ -125,8 +125,8 @@ class OptimizedFileListTile extends StatelessWidget {
                           Text(
                             ' • ',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(
-                                alpha: 0.6,
+                              color: theme.colorScheme.onSurface.withOpacity(
+                                0.6,
                               ),
                             ),
                           ),
@@ -134,8 +134,8 @@ class OptimizedFileListTile extends StatelessWidget {
                           Text(
                             _formatFileDate(file.lastModified),
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(
-                                alpha: 0.6,
+                              color: theme.colorScheme.onSurface.withOpacity(
+                                0.6,
                               ),
                             ),
                           ),
@@ -149,7 +149,7 @@ class OptimizedFileListTile extends StatelessWidget {
             if (file.isDirectory)
               Icon(
                 Icons.chevron_right,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                color: theme.colorScheme.onSurface.withOpacity(0.4),
                 size: 20,
               ),
           ],

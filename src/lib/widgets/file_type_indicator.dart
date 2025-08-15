@@ -27,7 +27,7 @@ class FileTypeIndicator extends StatelessWidget {
           Icon(
             Icons.play_circle_outline,
             size: 16,
-            color: Colors.green.withValues(alpha: 0.7),
+            color: Colors.green.withOpacity(0.7),
           ),
         ],
       ],

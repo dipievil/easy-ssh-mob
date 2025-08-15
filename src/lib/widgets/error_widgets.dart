@@ -380,7 +380,7 @@ class _ToastNotificationState extends State<ToastNotification>
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.2),
+                    color: Colors.black.withOpacity(0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -501,7 +501,7 @@ class _LoadingOverlayState extends State<LoadingOverlay>
         return Opacity(
           opacity: _fadeAnimation.value,
           child: Container(
-            color: Colors.black.withValues(alpha: 0.7),
+            color: Colors.black.withOpacity(0.7),
             child: Center(
               child: Card(
                 margin: const EdgeInsets.all(32),

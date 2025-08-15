@@ -284,7 +284,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(12),
-            color: Colors.orange.withValues(alpha: 0.1),
+            color: Colors.orange.withOpacity(0.1),
             child: Row(
               children: [
                 const Icon(Icons.info_outline, color: Colors.orange),
@@ -304,7 +304,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(8),
-            color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+            color: Theme.of(context).primaryColor.withOpacity(0.1),
             child: Row(
               children: [
                 Text(
