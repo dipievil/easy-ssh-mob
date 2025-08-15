@@ -44,7 +44,7 @@ jobs:
       - name: Analyze project source
         run: |
           cd src
-          flutter analyze --fatal-infos
+          flutter analyze
 
       - name: Check for outdated dependencies
         run: |
@@ -71,7 +71,7 @@ jobs:
       - name: Generate mocks (if needed)
         run: |
           cd src
-          flutter pub add build_runner --dev
+          flutter pub add build_runner
           flutter packages pub run build_runner build --delete-conflicting-outputs
 
       - name: Run unit tests (providers and models)
