@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../utils/icon_mapping.dart';
 import 'package:provider/provider.dart';
 import '../models/command_item.dart';
 import '../models/predefined_commands.dart';
@@ -55,7 +55,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
             '${sshProvider.currentCredentials?.host ?? 'localhost'}:${sshProvider.currentCredentials?.port ?? 22}',
           ),
           currentAccountPicture: const CircleAvatar(
-            child: Icon(FontAwesomeIcons.server),
+            child: Icon(Icons.dns),
           ),
           decoration: BoxDecoration(color: Theme.of(context).primaryColor),
         );
@@ -93,7 +93,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
               ),
               ListTile(
                 leading: const Icon(
-                  FontAwesomeIcons.clockRotateLeft,
+                  Icons.access_timeRotateLeft,
                   size: 20,
                   color: Colors.blue,
                 ),
@@ -120,7 +120,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
               if (sshProvider.sessionStartTime != null)
                 ListTile(
                   leading: const Icon(
-                    FontAwesomeIcons.clock,
+                    Icons.access_time,
                     size: 20,
                     color: Colors.green,
                   ),
@@ -184,7 +184,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
               if (title == 'Personalizado') ...[
                 const Spacer(),
                 IconButton(
-                  icon: const Icon(FontAwesomeIcons.plus, size: 16),
+                  icon: const Icon(Icons.add, size: 16),
                   onPressed: _addCustomCommand,
                   tooltip: 'Adicionar comando',
                   padding: EdgeInsets.zero,
@@ -208,7 +208,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
             child: Column(
               children: [
                 Icon(
-                  FontAwesomeIcons.plus,
+                  Icons.add,
                   color: Colors.grey.shade400,
                   size: 32,
                 ),
@@ -220,7 +220,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
                 const SizedBox(height: 8),
                 TextButton.icon(
                   onPressed: _addCustomCommand,
-                  icon: const Icon(FontAwesomeIcons.plus, size: 16),
+                  icon: const Icon(Icons.add, size: 16),
                   label: const Text('Adicionar comando'),
                 ),
               ],
@@ -265,7 +265,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
                   value: 'edit',
                   child: Row(
                     children: [
-                      Icon(FontAwesomeIcons.penToSquare, size: 16),
+                      Icon(Icons.edit, size: 16),
                       SizedBox(width: 8),
                       Text('Editar'),
                     ],
@@ -275,7 +275,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
                   value: 'delete',
                   child: Row(
                     children: [
-                      Icon(FontAwesomeIcons.trash, size: 16, color: Colors.red),
+                      Icon(Icons.delete, size: 16, color: Colors.red),
                       SizedBox(width: 8),
                       Text('Excluir', style: TextStyle(color: Colors.red)),
                     ],
@@ -304,7 +304,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: _exportCommands,
-                  icon: const Icon(FontAwesomeIcons.download, size: 16),
+                  icon: const Icon(Icons.download, size: 16),
                   label: const Text('Exportar'),
                 ),
               ),
@@ -312,7 +312,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: _importCommands,
-                  icon: const Icon(FontAwesomeIcons.upload, size: 16),
+                  icon: const Icon(Icons.upload, size: 16),
                   label: const Text('Importar'),
                 ),
               ),
@@ -328,7 +328,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
                 Navigator.of(context).pop(); // Close drawer
                 Navigator.of(context).pushNamed('/settings');
               },
-              icon: const Icon(FontAwesomeIcons.gear, size: 16),
+              icon: const Icon(Icons.settings, size: 16),
               label: const Text('Configurações'),
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: Theme.of(context).primaryColor),
@@ -437,7 +437,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
                 ),
               );
             },
-            icon: const Icon(FontAwesomeIcons.copy, size: 16),
+            icon: const Icon(Icons.copy, size: 16),
             label: const Text('Copiar'),
           ),
           TextButton(

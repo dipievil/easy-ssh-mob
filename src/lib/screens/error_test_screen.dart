@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../utils/icon_mapping.dart';
 import '../services/error_handler.dart';
 import '../widgets/error_widgets.dart';
 
@@ -39,14 +39,14 @@ class ErrorTestScreen extends StatelessWidget {
                     context,
                     'Arquivo Não Encontrado',
                     'Testa erro de arquivo inexistente',
-                    FontAwesomeIcons.fileCircleXmark,
+                    Icons.descriptionCircleXmark,
                     () => _showTestError(context, ErrorType.fileNotFound),
                   ),
                   _buildErrorTestCard(
                     context,
                     'Operação Não Permitida',
                     'Testa erro de operação restrita',
-                    FontAwesomeIcons.ban,
+                    Icons.block,
                     () => _showTestError(
                       context,
                       ErrorType.operationNotPermitted,
@@ -56,35 +56,35 @@ class ErrorTestScreen extends StatelessWidget {
                     context,
                     'Conexão Perdida',
                     'Testa erro de conexão SSH perdida',
-                    FontAwesomeIcons.wifi,
+                    Icons.wifi,
                     () => _showTestError(context, ErrorType.connectionLost),
                   ),
                   _buildErrorTestCard(
                     context,
                     'Timeout',
                     'Testa erro de timeout de comando',
-                    FontAwesomeIcons.clock,
+                    Icons.access_time,
                     () => _showTestError(context, ErrorType.timeout),
                   ),
                   _buildErrorTestCard(
                     context,
                     'Comando Não Encontrado',
                     'Testa erro de comando inexistente',
-                    FontAwesomeIcons.terminal,
+                    Icons.terminal,
                     () => _showTestError(context, ErrorType.commandNotFound),
                   ),
                   _buildErrorTestCard(
                     context,
                     'Disco Cheio',
                     'Testa erro de espaço em disco',
-                    FontAwesomeIcons.hardDrive,
+                    Icons.storage,
                     () => _showTestError(context, ErrorType.diskFull),
                   ),
                   _buildErrorTestCard(
                     context,
                     'Erro Desconhecido',
                     'Testa erro genérico',
-                    FontAwesomeIcons.triangleExclamation,
+                    Icons.warning,
                     () => _showTestError(context, ErrorType.unknown),
                   ),
                 ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../utils/icon_mapping.dart';
 import '../providers/ssh_provider.dart';
 import '../services/secure_storage_service.dart';
 import '../widgets/custom_components.dart';
@@ -250,7 +250,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         // Logo section
                         const Icon(
-                          FontAwesomeIcons.terminal,
+                          Icons.terminal,
                           size: 64,
                           color: Colors.deepPurple,
                         ),
@@ -430,7 +430,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        const Icon(FontAwesomeIcons.plug),
+                                        const Icon(Icons.power),
                                         const SizedBox(width: 8),
                                         Text(l10n.connect.toUpperCase()),
                                       ],

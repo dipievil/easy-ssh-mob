@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../utils/icon_mapping.dart';
 
 /// Custom card widget with SSH-specific styling
 class SshCard extends StatelessWidget {
@@ -294,13 +294,13 @@ class StatusCard extends StatelessWidget {
   (IconData, Color) _getIconAndColor() {
     switch (type) {
       case StatusType.success:
-        return (FontAwesomeIcons.check, Colors.green);
+        return (IconMapping.getIcon('check'), Colors.green);
       case StatusType.error:
-        return (FontAwesomeIcons.xmark, Colors.red);
+        return (IconMapping.getIcon('xmark'), Colors.red);
       case StatusType.warning:
-        return (FontAwesomeIcons.triangleExclamation, Colors.orange);
+        return (IconMapping.getIcon('triangleExclamation'), Colors.orange);
       case StatusType.info:
-        return (FontAwesomeIcons.circleInfo, Colors.blue);
+        return (IconMapping.getIcon('circleInfo'), Colors.blue);
     }
   }
 }

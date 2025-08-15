@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../utils/icon_mapping.dart';
 import '../models/command_item.dart';
 import '../services/custom_commands_service.dart';
 
@@ -18,52 +18,52 @@ class _AddCustomCommandDialogState extends State<AddCustomCommandDialog> {
   final _commandController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  IconData _selectedIcon = FontAwesomeIcons.terminal;
+  IconData _selectedIcon = Icons.terminal;
   bool _isLoading = false;
 
   // Common icons for commands
   final List<IconData> _availableIcons = [
-    FontAwesomeIcons.terminal,
-    FontAwesomeIcons.gear,
-    FontAwesomeIcons.play,
-    FontAwesomeIcons.stop,
-    FontAwesomeIcons.folder,
-    FontAwesomeIcons.file,
-    FontAwesomeIcons.download,
-    FontAwesomeIcons.upload,
-    FontAwesomeIcons.magnifyingGlass,
-    FontAwesomeIcons.penToSquare,
-    FontAwesomeIcons.trash,
-    FontAwesomeIcons.copy,
-    FontAwesomeIcons.scissors,
-    FontAwesomeIcons.paste,
-    FontAwesomeIcons.floppyDisk,
-    FontAwesomeIcons.print,
-    FontAwesomeIcons.eye,
-    FontAwesomeIcons.database,
-    FontAwesomeIcons.server,
-    FontAwesomeIcons.networkWired,
-    FontAwesomeIcons.wifi,
-    FontAwesomeIcons.hardDrive,
-    FontAwesomeIcons.memory,
-    FontAwesomeIcons.microchip,
-    FontAwesomeIcons.gaugeHigh,
-    FontAwesomeIcons.chartLine,
-    FontAwesomeIcons.rectangleList,
-    FontAwesomeIcons.listCheck,
-    FontAwesomeIcons.clock,
-    FontAwesomeIcons.calendar,
-    FontAwesomeIcons.user,
-    FontAwesomeIcons.users,
-    FontAwesomeIcons.key,
-    FontAwesomeIcons.lock,
-    FontAwesomeIcons.unlock,
-    FontAwesomeIcons.shield,
-    FontAwesomeIcons.bug,
-    FontAwesomeIcons.wrench,
-    FontAwesomeIcons.screwdriver,
-    FontAwesomeIcons.hammer,
-    FontAwesomeIcons.screwdriverWrench,
+    Icons.terminal,
+    Icons.settings,
+    Icons.play_arrow,
+    Icons.stop,
+    Icons.folder,
+    Icons.description,
+    Icons.download,
+    Icons.upload,
+    Icons.search,
+    Icons.edit,
+    Icons.delete,
+    Icons.copy,
+    Icons.cut,
+    Icons.paste,
+    Icons.save,
+    Icons.print,
+    Icons.visibility,
+    Icons.storage,
+    Icons.dns,
+    Icons.cable,
+    Icons.wifi,
+    Icons.storage,
+    Icons.memory,
+    Icons.memory,
+    Icons.speed,
+    Icons.trending_up,
+    Icons.list,
+    Icons.checklist,
+    Icons.access_time,
+    Icons.calendar_today,
+    Icons.person,
+    Icons.persons,
+    Icons.vpn_key,
+    Icons.lock,
+    Icons.lock_open,
+    Icons.security,
+    Icons.bug_report,
+    Icons.build,
+    Icons.build,
+    Icons.build,
+    Icons.buildWrench,
   ];
 
   @override

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../utils/icon_mapping.dart';
 import '../services/notification_service.dart';
 import '../widgets/error_widgets.dart';
 import 'notification_settings_screen.dart';
@@ -34,7 +34,7 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           IconButton(
-            icon: const Icon(FontAwesomeIcons.gear),
+            icon: const Icon(Icons.settings),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
@@ -75,7 +75,7 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                       children: [
                         ElevatedButton.icon(
                           icon: const Icon(
-                            FontAwesomeIcons.circleInfo,
+                            Icons.info,
                             size: 16,
                           ),
                           label: const Text('Info'),
@@ -96,7 +96,7 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                         ),
                         ElevatedButton.icon(
                           icon: const Icon(
-                            FontAwesomeIcons.circleCheck,
+                            Icons.check_circle,
                             size: 16,
                           ),
                           label: const Text('Sucesso'),
@@ -117,7 +117,7 @@ class _NotificationDemoScreenState extends State<NotificationDemoScreen> {
                         ),
                         ElevatedButton.icon(
                           icon: const Icon(
-                            FontAwesomeIcons.triangleExclamation,
+                            Icons.warning,
                             size: 16,
                           ),
                           label: const Text('Aviso'),

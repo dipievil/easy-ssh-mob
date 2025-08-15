@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../utils/icon_mapping.dart';
 import 'package:provider/provider.dart';
 import '../providers/ssh_provider.dart';
 import '../l10n/app_localizations.dart';
@@ -35,7 +35,7 @@ class SettingsScreen extends StatelessWidget {
                         Row(
                           children: [
                             Icon(
-                              FontAwesomeIcons.server,
+                              Icons.dns,
                               color: Theme.of(context).primaryColor,
                             ),
                             const SizedBox(width: 8),
@@ -58,7 +58,7 @@ class SettingsScreen extends StatelessWidget {
                           contentPadding: EdgeInsets.zero,
                         ),
                         ListTile(
-                          leading: const Icon(FontAwesomeIcons.user),
+                          leading: const Icon(Icons.person),
                           title: Text(
                               '${l10n.username}: ${sshProvider.currentCredentials?.username ?? 'N/A'}'),
                           subtitle: Text(
@@ -67,8 +67,8 @@ class SettingsScreen extends StatelessWidget {
                           contentPadding: EdgeInsets.zero,
                           trailing: Icon(
                             sshProvider.isConnected
-                                ? FontAwesomeIcons.wifi
-                                : FontAwesomeIcons.xmark,
+                                ? Icons.wifi
+                                : Icons.close,
                             color: sshProvider.isConnected
                                 ? Colors.green
                                 : Colors.red,
@@ -108,7 +108,7 @@ class SettingsScreen extends StatelessWidget {
 
                   // Session Log
                   ListTile(
-                    leading: const Icon(FontAwesomeIcons.clockRotateLeft),
+                    leading: const Icon(Icons.access_timeRotateLeft),
                     title: Text(l10n.sessionLog),
                     subtitle: Text(l10n.viewCommandHistory),
                     trailing: const Icon(Icons.arrow_forward_ios),
@@ -126,7 +126,7 @@ class SettingsScreen extends StatelessWidget {
 
                   // App Info
                   ListTile(
-                    leading: const Icon(FontAwesomeIcons.circleInfo),
+                    leading: const Icon(Icons.info),
                     title: Text(l10n.aboutApp),
                     subtitle: Text(l10n.versionInfo),
                     trailing: const Icon(Icons.arrow_forward_ios),
@@ -140,7 +140,7 @@ class SettingsScreen extends StatelessWidget {
                     builder: (context, sshProvider, child) {
                       return ListTile(
                         leading: const Icon(
-                          FontAwesomeIcons.trash,
+                          Icons.delete,
                           color: Colors.red,
                         ),
                         title: Text(
@@ -186,7 +186,7 @@ class SettingsScreen extends StatelessWidget {
       applicationName: l10n.appTitle,
       applicationVersion: '1.0.1',
       applicationIcon: const Icon(
-        FontAwesomeIcons.terminal,
+        Icons.terminal,
         size: 48,
         color: Colors.deepPurple,
       ),

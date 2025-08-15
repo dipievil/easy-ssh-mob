@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../utils/icon_mapping.dart';
 import '../providers/ssh_provider.dart';
 import '../models/ssh_file.dart';
 import '../widgets/execution_result_dialog.dart';
@@ -619,7 +619,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
               if (!_isAtHome())
                 IconButton(
                   onPressed: _isLoading ? null : () => _goHome(),
-                  icon: const Icon(FontAwesomeIcons.house),
+                  icon: const Icon(Icons.home),
                   tooltip: 'Ir para Home',
                 ),
 
@@ -660,14 +660,14 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
                     ),
                   );
                 },
-                icon: const Icon(FontAwesomeIcons.terminal),
+                icon: const Icon(Icons.terminal),
                 tooltip: 'Terminal',
               ),
 
               // Tools button
               IconButton(
                 onPressed: () => _showTools(),
-                icon: const Icon(FontAwesomeIcons.gear),
+                icon: const Icon(Icons.settings),
                 tooltip: 'Ferramentas',
               ),
             ],

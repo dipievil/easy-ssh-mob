@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../utils/icon_mapping.dart';
 import '../services/notification_service.dart';
 import '../widgets/error_widgets.dart';
 import '../l10n/app_localizations.dart';
@@ -230,7 +230,7 @@ class _NotificationSettingsScreenState
                   ListTile(
                     title: Text(l10n.testNotifications),
                     subtitle: Text(l10n.testDifferentNotificationTypes),
-                    trailing: const Icon(FontAwesomeIcons.play),
+                    trailing: const Icon(Icons.play_arrow),
                     onTap: _showTestNotifications,
                     contentPadding: EdgeInsets.zero,
                   ),
@@ -252,7 +252,7 @@ class _NotificationSettingsScreenState
                   Row(
                     children: [
                       const Icon(
-                        FontAwesomeIcons.circleInfo,
+                        Icons.info,
                         color: Colors.blue,
                       ),
                       const SizedBox(width: 8),
@@ -270,19 +270,19 @@ class _NotificationSettingsScreenState
                     'Info',
                     'Informações gerais',
                     Colors.blue,
-                    FontAwesomeIcons.circleInfo,
+                    Icons.info,
                   ),
                   _buildNotificationTypeInfo(
                     'Sucesso',
                     'Operações bem-sucedidas',
                     Colors.green,
-                    FontAwesomeIcons.circleCheck,
+                    Icons.check_circle,
                   ),
                   _buildNotificationTypeInfo(
                     'Aviso',
                     'Situações que requerem atenção',
                     Colors.orange,
-                    FontAwesomeIcons.triangleExclamation,
+                    Icons.warning,
                   ),
                   _buildNotificationTypeInfo(
                     'Erro',

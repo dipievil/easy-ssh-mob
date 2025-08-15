@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../utils/icon_mapping.dart';
 import 'package:easy_ssh_mob_new/models/command_item.dart';
 import 'package:easy_ssh_mob_new/models/predefined_commands.dart';
 
@@ -9,13 +9,13 @@ void main() {
       const command = CommandItem(
         'Test Command',
         'echo "test"',
-        FontAwesomeIcons.terminal,
+        Icons.terminal,
         'Test description',
       );
 
       expect(command.name, 'Test Command');
       expect(command.command, 'echo "test"');
-      expect(command.icon, FontAwesomeIcons.terminal);
+      expect(command.icon, Icons.terminal);
       expect(command.description, 'Test description');
     });
 
@@ -23,7 +23,7 @@ void main() {
       const command = CommandItem(
         'Test Command',
         'echo "test"',
-        FontAwesomeIcons.terminal,
+        Icons.terminal,
         'Test description',
       );
 
@@ -40,12 +40,12 @@ void main() {
       const command1 = CommandItem(
         'Test Command',
         'echo "test"',
-        FontAwesomeIcons.terminal,
+        Icons.terminal,
       );
       const command2 = CommandItem(
         'Test Command',
         'echo "test"',
-        FontAwesomeIcons.house,
+        Icons.home,
       );
 
       expect(command1, command2); // Should be equal based on name and command

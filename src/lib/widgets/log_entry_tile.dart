@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../models/log_entry.dart';
+import '../utils/icon_mapping.dart';
 
 /// Widget for displaying a log entry in a list
 class LogEntryTile extends StatelessWidget {
@@ -208,32 +208,32 @@ class LogEntryTile extends StatelessWidget {
   IconData _getCommandTypeIcon(CommandType type) {
     switch (type) {
       case CommandType.navigation:
-        return FontAwesomeIcons.folderOpen;
+        return IconMapping.getIcon('folderOpen');
       case CommandType.execution:
-        return FontAwesomeIcons.play;
+        return IconMapping.getIcon('play');
       case CommandType.fileView:
-        return FontAwesomeIcons.fileLines;
+        return IconMapping.getIcon('fileLines');
       case CommandType.system:
-        return FontAwesomeIcons.gear;
+        return IconMapping.getIcon('gear');
       case CommandType.custom:
-        return FontAwesomeIcons.terminal;
+        return IconMapping.getIcon('terminal');
       case CommandType.unknown:
-        return FontAwesomeIcons.question;
+        return IconMapping.getIcon('question');
     }
   }
 
   IconData _getStatusIcon(CommandStatus status) {
     switch (status) {
       case CommandStatus.success:
-        return FontAwesomeIcons.circleCheck;
+        return IconMapping.getIcon('circleCheck');
       case CommandStatus.error:
-        return FontAwesomeIcons.triangleExclamation;
+        return IconMapping.getIcon('triangleExclamation');
       case CommandStatus.timeout:
-        return FontAwesomeIcons.clock;
+        return IconMapping.getIcon('clock');
       case CommandStatus.cancelled:
-        return FontAwesomeIcons.ban;
+        return IconMapping.getIcon('ban');
       case CommandStatus.partial:
-        return FontAwesomeIcons.circleExclamation;
+        return IconMapping.getIcon('circleExclamation');
     }
   }
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../utils/icon_mapping.dart';
 import 'package:provider/provider.dart';
 import '../models/log_entry.dart';
 import '../providers/ssh_provider.dart';
@@ -29,7 +29,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            icon: const Icon(FontAwesomeIcons.magnifyingGlass),
+            icon: const Icon(Icons.search),
             onPressed: _showSearchDialog,
             tooltip: 'Buscar comandos',
           ),
@@ -55,7 +55,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
               const PopupMenuItem(
                 value: 'save_txt',
                 child: ListTile(
-                  leading: Icon(FontAwesomeIcons.fileLines),
+                  leading: Icon(Icons.descriptionLines),
                   title: Text('Salvar como TXT'),
                   contentPadding: EdgeInsets.zero,
                 ),
@@ -63,7 +63,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
               const PopupMenuItem(
                 value: 'save_json',
                 child: ListTile(
-                  leading: Icon(FontAwesomeIcons.fileCode),
+                  leading: Icon(Icons.descriptionCode),
                   title: Text('Salvar como JSON'),
                   contentPadding: EdgeInsets.zero,
                 ),
@@ -71,7 +71,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
               const PopupMenuItem(
                 value: 'save_csv',
                 child: ListTile(
-                  leading: Icon(FontAwesomeIcons.fileCsv),
+                  leading: Icon(Icons.descriptionCsv),
                   title: Text('Salvar como CSV'),
                   contentPadding: EdgeInsets.zero,
                 ),
@@ -79,7 +79,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
               const PopupMenuItem(
                 value: 'clear',
                 child: ListTile(
-                  leading: Icon(FontAwesomeIcons.trash, color: Colors.red),
+                  leading: Icon(Icons.delete, color: Colors.red),
                   title: Text(
                     'Limpar Histórico',
                     style: TextStyle(color: Colors.red),
@@ -101,7 +101,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _saveLogToServer,
         tooltip: 'Salvar log no servidor',
-        child: const Icon(FontAwesomeIcons.floppyDisk),
+        child: const Icon(Icons.save),
       ),
     );
   }
@@ -220,7 +220,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(FontAwesomeIcons.clockRotateLeft,
+          Icon(Icons.access_timeRotateLeft,
               size: 64, color: Colors.grey[400]),
           const SizedBox(height: 16),
           Text(
@@ -249,7 +249,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
         content: TextField(
           decoration: const InputDecoration(
             hintText: 'Digite o termo de busca...',
-            prefixIcon: Icon(FontAwesomeIcons.magnifyingGlass),
+            prefixIcon: Icon(Icons.search),
           ),
           onChanged: (value) {
             setState(() {

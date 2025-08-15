@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../utils/icon_mapping.dart';
 import '../services/error_handler.dart';
 import '../services/notification_service.dart';
 
@@ -44,21 +44,21 @@ class ErrorSnackBar {
     switch (type) {
       case ErrorType.permissionDenied:
       case ErrorType.accessDenied:
-        return FontAwesomeIcons.lock;
+        return Icons.lock;
       case ErrorType.fileNotFound:
-        return FontAwesomeIcons.fileCircleXmark;
+        return Icons.descriptionCircleXmark;
       case ErrorType.operationNotPermitted:
-        return FontAwesomeIcons.ban;
+        return Icons.block;
       case ErrorType.connectionLost:
-        return FontAwesomeIcons.wifi;
+        return Icons.wifi;
       case ErrorType.timeout:
-        return FontAwesomeIcons.clock;
+        return Icons.access_time;
       case ErrorType.commandNotFound:
-        return FontAwesomeIcons.terminal;
+        return Icons.terminal;
       case ErrorType.diskFull:
-        return FontAwesomeIcons.hardDrive;
+        return Icons.storage;
       case ErrorType.unknown:
-        return FontAwesomeIcons.triangleExclamation;
+        return Icons.warning;
     }
   }
 
@@ -174,13 +174,13 @@ class CustomSnackBar {
   static IconData _getTypeIcon(NotificationType type) {
     switch (type) {
       case NotificationType.info:
-        return FontAwesomeIcons.circleInfo;
+        return Icons.info;
       case NotificationType.warning:
-        return FontAwesomeIcons.triangleExclamation;
+        return Icons.warning;
       case NotificationType.error:
         return FontAwesomeIcons.circleXmark;
       case NotificationType.success:
-        return FontAwesomeIcons.circleCheck;
+        return Icons.check_circle;
       case NotificationType.critical:
         return FontAwesomeIcons.exclamation;
     }
