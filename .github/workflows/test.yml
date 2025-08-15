@@ -155,7 +155,7 @@ jobs:
           keystore-base64: ${{ secrets.KEYSTORE_BASE64 }}
           keystore-password: "${{ secrets.KEYSTORE_PASSWORD }}"
           build-cmd: flutter build apk --release --flavor dev
-          working-directory: ./
+          working-directory: ./src
 
       # - name: Setup Java
       #   uses: actions/setup-java@v3
