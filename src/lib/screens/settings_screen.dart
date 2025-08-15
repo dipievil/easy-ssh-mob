@@ -50,7 +50,7 @@ class SettingsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         ListTile(
-                          leading: const Icon(FontAwesomeIcons.desktop),
+                          leading: const Icon(Icons.computer),
                           title: Text(
                               '${l10n.host}: ${sshProvider.currentCredentials?.host ?? 'N/A'}'),
                           subtitle: Text(
