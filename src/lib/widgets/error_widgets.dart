@@ -178,7 +178,7 @@ class CustomSnackBar {
       case NotificationType.warning:
         return Icons.warning;
       case NotificationType.error:
-        return FontAwesomeIcons.circleXmark;
+        return IconMapping.getIcon('circleXmark');
       case NotificationType.success:
         return Icons.check_circle;
       case NotificationType.critical:
