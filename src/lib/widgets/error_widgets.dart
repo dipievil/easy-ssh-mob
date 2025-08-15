@@ -182,7 +182,7 @@ class CustomSnackBar {
       case NotificationType.success:
         return Icons.check_circle;
       case NotificationType.critical:
-        return FontAwesomeIcons.exclamation;
+        return Icons.priority_high;
     }
   }
 
