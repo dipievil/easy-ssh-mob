@@ -200,7 +200,7 @@ jobs:
       - name: Build iOS (no codesign)
         run: |
           cd src
-          flutter build ios --release --no-codesign
+          flutter build ios --no-codesign
 
 
   coverage-report:
