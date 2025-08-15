@@ -12,7 +12,6 @@ void main() {
       ]);
     });
   });
-
   group('SshConnectionStateExtension', () {
     test('description should return correct strings', () {
       expect(SshConnectionState.disconnected.description, 'Disconnected');
@@ -20,28 +19,24 @@ void main() {
       expect(SshConnectionState.connected.description, 'Connected');
       expect(SshConnectionState.error.description, 'Error');
     });
-
     test('isConnected should only be true for connected state', () {
       expect(SshConnectionState.connected.isConnected, true);
       expect(SshConnectionState.disconnected.isConnected, false);
       expect(SshConnectionState.connecting.isConnected, false);
       expect(SshConnectionState.error.isConnected, false);
     });
-
     test('isConnecting should only be true for connecting state', () {
       expect(SshConnectionState.connecting.isConnecting, true);
       expect(SshConnectionState.disconnected.isConnecting, false);
       expect(SshConnectionState.connected.isConnecting, false);
       expect(SshConnectionState.error.isConnecting, false);
     });
-
     test('isDisconnected should only be true for disconnected state', () {
       expect(SshConnectionState.disconnected.isDisconnected, true);
       expect(SshConnectionState.connecting.isDisconnected, false);
       expect(SshConnectionState.connected.isDisconnected, false);
       expect(SshConnectionState.error.isDisconnected, false);
     });
-
     test('hasError should only be true for error state', () {
       expect(SshConnectionState.error.hasError, true);
       expect(SshConnectionState.disconnected.hasError, false);

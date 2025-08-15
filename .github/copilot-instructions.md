@@ -12,6 +12,8 @@ Consider user already has basic knowledge in software development.
 
 Keep all coding and method comments in english.
 
+Avoid unnecessary comments.
+
 Always follow projects's architecture and best practices.
 
 Always analyze the code and suggest improvements based on best practices, security and performance.
@@ -25,8 +27,7 @@ Use the same style as the project, which is Dart and flutter.
 # files
 
 Suggest changes to the `docs/` folder when appropriate.
-Always create scripts on the `scripts/` foler.
-Always create markdown files in the `docs/` folder.
+If necessary create scripts, save on the `scripts/` folder.
 
 # git
 

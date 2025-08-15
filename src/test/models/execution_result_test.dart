@@ -6,7 +6,6 @@ void main() {
     test('should create ExecutionResult with required parameters', () {
       final timestamp = DateTime.now();
       const duration = Duration(milliseconds: 500);
-
       final result = ExecutionResult(
         stdout: 'Hello World',
         stderr: '',
@@ -14,16 +13,13 @@ void main() {
         duration: duration,
         timestamp: timestamp,
       );
-
       expect(result.stdout, 'Hello World');
       expect(result.stderr, '');
       expect(result.exitCode, 0);
       expect(result.duration, duration);
       expect(result.timestamp, timestamp);
     });
-
     test('should correctly identify error conditions', () {
-      // Test stderr present
       final errorResult1 = ExecutionResult(
         stdout: '',
         stderr: 'Error message',
@@ -32,8 +28,6 @@ void main() {
         timestamp: DateTime.now(),
       );
       expect(errorResult1.hasError, true);
-
-      // Test non-zero exit code
       final errorResult2 = ExecutionResult(
         stdout: 'Some output',
         stderr: '',
@@ -42,8 +36,6 @@ void main() {
         timestamp: DateTime.now(),
       );
       expect(errorResult2.hasError, true);
-
-      // Test success case
       final successResult = ExecutionResult(
         stdout: 'Success output',
         stderr: '',
@@ -52,8 +44,6 @@ void main() {
         timestamp: DateTime.now(),
       );
       expect(successResult.hasError, false);
-
-      // Test null exit code (should not be error if no stderr)
       final nullExitResult = ExecutionResult(
         stdout: 'Output',
         stderr: '',
@@ -63,7 +53,6 @@ void main() {
       );
       expect(nullExitResult.hasError, false);
     });
-
     test('should correctly identify empty results', () {
       final emptyResult = ExecutionResult(
         stdout: '',
@@ -73,7 +62,6 @@ void main() {
         timestamp: DateTime.now(),
       );
       expect(emptyResult.isEmpty, true);
-
       final nonEmptyResult = ExecutionResult(
         stdout: 'Output',
         stderr: '',
@@ -83,7 +71,6 @@ void main() {
       );
       expect(nonEmptyResult.isEmpty, false);
     });
-
     test('should generate correct combined output', () {
       final result = ExecutionResult(
         stdout: 'Standard output',
@@ -92,11 +79,8 @@ void main() {
         duration: const Duration(milliseconds: 100),
         timestamp: DateTime.now(),
       );
-
       expect(result.combinedOutput,
           'Standard output\n--- STDERR ---\nError output');
-
-      // Test stdout only
       final stdoutOnlyResult = ExecutionResult(
         stdout: 'Only stdout',
         stderr: '',
@@ -105,8 +89,6 @@ void main() {
         timestamp: DateTime.now(),
       );
       expect(stdoutOnlyResult.combinedOutput, 'Only stdout');
-
-      // Test stderr only
       final stderrOnlyResult = ExecutionResult(
         stdout: '',
         stderr: 'Only stderr',
@@ -115,8 +97,6 @@ void main() {
         timestamp: DateTime.now(),
       );
       expect(stderrOnlyResult.combinedOutput, 'Only stderr');
-
-      // Test empty
       final emptyResult = ExecutionResult(
         stdout: '',
         stderr: '',
@@ -126,7 +106,6 @@ void main() {
       );
       expect(emptyResult.combinedOutput, '');
     });
-
     test('should generate correct status descriptions', () {
       final successResult = ExecutionResult(
         stdout: 'Success',
@@ -136,7 +115,6 @@ void main() {
         timestamp: DateTime.now(),
       );
       expect(successResult.statusDescription, 'Success');
-
       final errorResult = ExecutionResult(
         stdout: '',
         stderr: 'Error',
@@ -145,7 +123,6 @@ void main() {
         timestamp: DateTime.now(),
       );
       expect(errorResult.statusDescription, 'Failed (exit code: 1)');
-
       final errorNoCodeResult = ExecutionResult(
         stdout: '',
         stderr: 'Error',
@@ -155,7 +132,6 @@ void main() {
       );
       expect(errorNoCodeResult.statusDescription, 'Failed');
     });
-
     test('should support copyWith method', () {
       final original = ExecutionResult(
         stdout: 'Original stdout',
@@ -164,23 +140,19 @@ void main() {
         duration: const Duration(milliseconds: 100),
         timestamp: DateTime.now(),
       );
-
       final modified = original.copyWith(
         stdout: 'Modified stdout',
         exitCode: 1,
       );
-
       expect(modified.stdout, 'Modified stdout');
-      expect(modified.stderr, 'Original stderr'); // Unchanged
+      expect(modified.stderr, 'Original stderr');
       expect(modified.exitCode, 1);
-      expect(modified.duration, original.duration); // Unchanged
-      expect(modified.timestamp, original.timestamp); // Unchanged
+      expect(modified.duration, original.duration);
+      expect(modified.timestamp, original.timestamp);
     });
-
     test('should support equality comparison', () {
       final timestamp = DateTime.now();
       const duration = Duration(milliseconds: 100);
-
       final result1 = ExecutionResult(
         stdout: 'Output',
         stderr: '',
@@ -188,7 +160,6 @@ void main() {
         duration: duration,
         timestamp: timestamp,
       );
-
       final result2 = ExecutionResult(
         stdout: 'Output',
         stderr: '',
@@ -196,7 +167,6 @@ void main() {
         duration: duration,
         timestamp: timestamp,
       );
-
       final result3 = ExecutionResult(
         stdout: 'Different output',
         stderr: '',
@@ -204,11 +174,9 @@ void main() {
         duration: duration,
         timestamp: timestamp,
       );
-
       expect(result1, equals(result2));
       expect(result1, isNot(equals(result3)));
     });
-
     test('should generate informative toString', () {
       final result = ExecutionResult(
         stdout: 'Hello World',
@@ -217,11 +185,10 @@ void main() {
         duration: const Duration(milliseconds: 250),
         timestamp: DateTime.now(),
       );
-
       final str = result.toString();
       expect(str, contains('ExecutionResult'));
-      expect(str, contains('11 chars')); // stdout length
-      expect(str, contains('10 chars')); // stderr length
+      expect(str, contains('11 chars'));
+      expect(str, contains('10 chars'));
       expect(str, contains('exitCode: 0'));
       expect(str, contains('250ms'));
     });

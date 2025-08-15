@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('Simple Accessibility Tests', () {
     testWidgets('Basic accessibility test', (WidgetTester tester) async {
-      // Build a simple Material app with basic widgets
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -28,18 +27,13 @@ void main() {
           ),
         ),
       );
-
-      // Test basic widget presence
       expect(find.text('Test App'), findsOneWidget);
       expect(find.text('Hello World'), findsOneWidget);
       expect(find.text('Test Button'), findsOneWidget);
       expect(find.text('Username'), findsOneWidget);
-
-      // Test that ElevatedButton is tappable (even if disabled)
       expect(find.byType(ElevatedButton), findsOneWidget);
       expect(find.byType(TextField), findsOneWidget);
     });
-
     testWidgets('Semantics test', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -65,20 +59,13 @@ void main() {
           ),
         ),
       );
-
-      // Test widget presence
       expect(find.text('Click me'), findsOneWidget);
       expect(find.text('Input field'), findsOneWidget);
-
-      // Test button tap
       await tester.tap(find.text('Click me'));
       await tester.pump();
-
-      // Test text input
       await tester.enterText(find.byType(TextField), 'Test input');
       expect(find.text('Test input'), findsOneWidget);
     });
-
     testWidgets('Accessibility with different text scales',
         (WidgetTester tester) async {
       await tester.pumpWidget(
@@ -99,7 +86,6 @@ void main() {
           ),
         ),
       );
-
       expect(find.text('Scaled text'), findsOneWidget);
       expect(find.text('Scaled button'), findsOneWidget);
     });

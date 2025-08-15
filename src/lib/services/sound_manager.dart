@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'notification_service.dart';
+import 'audio_factory.dart';
 
 /// Manager for notification sounds
 class SoundManager {
@@ -12,7 +13,6 @@ class SoundManager {
     NotificationType.critical: 'sounds/critical.mp3',
   };
 
-  /// Play notification sound for the specified type
   static Future<void> playNotificationSound(
     NotificationType type,
     double volume,
@@ -20,7 +20,7 @@ class SoundManager {
     try {
       final soundFile = _soundFiles[type];
       if (soundFile != null) {
-        final player = AudioPlayer();
+        final player = audioPlayerFactory.create();
         await player.setVolume(volume);
         await player.play(AssetSource(soundFile));
 
@@ -38,7 +38,7 @@ class SoundManager {
   static Future<void> _playFallbackSound() async {
     try {
       // Try to play a simple beep using system sounds
-      final player = AudioPlayer();
+      final player = audioPlayerFactory.create();
       await player.setVolume(0.5);
       // This will create a simple beep sound programmatically
       await player.play(AssetSource('sounds/error_beep.mp3'));

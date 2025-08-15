@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/ssh_file.dart';
-import '../utils/file_icon_manager.dart';
+import '../services/file_icon_manager.dart';
 import 'custom_components.dart';
 import '../utils/custom_animations.dart';
 

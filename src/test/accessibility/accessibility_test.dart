@@ -23,13 +23,10 @@ void main() {
             ),
           ),
         );
-
-        // Test basic rendering without errors
         expect(tester.takeException(), isNull);
         expect(find.text('Easy SSH Mob'), findsOneWidget);
         expect(find.text('Welcome to Easy SSH Mob'), findsOneWidget);
       });
-
       testWidgets('should handle text input fields',
           (WidgetTester tester) async {
         await tester.pumpWidget(
@@ -66,29 +63,21 @@ void main() {
             ),
           ),
         );
-
-        // Test form elements
         expect(find.byType(TextField), findsNWidgets(3));
         expect(find.text('Host'), findsOneWidget);
         expect(find.text('Username'), findsOneWidget);
         expect(find.text('Password'), findsOneWidget);
         expect(find.text('Connect'), findsOneWidget);
-
-        // Test text input
         await tester.enterText(
             find.widgetWithText(TextField, 'Enter server address'), 'test.com');
         await tester.enterText(
             find.widgetWithText(TextField, 'Enter username'), 'user');
-
         expect(find.text('test.com'), findsOneWidget);
         expect(find.text('user'), findsOneWidget);
-
-        // Test button interaction
         await tester.tap(find.text('Connect'));
         await tester.pump();
       });
     });
-
     group('Text Scaling', () {
       testWidgets('should handle large text sizes',
           (WidgetTester tester) async {
@@ -113,12 +102,10 @@ void main() {
             ),
           ),
         );
-
         expect(find.text('Large Text'), findsOneWidget);
         expect(find.text('This is large text'), findsOneWidget);
         expect(find.text('Large Button'), findsOneWidget);
       });
-
       testWidgets('should handle small text sizes',
           (WidgetTester tester) async {
         await tester.pumpWidget(
@@ -142,13 +129,11 @@ void main() {
             ),
           ),
         );
-
         expect(find.text('Small Text'), findsOneWidget);
         expect(find.text('This is small text'), findsOneWidget);
         expect(find.text('Small Button'), findsOneWidget);
       });
     });
-
     group('Theme Accessibility', () {
       testWidgets('should work with light theme', (WidgetTester tester) async {
         await tester.pumpWidget(
@@ -175,12 +160,10 @@ void main() {
             ),
           ),
         );
-
         expect(find.text('Light Theme'), findsOneWidget);
         expect(find.text('Light theme text'), findsOneWidget);
         expect(find.text('Card content'), findsOneWidget);
       });
-
       testWidgets('should work with dark theme', (WidgetTester tester) async {
         await tester.pumpWidget(
           MaterialApp(
@@ -206,18 +189,15 @@ void main() {
             ),
           ),
         );
-
         expect(find.text('Dark Theme'), findsOneWidget);
         expect(find.text('Dark theme text'), findsOneWidget);
         expect(find.text('Card content'), findsOneWidget);
       });
     });
-
     group('Interactive Elements', () {
       testWidgets('should handle button interactions',
           (WidgetTester tester) async {
         bool buttonPressed = false;
-
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
@@ -236,19 +216,14 @@ void main() {
             ),
           ),
         );
-
-        // Test button presence and tap
         expect(find.text('Tap me'), findsOneWidget);
         expect(find.byIcon(Icons.home), findsOneWidget);
-
         await tester.tap(find.text('Tap me'));
         expect(buttonPressed, isTrue);
       });
-
       testWidgets('should handle checkbox interactions',
           (WidgetTester tester) async {
         bool checkboxValue = false;
-
         await tester.pumpWidget(
           MaterialApp(
             home: StatefulBuilder(
@@ -272,19 +247,13 @@ void main() {
             ),
           ),
         );
-
         expect(find.text('Remember me'), findsOneWidget);
         expect(find.byType(Checkbox), findsOneWidget);
-
-        // Tap checkbox
         await tester.tap(find.byType(Checkbox));
         await tester.pump();
-
-        // Widget should be found after state change
         expect(find.byType(CheckboxListTile), findsOneWidget);
       });
     });
-
     group('Semantics', () {
       testWidgets('should provide proper semantics for buttons',
           (WidgetTester tester) async {
@@ -314,15 +283,12 @@ void main() {
             ),
           ),
         );
-
         expect(find.text('Connect'), findsOneWidget);
         expect(find.byIcon(Icons.arrow_back), findsOneWidget);
-
         await tester.tap(find.text('Connect'));
         await tester.tap(find.byIcon(Icons.arrow_back));
         await tester.pump();
       });
-
       testWidgets('should provide proper semantics for text fields',
           (WidgetTester tester) async {
         await tester.pumpWidget(
@@ -355,18 +321,14 @@ void main() {
             ),
           ),
         );
-
         expect(find.byType(TextField), findsNWidgets(2));
         expect(find.text('Host'), findsOneWidget);
         expect(find.text('User'), findsOneWidget);
-
-        // Test text input
         await tester.enterText(
             find.widgetWithText(TextField, 'Enter server hostname'),
             'server.com');
         await tester.enterText(
             find.widgetWithText(TextField, 'Enter username'), 'myuser');
-
         expect(find.text('server.com'), findsOneWidget);
         expect(find.text('myuser'), findsOneWidget);
       });

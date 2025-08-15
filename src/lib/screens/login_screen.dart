@@ -142,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
       }
-      
+
       Navigator.of(context).pushReplacement(
         SlideRoute(
           page: const FileExplorerScreen(),
@@ -187,300 +187,306 @@ class _LoginScreenState extends State<LoginScreen> {
             ? const SshLoadingIndicator(message: 'Carregando credenciais...')
             : ResponsiveContainer(
                 child: SlideInAnimation(
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Error display
-                        if (_connectionError != null)
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            margin: const EdgeInsets.only(bottom: 16),
-                            decoration: BoxDecoration(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.errorContainer,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.error_outline,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onErrorContainer,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    _connectionError!,
-                                    style: TextStyle(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onErrorContainer,
-                                    ),
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _connectionError = null;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    Icons.close,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Error display
+                          if (_connectionError != null)
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              margin: const EdgeInsets.only(bottom: 16),
+                              decoration: BoxDecoration(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.errorContainer,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.error_outline,
                                     color: Theme.of(
                                       context,
                                     ).colorScheme.onErrorContainer,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                        // Logo section
-                        const Icon(
-                          FontAwesomeIcons.terminal,
-                          size: 64,
-                          color: Colors.deepPurple,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'EasySSH',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Conecte-se ao seu servidor SSH',
-                          textAlign: TextAlign.center,
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurfaceVariant,
-                                  ),
-                        ),
-                        const SizedBox(height: 48),
-
-                        // Host/IP field
-                        TextFormField(
-                          controller: _hostController,
-                          decoration: const InputDecoration(
-                            labelText: 'Host/IP',
-                            hintText: 'exemplo.com ou 192.168.1.100',
-                            prefixIcon: Icon(Icons.dns),
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: _validateHost,
-                          textInputAction: TextInputAction.next,
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Port field
-                        TextFormField(
-                          controller: _portController,
-                          decoration: const InputDecoration(
-                            labelText: 'Porta',
-                            hintText: '22',
-                            prefixIcon: Icon(Icons.router),
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(5),
-                          ],
-                          validator: _validatePort,
-                          textInputAction: TextInputAction.next,
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Username field
-                        TextFormField(
-                          controller: _usernameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Usuário',
-                            hintText: 'seu_usuario',
-                            prefixIcon: Icon(Icons.person),
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: _validateUsername,
-                          textInputAction: TextInputAction.next,
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Password field
-                        TextFormField(
-                          controller: _passwordController,
-                          decoration: InputDecoration(
-                            labelText: 'Senha',
-                            hintText: '••••••••••••',
-                            prefixIcon: const Icon(Icons.lock),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscurePassword = !_obscurePassword;
-                                });
-                              },
-                            ),
-                            border: const OutlineInputBorder(),
-                          ),
-                          obscureText: _obscurePassword,
-                          validator: _validatePassword,
-                          textInputAction: TextInputAction.done,
-                          onFieldSubmitted: (_) => _handleConnect(),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Remember credentials checkbox
-                        Row(
-                          children: [
-                            Checkbox(
-                              value: _rememberCredentials,
-                              onChanged: (value) {
-                                setState(() {
-                                  _rememberCredentials = value ?? false;
-                                });
-                              },
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'Lembrar credenciais',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ),
-                            // Forget credentials button (show only if has saved credentials)
-                            Consumer<SshProvider>(
-                              builder: (context, sshProvider, child) {
-                                if (sshProvider.currentCredentials != null) {
-                                  return TextButton.icon(
-                                    onPressed: _handleForgetCredentials,
-                                    icon: const Icon(
-                                      Icons.delete_outline,
-                                      size: 16,
-                                    ),
-                                    label: const Text('Esquecer'),
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: Theme.of(
-                                        context,
-                                      ).colorScheme.error,
-                                    ),
-                                  );
-                                }
-                                return const SizedBox.shrink();
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Connect button
-                        Consumer<SshProvider>(
-                          builder: (context, sshProvider, child) {
-                            return FilledButton(
-                              onPressed: sshProvider.isConnecting
-                                  ? null
-                                  : _handleConnect,
-                              style: FilledButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                              ),
-                              child: sshProvider.isConnecting
-                                  ? const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        SizedBox(width: 12),
-                                        Text('Conectando...'),
-                                      ],
-                                    )
-                                  : const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(FontAwesomeIcons.plug),
-                                        SizedBox(width: 8),
-                                        Text('CONECTAR'),
-                                      ],
-                                    ),
-                            );
-                          },
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        // Status/Error display
-                        Consumer<SshProvider>(
-                          builder: (context, sshProvider, child) {
-                            if (sshProvider.errorMessage != null) {
-                              return Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.errorContainer,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.error_outline,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onErrorContainer,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        sshProvider.errorMessage!,
-                                        style: TextStyle(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onErrorContainer,
-                                        ),
-                                      ),
-                                    ),
-                                    IconButton(
-                                      onPressed: sshProvider.clearError,
-                                      icon: Icon(
-                                        Icons.close,
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      _connectionError!,
+                                      style: TextStyle(
                                         color: Theme.of(
                                           context,
                                         ).colorScheme.onErrorContainer,
                                       ),
                                     ),
-                                  ],
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _connectionError = null;
+                                      });
+                                    },
+                                    icon: Icon(
+                                      Icons.close,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onErrorContainer,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                          // Logo section
+                          const Icon(
+                            FontAwesomeIcons.terminal,
+                            size: 64,
+                            color: Colors.deepPurple,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'EasySSH',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Conecte-se ao seu servidor SSH',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
+                          ),
+                          const SizedBox(height: 48),
+
+                          // Host/IP field
+                          TextFormField(
+                            controller: _hostController,
+                            decoration: const InputDecoration(
+                              labelText: 'Host/IP',
+                              hintText: 'exemplo.com ou 192.168.1.100',
+                              prefixIcon: Icon(Icons.dns),
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: _validateHost,
+                            textInputAction: TextInputAction.next,
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Port field
+                          TextFormField(
+                            controller: _portController,
+                            decoration: const InputDecoration(
+                              labelText: 'Porta',
+                              hintText: '22',
+                              prefixIcon: Icon(Icons.router),
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(5),
+                            ],
+                            validator: _validatePort,
+                            textInputAction: TextInputAction.next,
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Username field
+                          TextFormField(
+                            controller: _usernameController,
+                            decoration: const InputDecoration(
+                              labelText: 'Usuário',
+                              hintText: 'seu_usuario',
+                              prefixIcon: Icon(Icons.person),
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: _validateUsername,
+                            textInputAction: TextInputAction.next,
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Password field
+                          TextFormField(
+                            controller: _passwordController,
+                            decoration: InputDecoration(
+                              labelText: 'Senha',
+                              hintText: '••••••••••••',
+                              prefixIcon: const Icon(Icons.lock),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
+                              ),
+                              border: const OutlineInputBorder(),
+                            ),
+                            obscureText: _obscurePassword,
+                            validator: _validatePassword,
+                            textInputAction: TextInputAction.done,
+                            onFieldSubmitted: (_) => _handleConnect(),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Remember credentials checkbox
+                          Row(
+                            children: [
+                              Checkbox(
+                                value: _rememberCredentials,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _rememberCredentials = value ?? false;
+                                  });
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Lembrar credenciais',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ),
+                              // Forget credentials button (show only if has saved credentials)
+                              Consumer<SshProvider>(
+                                builder: (context, sshProvider, child) {
+                                  if (sshProvider.currentCredentials != null) {
+                                    return TextButton.icon(
+                                      onPressed: _handleForgetCredentials,
+                                      icon: const Icon(
+                                        Icons.delete_outline,
+                                        size: 16,
+                                      ),
+                                      label: const Text('Esquecer'),
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: Theme.of(
+                                          context,
+                                        ).colorScheme.error,
+                                      ),
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Connect button
+                          Consumer<SshProvider>(
+                            builder: (context, sshProvider, child) {
+                              return FilledButton(
+                                onPressed: sshProvider.isConnecting
+                                    ? null
+                                    : _handleConnect,
+                                style: FilledButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                ),
+                                child: sshProvider.isConnecting
+                                    ? const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          SizedBox(width: 12),
+                                          Text('Conectando...'),
+                                        ],
+                                      )
+                                    : const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(FontAwesomeIcons.plug),
+                                          SizedBox(width: 8),
+                                          Text('CONECTAR'),
+                                        ],
+                                      ),
                               );
-                            }
-                            return const SizedBox.shrink();
-                          },
-                        ),
-                      ],
+                            },
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          // Status/Error display
+                          Consumer<SshProvider>(
+                            builder: (context, sshProvider, child) {
+                              if (sshProvider.errorMessage != null) {
+                                return Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.errorContainer,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.error_outline,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onErrorContainer,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          sshProvider.errorMessage!,
+                                          style: TextStyle(
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onErrorContainer,
+                                          ),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: sshProvider.clearError,
+                                        icon: Icon(
+                                          Icons.close,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onErrorContainer,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
