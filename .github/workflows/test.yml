@@ -7,7 +7,7 @@ on:
       - created
   pull_request:
     branches: [ main ]
-  
+ 
 
 jobs:
   analyze:
@@ -140,49 +140,6 @@ jobs:
         run: |
           cd src
           flutter test test/accessibility/ --reporter=compact
-          
-  build-android:
-    name: Build Android APK
-    runs-on: self-hosted
-    needs: [analyze, test]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Build Android APK 
-        uses: cedvdb/action-flutter-build-android@v1
-        with:
-          keystore-base64: ${{ secrets.KEYSTORE_BASE64 }}
-          keystore-password: "${{ secrets.KEYSTORE_PASSWORD }}"
-          build-cmd: flutter build apk --release --flavor dev
-          working-directory: ./src
-
-      # - name: Setup Java
-      #   uses: actions/setup-java@v3
-      #   with:
-      #     distribution: 'zulu'
-      #     java-version: '17'
-
-      # - name: Setup Flutter
-      #   uses: subosito/flutter-action@v2
-      #   with:
-      #     channel: 'stable'
-
-      # - name: Get dependencies
-      #   run: |
-      #     cd src
-      #     flutter pub get
-
-      # - name: Build APK
-      #   run: |
-      #     cd src
-      #     flutter build apk --release
-
-      # - name: Upload APK artifact
-      #   uses: actions/upload-artifact@v4.6.2
-      #   with:
-      #     name: app-release.apk
-      #     path: src/build/app/outputs/flutter-apk/app-release.apk
 
   coverage-report:
     name: Coverage Report
