@@ -1,0 +1,181 @@
+{
+  "appTitle": "EasySSH",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings menu title"
+  },
+
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications menu item"
+  },
+
+  "notificationsSubtitle": "Configure alerts and sounds",
+  "@notificationsSubtitle": {
+    "description": "Subtitle for notifications settings"
+  },
+
+  "sessionLog": "Session Log",
+  "@sessionLog": {
+    "description": "Session log menu item"
+  },
+
+  "sessionLogSubtitle": "View command history",
+  "@sessionLogSubtitle": {
+    "description": "Subtitle for session log"
+  },
+
+  "aboutApp": "About App",
+  "@aboutApp": {
+    "description": "About app menu item"
+  },
+
+  "aboutAppSubtitle": "Version information",
+  "@aboutAppSubtitle": {
+    "description": "Subtitle for about app"
+  },
+
+  "clearCredentials": "Clear Credentials",
+  "@clearCredentials": {
+    "description": "Clear credentials menu item"
+  },
+
+  "clearCredentialsSubtitle": "Forget saved login data",
+  "@clearCredentialsSubtitle": {
+    "description": "Subtitle for clear credentials"
+  },
+
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout menu item"
+  },
+
+  "currentConnection": "Current Connection",
+  "@currentConnection": {
+    "description": "Current connection section title"
+  },
+
+  "host": "Host",
+  "@host": {
+    "description": "Host field label"
+  },
+
+  "port": "Port",
+  "@port": {
+    "description": "Port field label"
+  },
+
+  "user": "User",
+  "@user": {
+    "description": "User field label"
+  },
+
+  "status": "Status",
+  "@status": {
+    "description": "Status field label"
+  },
+
+  "connected": "Connected",
+  "@connected": {
+    "description": "Connected status"
+  },
+
+  "disconnected": "Disconnected",
+  "@disconnected": {
+    "description": "Disconnected status"
+  },
+
+  "notificationSettings": "Notification Settings",
+  "@notificationSettings": {
+    "description": "Notification settings screen title"
+  },
+
+  "notificationTypes": "Notification Types",
+  "@notificationTypes": {
+    "description": "Notification types section title"
+  },
+
+  "info": "Info",
+  "@info": {
+    "description": "Info notification type"
+  },
+
+  "infoDescription": "General information",
+  "@infoDescription": {
+    "description": "Description for info notifications"
+  },
+
+  "success": "Success",
+  "@success": {
+    "description": "Success notification type"
+  },
+
+  "successDescription": "Successful operations",
+  "@successDescription": {
+    "description": "Description for success notifications"
+  },
+
+  "warning": "Warning",
+  "@warning": {
+    "description": "Warning notification type"
+  },
+
+  "warningDescription": "Situations requiring attention",
+  "@warningDescription": {
+    "description": "Description for warning notifications"
+  },
+
+  "error": "Error",
+  "@error": {
+    "description": "Error notification type"
+  },
+
+  "errorDescription": "Problems during operations",
+  "@errorDescription": {
+    "description": "Description for error notifications"
+  },
+
+  "critical": "Critical",
+  "@critical": {
+    "description": "Critical notification type"
+  },
+
+  "criticalDescription": "Serious system failures",
+  "@criticalDescription": {
+    "description": "Description for critical notifications"
+  },
+
+  "close": "Close",
+  "@close": {
+    "description": "Close button text"
+  },
+
+  "testMessageInfo": "This is an informative notification",
+  "@testMessageInfo": {
+    "description": "Test info notification message"
+  },
+
+  "testMessageSuccess": "Operation completed successfully!",
+  "@testMessageSuccess": {
+    "description": "Test success notification message"
+  },
+
+  "testMessageWarning": "Warning: this is an alert",
+  "@testMessageWarning": {
+    "description": "Test warning notification message"
+  },
+
+  "testMessageError": "An error occurred during operation",
+  "@testMessageError": {
+    "description": "Test error notification message"
+  },
+
+  "testMessageCritical": "CRITICAL: Serious system failure",
+  "@testMessageCritical": {
+    "description": "Test critical notification message"
+  }
+}

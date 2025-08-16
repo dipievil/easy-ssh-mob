@@ -1,0 +1,73 @@
+{
+  "appTitle": "EasySSH",
+
+  "settings": "Configurações",
+
+  "notifications": "Notificações",
+
+  "notificationsSubtitle": "Configurar alertas e sons",
+
+  "sessionLog": "Log da Sessão",
+
+  "sessionLogSubtitle": "Ver histórico de comandos",
+
+  "aboutApp": "Sobre o App",
+
+  "aboutAppSubtitle": "Informações da versão",
+
+  "clearCredentials": "Limpar Credenciais",
+
+  "clearCredentialsSubtitle": "Esquecer dados de login salvos",
+
+  "logout": "Logout",
+
+  "currentConnection": "Conexão Atual",
+
+  "host": "Host",
+
+  "port": "Porta",
+
+  "user": "Usuário",
+
+  "status": "Status",
+
+  "connected": "Conectado",
+
+  "disconnected": "Desconectado",
+
+  "notificationSettings": "Configurações de Notificação",
+
+  "notificationTypes": "Tipos de Notificação",
+
+  "info": "Info",
+
+  "infoDescription": "Informações gerais",
+
+  "success": "Sucesso",
+
+  "successDescription": "Operações bem-sucedidas",
+
+  "warning": "Aviso",
+
+  "warningDescription": "Situações que requerem atenção",
+
+  "error": "Erro",
+
+  "errorDescription": "Problemas durante operações",
+
+  "critical": "Crítico",
+
+  "criticalDescription": "Falhas graves do sistema",
+
+  "close": "Fechar",
+
+  "testMessageInfo": "Esta é uma notificação informativa",
+
+  "testMessageSuccess": "Operação realizada com sucesso!",
+
+  "testMessageWarning": "Atenção: isto é um aviso",
+
+  "testMessageError": "Ocorreu um erro na operação",
+
+  "testMessageCritical": "CRÍTICO: Falha grave do sistema"
+}
