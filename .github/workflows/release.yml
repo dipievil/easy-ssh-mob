@@ -24,6 +24,7 @@ jobs:
         
         with:
           release-type: dart
+          path: ./src
 
   # build:
   #   name: Build Flutter App
