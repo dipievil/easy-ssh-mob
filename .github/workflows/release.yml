@@ -6,8 +6,8 @@ on:
   push:
 #    branches:
 #      - main
-    paths:
-      - 'src/pubspec.yaml'
+#    paths:
+#      - 'src/pubspec.yaml'
   workflow_dispatch:
 
 jobs:
