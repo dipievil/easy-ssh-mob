@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:easy_ssh_mob_new/services/file_icon_manager.dart';
 import 'package:easy_ssh_mob_new/models/ssh_file.dart';
 
@@ -33,29 +32,29 @@ void main() {
           displayName: 'link@',
         );
         expect(
-            FileIconManager.getIconForFile(directory), FontAwesomeIcons.folder);
+            FileIconManager.getIconForFile(directory), Icons.folder);
         expect(FileIconManager.getIconForFile(executable),
-            FontAwesomeIcons.terminal);
+            Icons.terminal);
         expect(FileIconManager.getIconForFile(regular),
-            FontAwesomeIcons.fileLines);
-        expect(FileIconManager.getIconForFile(symlink), FontAwesomeIcons.link);
+            Icons.description);
+        expect(FileIconManager.getIconForFile(symlink), Icons.link);
       });
       test('should return specific icons for file extensions', () {
         final testCases = [
-          ('document.pdf', FontAwesomeIcons.filePdf),
-          ('text.md', FontAwesomeIcons.readme),
-          ('sheet.xlsx', FontAwesomeIcons.fileExcel),
-          ('text.txt', FontAwesomeIcons.fileLines),
-          ('script.py', FontAwesomeIcons.python),
-          ('web.html', FontAwesomeIcons.html5),
-          ('style.css', FontAwesomeIcons.css3Alt),
-          ('data.json', FontAwesomeIcons.fileCode),
-          ('app.js', FontAwesomeIcons.js),
-          ('photo.jpg', FontAwesomeIcons.fileImage),
-          ('video.mp4', FontAwesomeIcons.fileVideo),
-          ('song.mp3', FontAwesomeIcons.fileAudio),
-          ('archive.zip', FontAwesomeIcons.fileZipper),
-          ('system.log', FontAwesomeIcons.fileLines),
+          ('document.pdf', Icons.picture_as_pdf),
+          ('text.md', Icons.description),
+          ('sheet.xlsx', Icons.table_chart),
+          ('text.txt', Icons.description),
+          ('script.py', Icons.code),
+          ('web.html', Icons.web),
+          ('style.css', Icons.palette),
+          ('data.json', Icons.code),
+          ('app.js', Icons.code),
+          ('photo.jpg', Icons.image),
+          ('video.mp4', Icons.videocam),
+          ('song.mp3', Icons.audiotrack),
+          ('archive.zip', Icons.archive),
+          ('system.log', Icons.description),
         ];
         for (final (filename, expectedIcon) in testCases) {
           final file = SshFile(
@@ -73,13 +72,13 @@ void main() {
       });
       test('should return special icons for special directories', () {
         final specialDirs = [
-          ('Documents', FontAwesomeIcons.folder.codePoint),
-          ('Downloads', FontAwesomeIcons.folder.codePoint),
-          ('Pictures', FontAwesomeIcons.folder.codePoint),
-          ('Music', FontAwesomeIcons.folder.codePoint),
-          ('Videos', FontAwesomeIcons.folder.codePoint),
-          ('Desktop', FontAwesomeIcons.folder.codePoint),
-          ('.hidden', FontAwesomeIcons.folder.codePoint),
+          ('Documents', Icons.folder.codePoint),
+          ('Downloads', Icons.folder.codePoint),
+          ('Pictures', Icons.folder.codePoint),
+          ('Music', Icons.folder.codePoint),
+          ('Videos', Icons.folder.codePoint),
+          ('Desktop', Icons.folder.codePoint),
+          ('.hidden', Icons.folder.codePoint),
         ];
         for (final (dirName, expectedCodePoint) in specialDirs) {
           final dir = SshFile(
@@ -99,13 +98,13 @@ void main() {
       });
       test('should return special icons for special file names', () {
         final specialFiles = [
-          ('README', FontAwesomeIcons.readme.codePoint),
-          ('LICENSE', FontAwesomeIcons.certificate.codePoint),
-          ('CHANGELOG', FontAwesomeIcons.fileLines.codePoint),
-          ('Makefile', FontAwesomeIcons.hammer.codePoint),
-          ('Dockerfile', FontAwesomeIcons.docker.codePoint),
-          ('.env', FontAwesomeIcons.gear.codePoint),
-          ('.gitignore', FontAwesomeIcons.gitAlt.codePoint),
+          ('README', Icons.description.codePoint),
+          ('LICENSE', Icons.verified.codePoint),
+          ('CHANGELOG', Icons.description.codePoint),
+          ('Makefile', Icons.build.codePoint),
+          ('Dockerfile', Icons.developer_board.codePoint),
+          ('.env', Icons.settings.codePoint),
+          ('.gitignore', Icons.source.codePoint),
         ];
         for (final (fileName, expectedCodePoint) in specialFiles) {
           final file = SshFile(
@@ -211,7 +210,7 @@ void main() {
         );
         final icon = FileIconManager.getIconForFile(file);
         expect(icon, isNotNull);
-        expect(icon, FontAwesomeIcons.file);
+        expect(icon, Icons.description);
       });
       test('should handle files with multiple dots', () {
         const file = SshFile(
@@ -221,7 +220,7 @@ void main() {
           displayName: 'file.backup.txt',
         );
         final icon = FileIconManager.getIconForFile(file);
-        expect(icon, FontAwesomeIcons.fileLines);
+        expect(icon, Icons.description);
       });
       test('should handle empty file names', () {
         const file = SshFile(
@@ -232,7 +231,7 @@ void main() {
         );
         final icon = FileIconManager.getIconForFile(file);
         expect(icon, isNotNull);
-        expect(icon, FontAwesomeIcons.file);
+        expect(icon, Icons.description);
       });
       test('should handle case insensitive extensions', () {
         const lowerCase = SshFile(
@@ -258,7 +257,7 @@ void main() {
         final icon3 = FileIconManager.getIconForFile(mixedCase);
         expect(icon1, icon2);
         expect(icon2, icon3);
-        expect(icon1, FontAwesomeIcons.fileLines);
+        expect(icon1, Icons.description);
       });
       test('should handle unknown file types gracefully', () {
         const unknownFile = SshFile(
@@ -269,7 +268,7 @@ void main() {
         );
         final icon = FileIconManager.getIconForFile(unknownFile);
         expect(icon, isNotNull);
-        expect(icon, FontAwesomeIcons.question);
+        expect(icon, Icons.help);
       });
     });
     group('Utility Methods', () {
