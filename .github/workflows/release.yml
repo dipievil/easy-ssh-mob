@@ -26,6 +26,7 @@ jobs:
         id: release        
         with:
           release-type: dart
+          path: src
           
 
   # build:
