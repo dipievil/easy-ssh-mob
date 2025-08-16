@@ -12,7 +12,7 @@ on:
 
 jobs:
   release-please:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       version: ${{ steps.release.outputs.version }}
@@ -27,7 +27,7 @@ jobs:
 
   build:
     name: Build Flutter App
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created == 'true' }}
 
@@ -80,7 +80,7 @@ jobs:
 
   deploy:
     name: Deploy to Play Store
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: build 
     
     steps:
@@ -109,7 +109,7 @@ jobs:
           
   tag_and_release:
     name: Create GitHub Tag and Release
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: deploy
     permissions:
       contents: write
