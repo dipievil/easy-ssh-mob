@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/ssh_provider.dart';
 import 'notification_settings_screen.dart';
 import 'session_log_screen.dart';
@@ -11,9 +12,11 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Configurações'),
+        title: Text(l10n.settings),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Padding(
@@ -37,7 +40,7 @@ class SettingsScreen extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'Conexão Atual',
+                              l10n.currentConnection,
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium
@@ -49,17 +52,17 @@ class SettingsScreen extends StatelessWidget {
                         ListTile(
                           leading: const Icon(FontAwesomeIcons.desktop),
                           title: Text(
-                              'Host: ${sshProvider.currentCredentials?.host ?? 'N/A'}'),
+                              '${l10n.host}: ${sshProvider.currentCredentials?.host ?? 'N/A'}'),
                           subtitle: Text(
-                              'Porta: ${sshProvider.currentCredentials?.port ?? 'N/A'}'),
+                              '${l10n.port}: ${sshProvider.currentCredentials?.port ?? 'N/A'}'),
                           contentPadding: EdgeInsets.zero,
                         ),
                         ListTile(
                           leading: const Icon(FontAwesomeIcons.user),
                           title: Text(
-                              'Usuário: ${sshProvider.currentCredentials?.username ?? 'N/A'}'),
+                              '${l10n.user}: ${sshProvider.currentCredentials?.username ?? 'N/A'}'),
                           subtitle: Text(
-                            'Status: ${sshProvider.isConnected ? 'Conectado' : 'Desconectado'}',
+                            '${l10n.status}: ${sshProvider.isConnected ? l10n.connected : l10n.disconnected}',
                           ),
                           contentPadding: EdgeInsets.zero,
                           trailing: Icon(
@@ -87,8 +90,8 @@ class SettingsScreen extends StatelessWidget {
                   // Notification Settings
                   ListTile(
                     leading: const Icon(FontAwesomeIcons.bell),
-                    title: const Text('Notificações'),
-                    subtitle: const Text('Configurar alertas e sons'),
+                    title: Text(l10n.notifications),
+                    subtitle: Text(l10n.notificationsSubtitle),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
                       Navigator.push(
@@ -106,8 +109,8 @@ class SettingsScreen extends StatelessWidget {
                   // Session Log
                   ListTile(
                     leading: const Icon(FontAwesomeIcons.clockRotateLeft),
-                    title: const Text('Log da Sessão'),
-                    subtitle: const Text('Ver histórico de comandos'),
+                    title: Text(l10n.sessionLog),
+                    subtitle: Text(l10n.sessionLogSubtitle),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
                       Navigator.push(
@@ -124,8 +127,8 @@ class SettingsScreen extends StatelessWidget {
                   // App Info
                   ListTile(
                     leading: const Icon(FontAwesomeIcons.circleInfo),
-                    title: const Text('Sobre o App'),
-                    subtitle: const Text('Informações da versão'),
+                    title: Text(l10n.aboutApp),
+                    subtitle: Text(l10n.aboutAppSubtitle),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () => _showAboutDialog(context),
                   ),
@@ -140,11 +143,11 @@ class SettingsScreen extends StatelessWidget {
                           FontAwesomeIcons.trash,
                           color: Colors.red,
                         ),
-                        title: const Text(
-                          'Limpar Credenciais',
-                          style: TextStyle(color: Colors.red),
+                        title: Text(
+                          l10n.clearCredentials,
+                          style: const TextStyle(color: Colors.red),
                         ),
-                        subtitle: const Text('Esquecer dados de login salvos'),
+                        subtitle: Text(l10n.clearCredentialsSubtitle),
                         onTap: () =>
                             _showClearCredentialsDialog(context, sshProvider),
                       );
@@ -159,9 +162,9 @@ class SettingsScreen extends StatelessWidget {
                       FontAwesomeIcons.rightFromBracket,
                       color: Colors.orange,
                     ),
-                    title: const Text(
-                      'Logout',
-                      style: TextStyle(color: Colors.orange),
+                    title: Text(
+                      l10n.logout,
+                      style: const TextStyle(color: Colors.orange),
                     ),
                     subtitle: const Text('Desconectar do servidor'),
                     onTap: () => _showLogoutDialog(context),

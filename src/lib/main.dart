@@ -1,6 +1,8 @@
+import 'package:easy_ssh_mob_new/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'screens/login_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/file_explorer_screen.dart';
@@ -8,6 +10,7 @@ import 'providers/ssh_provider.dart';
 import 'themes/app_theme.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> main() async {
   // Load environment file if present. If missing, catch the error so the app
@@ -55,6 +58,16 @@ class MyApp extends StatelessWidget {
         darkTheme: AppTheme.darkTheme,
         themeMode:
             ThemeMode.system, // Automatically switch based on system preference
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+          Locale('pt'),
+        ],
         home: const LoginScreen(),
         routes: {
           '/settings': (context) => const SettingsScreen(),
