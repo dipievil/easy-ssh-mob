@@ -83,7 +83,6 @@ flutter {
 tasks.register("copyFlutterApks") {
     doLast {
         val fromDir = file("$buildDir/outputs/flutter-apk")
-        // projectDir is android/app; parentFile.parentFile resolves to src/
         val destDir = project.projectDir.parentFile.parentFile.resolve("build/app/outputs/flutter-apk")
         if (fromDir.exists()) {
             copy {
