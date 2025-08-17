@@ -21,6 +21,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Check code
+        run: |
+           - pwd
+           - ls -d */*/
+
       - name: Automate release
         uses: googleapis/release-please-action@v4
         id: release        
