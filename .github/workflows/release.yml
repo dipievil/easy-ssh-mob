@@ -16,14 +16,14 @@ jobs:
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       version: ${{ steps.release.outputs.version }}
-      changelog: ${{ steps.release.outputs.changelog }}    
+      changelog: ${{ steps.release.outputs.changelog }}
     steps:
       - name: Automate release
         uses: googleapis/release-please-action@v4
         id: release        
         with:
           release-type: dart
-          path: src
+          path: ./src
           
 
   # build:
