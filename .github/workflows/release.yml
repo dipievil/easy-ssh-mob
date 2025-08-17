@@ -4,133 +4,136 @@ name: Create Release and Deploy to Play Store
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - 'src/pubspec.yaml'
+   branches:
+     - main
+  #  paths:
+  #    - 'src/pubspec.yaml'
   workflow_dispatch:
 
 jobs:
   release-please:
+    defaults:
+      run:
+        working-directory: src
     runs-on: self-hosted
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       version: ${{ steps.release.outputs.version }}
-      changelog: ${{ steps.release.outputs.changelog }}
+      changelog: ${{ steps.release.outputs.changelog }}    
     steps:
       - name: Automate release
         uses: googleapis/release-please-action@v4
-        id: release
-        
+        id: release        
         with:
           release-type: dart
-          path: ./src
-
-  build:
-    name: Build Flutter App
-    runs-on: self-hosted
-    needs: release-please
-    if: ${{ needs.release-please.outputs.release_created == 'true' }}
-
-    outputs:
-      version_number: ${{ steps.get_version.outputs.version_number }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-
-      - name: Get Flutter dependencies
-        run: |
-          cd src
-          flutter pub get
-
-      - name: Extract Version from pubspec.yaml
-        id: get_version
-        run: |
-          VERSION=$(grep 'version:' src/pubspec.yaml | sed 's/version: //')
-          echo "Versão extraída: $VERSION"
-          echo "version_number=$VERSION" >> $GITHUB_OUTPUT
-      
-      - name: Build App Bundle
-        run: |
-          cd src
-          flutter build appbundle --release \
-            --build-name=${{ steps.get_version.outputs.version_number }} \
-            --build-number=${{ github.run_number }}
-        env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-
-      - name: Upload App Bundle Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release-bundle
-          path: src/build/app/outputs/bundle/release/app-release.aab
-
-  deploy:
-    name: Deploy to Play Store
-    runs-on: self-hosted
-    needs: build 
-    
-    steps:
-      - name: Download App Bundle Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: app-release-bundle
-
-      - name: Decode Keystore
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > ${{ github.workspace }}/upload-keystore.jks
-
-      - name: Salva changelog pt-BR
-        run: |
-          mkdir -p play-whatsnew
-          echo "${{ needs.release-please.outputs.changelog }}" > play-whatsnew/whatsnew-pt-BR
-
-      - name: Upload to Play Store
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_API_KEY }}
-          packageName: com.dipi.android.easy_ssh_mob
-          releaseFiles: app-release.aab
-          track: internal
-          whatsNewDirectory: play-whatsnew
+          path: src
           
-  tag_and_release:
-    name: Create GitHub Tag and Release
-    runs-on: self-hosted
-    needs: deploy
-    permissions:
-      contents: write
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # build:
+  #   name: Build Flutter App
+  #   runs-on: ubuntu-latest
+  #   needs: release-please
+  #   if: ${{ needs.release-please.outputs.release_created == 'true' }}
 
-      - name: Create and Push Git Tag
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git tag v${{ needs.build.outputs.version_number }}
-          git push origin v${{ needs.build.outputs.version_number }}
+  #   outputs:
+  #     version_number: ${{ steps.get_version.outputs.version_number }}
 
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ needs.build.outputs.version_number }}
-          release_name: Release v${{ needs.build.outputs.version_number }}
-          body: "Deploy da versão ${{ needs.build.outputs.version_number }} realizado com sucesso na Play Store."
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v3
+  #       with:
+  #         distribution: 'zulu'
+  #         java-version: '17'
+
+  #     - name: Setup Flutter
+  #       uses: subosito/flutter-action@v2
+  #       with:
+  #         channel: 'stable'
+
+  #     - name: Get Flutter dependencies
+  #       run: |
+  #         cd src
+  #         flutter pub get
+
+  #     - name: Extract Version from pubspec.yaml
+  #       id: get_version
+  #       run: |
+  #         VERSION=$(grep 'version:' src/pubspec.yaml | sed 's/version: //')
+  #         echo "Versão extraída: $VERSION"
+  #         echo "version_number=$VERSION" >> $GITHUB_OUTPUT
+      
+  #     - name: Build App Bundle
+  #       run: |
+  #         cd src
+  #         flutter build appbundle --release \
+  #           --build-name=${{ steps.get_version.outputs.version_number }} \
+  #           --build-number=${{ github.run_number }}
+  #       env:
+  #         KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+  #         KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+  #         KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+  #     - name: Upload App Bundle Artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: app-release-bundle
+  #         path: src/build/app/outputs/bundle/release/app-release.aab
+
+  # deploy:
+  #   name: Deploy to Play Store
+  #   runs-on: ubuntu-latest
+  #   needs: build 
+    
+  #   steps:
+  #     - name: Download App Bundle Artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: app-release-bundle
+
+  #     - name: Decode Keystore
+  #       run: |
+  #         echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > ${{ github.workspace }}/upload-keystore.jks
+
+  #     - name: Salva changelog pt-BR
+  #       run: |
+  #         mkdir -p play-whatsnew
+  #         echo "${{ needs.release-please.outputs.changelog }}" > play-whatsnew/whatsnew-pt-BR
+
+  #     - name: Upload to Play Store
+  #       uses: r0adkll/upload-google-play@v1
+  #       with:
+  #         serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_API_KEY }}
+  #         packageName: com.dipi.android.easy_ssh_mob
+  #         releaseFiles: app-release.aab
+  #         track: internal
+  #         whatsNewDirectory: play-whatsnew
+          
+  # tag_and_release:
+  #   name: Create GitHub Tag and Release
+  #   runs-on: ubuntu-latest
+  #   needs: deploy
+  #   permissions:
+  #     contents: write
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Create and Push Git Tag
+  #       run: |
+  #         git config user.name "GitHub Actions"
+  #         git config user.email "actions@github.com"
+  #         git tag v${{ needs.build.outputs.version_number }}
+  #         git push origin v${{ needs.build.outputs.version_number }}
+
+  #     - name: Create GitHub Release
+  #       uses: actions/create-release@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         tag_name: v${{ needs.build.outputs.version_number }}
+  #         release_name: Release v${{ needs.build.outputs.version_number }}
+  #         body: "Deploy da versão ${{ needs.build.outputs.version_number }} realizado com sucesso na Play Store."
