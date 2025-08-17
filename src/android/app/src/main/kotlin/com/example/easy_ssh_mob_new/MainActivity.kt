@@ -1,4 +1,4 @@
-package com.example.easy_ssh_mob_new
+package com.dipi.android.easy_ssh_mob
 
 import io.flutter.embedding.android.FlutterActivity
 

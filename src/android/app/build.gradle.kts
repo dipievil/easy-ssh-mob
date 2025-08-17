@@ -79,3 +79,26 @@ android {
 flutter {
     source = "../.."
 }
+
+tasks.register("copyFlutterApks") {
+    doLast {
+        val fromDir = file("$buildDir/outputs/flutter-apk")
+        // projectDir is android/app; parentFile.parentFile resolves to src/
+        val destDir = project.projectDir.parentFile.parentFile.resolve("build/app/outputs/flutter-apk")
+        if (fromDir.exists()) {
+            copy {
+                from(fromDir)
+                into(destDir)
+            }
+            logger.quiet("Copied APKs from $fromDir to $destDir")
+        } else {
+            logger.warn("No flutter-apk directory found at $fromDir; nothing to copy.")
+        }
+    }
+}
+
+gradle.projectsEvaluated {
+    listOf("assembleDebug", "assembleRelease").forEach { name ->
+        tasks.findByName(name)?.finalizedBy("copyFlutterApks")
+    }
+}
