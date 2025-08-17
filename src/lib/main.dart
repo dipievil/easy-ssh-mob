@@ -6,12 +6,25 @@ import 'screens/file_explorer_screen.dart';
 import 'providers/ssh_provider.dart';
 import 'themes/app_theme.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
+  // Load environment file if present. If missing, catch the error so the app
+  // doesn't crash on startup when running on a device without the file.
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    // Keep startup silent but log to console for debugging.
+    // This is expected when running an installed build that doesn't include
+    // the local .env file.
+    // ignore: avoid_print
+    print('No .env file found: $e');
+  }
+
   await SentryFlutter.init(
     (options) {
       options.dsn = dotenv.env['SENTRY_DSN'];
-      
+
       options.tracesSampleRate = 0.2;
     },
     appRunner: () => runApp(SentryWidget(child: const MyApp())),

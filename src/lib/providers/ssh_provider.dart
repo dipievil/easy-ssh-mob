@@ -30,7 +30,7 @@ class SshProvider extends ChangeNotifier {
 
   // Error handling properties
   SshError? _lastError;
-  final AudioPlayer _audioPlayer = audioPlayerFactory.create();
+  AudioPlayer? _lazyAudioPlayer;
   bool _shouldPlayErrorSound = true;
   final NotificationService _notificationService = NotificationService();
 
@@ -679,10 +679,9 @@ class SshProvider extends ChangeNotifier {
   /// Play error sound
   void _playErrorSound() {
     try {
-      // Try to play a simple system beep sound
-      // Note: For a real implementation, you'd add actual sound files
-      // For now, we'll use a simple notification approach
-      _audioPlayer.play(AssetSource(_errorSoundPath)).catchError((e) {
+      // Lazy-create player and reuse it across plays to avoid eager plugin init
+      final player = _getOrCreateAudioPlayer();
+      player.play(AssetSource(_errorSoundPath)).catchError((e) {
         // Fallback: log that sound would play
         debugPrint('Error sound notification (no audio file): $e');
       });
@@ -1194,7 +1193,17 @@ class SshProvider extends ChangeNotifier {
   @override
   void dispose() {
     _cleanup();
-    _audioPlayer.dispose();
+    try {
+      _lazyAudioPlayer?.dispose();
+    } catch (_) {
+      // ignore
+    }
     super.dispose();
+  }
+
+  /// Return existing AudioPlayer or create it lazily via factory.
+  AudioPlayer _getOrCreateAudioPlayer() {
+    _lazyAudioPlayer ??= audioPlayerFactory.create();
+    return _lazyAudioPlayer!;
   }
 }

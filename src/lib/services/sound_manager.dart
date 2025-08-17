@@ -13,6 +13,8 @@ class SoundManager {
     NotificationType.critical: 'sounds/critical.mp3',
   };
 
+  static AudioPlayer? _lazyPlayer;
+
   static Future<void> playNotificationSound(
     NotificationType type,
     double volume,
@@ -20,12 +22,9 @@ class SoundManager {
     try {
       final soundFile = _soundFiles[type];
       if (soundFile != null) {
-        final player = audioPlayerFactory.create();
+        final player = _getOrCreatePlayer();
         await player.setVolume(volume);
         await player.play(AssetSource(soundFile));
-
-        // Release the player after playing
-        player.dispose();
       }
     } catch (e) {
       debugPrint('Error playing notification sound: $e');
@@ -38,11 +37,9 @@ class SoundManager {
   static Future<void> _playFallbackSound() async {
     try {
       // Try to play a simple beep using system sounds
-      final player = audioPlayerFactory.create();
+      final player = _getOrCreatePlayer();
       await player.setVolume(0.5);
-      // This will create a simple beep sound programmatically
       await player.play(AssetSource('sounds/error_beep.mp3'));
-      player.dispose();
     } catch (e) {
       debugPrint('Fallback sound also failed: $e');
       // At this point, we just fail silently
@@ -55,6 +52,20 @@ class SoundManager {
       await playNotificationSound(type, volume);
       await Future.delayed(const Duration(milliseconds: 800));
     }
+  }
+
+  /// Return or create a lazy AudioPlayer for reuse.
+  static AudioPlayer _getOrCreatePlayer() {
+    _lazyPlayer ??= audioPlayerFactory.create();
+    return _lazyPlayer!;
+  }
+
+  /// Dispose shared player when app shuts down (optional)
+  static Future<void> disposePlayer() async {
+    try {
+      await _lazyPlayer?.dispose();
+    } catch (_) {}
+    _lazyPlayer = null;
   }
 
   /// Check if sound file exists for the given type

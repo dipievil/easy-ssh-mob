@@ -233,8 +233,6 @@ class FileIconManager {
     'docker-compose.yml': Icons.developer_board,
     'docker-compose.yaml': Icons.developer_board,
     '.dockerignore': Icons.developer_board,
-    'package.json': Icons.package_2,
-    'yarn.lock': Icons.package_2,
     'composer.json': Icons.code,
     'requirements.txt': Icons.code,
     'Pipfile': Icons.code,
