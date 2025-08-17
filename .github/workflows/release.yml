@@ -12,9 +12,6 @@ on:
 
 jobs:
   release-please:
-    defaults:
-      run:
-        working-directory: src
     runs-on: self-hosted
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
