@@ -63,6 +63,12 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+      - name: Create empty .env for tests
+        run: |
+          mkdir -p src
+          if [ ! -f src/.env ]; then
+            touch src/.env
+          fi
 
       - name: Get dependencies
         run: |
