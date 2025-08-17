@@ -39,8 +39,9 @@ jobs:
 
       - name: Verify formatting
         run: |
-          cd src/lib
-          dart format --output=none --set-exit-if-changed .
+          # Run dart format on tracked Dart files but exclude generated l10n files
+          cd src
+          git ls-files '*.dart' | grep -v '^lib/l10n/' | xargs dart format --output=none --set-exit-if-changed
 
       - name: Analyze project source
         run: |
