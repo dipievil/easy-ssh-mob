@@ -18,9 +18,7 @@ void main() {
       }
     });
     tearDown(() {
-      try {
-        sshProvider?.dispose();
-      } catch (e) {}
+      sshProvider?.dispose();
     });
     test('initial state should be disconnected', () {
       if (sshProvider == null) {
