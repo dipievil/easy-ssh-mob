@@ -23,8 +23,8 @@ jobs:
 
       - name: Check code
         run: |
-           - pwd
-           - ls -d */*/
+          pwd
+          ls -d */*/
 
       - name: Check release path
         id: check_path
