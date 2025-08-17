@@ -25,3 +25,23 @@ tasks.register("assembleDebugAndCopy") {
     }
 }
 
+// Wrapper task to build bundle (AAB) and copy generated outputs to repo-level build.
+tasks.register("assembleBundleAndCopy") {
+    group = "build"
+    description = "Run :app:bundleRelease and copy generated aab files to src/build/app/outputs/bundle"
+    dependsOn(":app:bundleRelease")
+    doLast {
+        val fromDir = file("app/build/outputs/bundle")
+        val destDir = rootProject.projectDir.resolve("src").resolve("build/app/outputs/bundle")
+        if (fromDir.exists()) {
+            copy {
+                from(fromDir)
+                into(destDir)
+            }
+            logger.quiet("Copied AABs from $fromDir to $destDir")
+        } else {
+            logger.warn("No bundle directory found at $fromDir; nothing to copy.")
+        }
+    }
+}
+
