@@ -26,6 +26,18 @@ jobs:
            - pwd
            - ls -d */*/
 
+      - name: Check release path
+        id: check_path
+        run: |
+          # verify directory exists and expose result to next steps
+          if [ -d "./src" ]; then
+            echo "Path ./src exists"
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Path ./src not found"
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Automate release
         uses: googleapis/release-please-action@v4
         id: release        
