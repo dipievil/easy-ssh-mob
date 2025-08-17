@@ -1,0 +1,13 @@
+# Root pubspec that forwards to the real package in ./src
+# This is a lightweight wrapper so tools that expect a root pubspec work.
+name: easy_ssh_mob_root
+description: "Wrapper package pointing to src/easy_ssh_mob_new"
+publish_to: 'none'
+version: 0.0.0
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  easy_ssh_mob_new:
+    path: src
