@@ -10,8 +10,8 @@ on:
  
 
 jobs:
-  analyze:
-    name: Code Analysis
+  prepare:
+    name: Prepare workspace
     runs-on: self-hosted
     steps:
       - name: Checkout code
@@ -23,6 +23,56 @@ jobs:
           channel: 'stable'
           flutter-version: 3.32.8
 
+      - name: Get dependencies
+        run: |
+          cd src
+          if [ ! -f .env ]; then
+            touch .env
+          fi
+          flutter pub get
+
+      - name: Cache pub-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            $HOME/.pub-cache
+          key: ${{ runner.os }}-pub-cache-${{ hashFiles('src/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-cache-
+
+      - name: Upload src artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: prebuilt-src
+          path: src
+
+  # pub-cache is cached via actions/cache; no tarball upload needed
+
+  analyze:
+    name: Code Analysis
+    runs-on: self-hosted
+    needs: prepare
+    steps:
+      - name: Restore prebuilt src
+        uses: actions/download-artifact@v4
+        with:
+          name: prebuilt-src
+          path: .
+
+      - name: Restore pub-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            $HOME/.pub-cache
+          key: ${{ runner.os }}-pub-cache-${{ hashFiles('src/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-cache-
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
       - name: Check Flutter and Dart versions
         run: |
           flutter --version
@@ -32,15 +82,15 @@ jobs:
         working-directory: ./src
         run: flutter clean
 
-      - name: Get dependencies
-        run: |
-          cd src
-          flutter pub get
+  # dependencies restored from prepare; no need to run `flutter pub get` here
 
       - name: Verify formatting
         run: |
-          cd src/lib
-          dart format --output=none --set-exit-if-changed .
+          cd src
+          flutter pub get
+          # Run dart format on tracked Dart files but exclude generated l10n files
+          cd lib
+          git ls-files '*.dart' | grep -v '^lib/l10n/' | xargs dart format --output=none --set-exit-if-changed
 
       - name: Analyze project source
         run: |
@@ -55,19 +105,27 @@ jobs:
   test:
     name: Unit and Widget Tests
     runs-on: self-hosted
+    needs: prepare
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Restore prebuilt src
+        uses: actions/download-artifact@v4
+        with:
+          name: prebuilt-src
+          path: .
+
+      - name: Restore pub-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            $HOME/.pub-cache
+          key: ${{ runner.os }}-pub-cache-${{ hashFiles('src/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-cache-
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-
-      - name: Get dependencies
-        run: |
-          cd src
-          flutter pub get
 
       - name: Generate mocks (if needed)
         run: |
@@ -100,19 +158,27 @@ jobs:
   performance:
     name: Performance Tests
     runs-on: self-hosted
+    needs: prepare
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Restore prebuilt src
+        uses: actions/download-artifact@v4
+        with:
+          name: prebuilt-src
+          path: .
+
+      - name: Restore pub-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            $HOME/.pub-cache
+          key: ${{ runner.os }}-pub-cache-${{ hashFiles('src/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-cache-
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-
-      - name: Get dependencies
-        run: |
-          cd src
-          flutter pub get
 
       - name: Run performance tests
         run: |
@@ -122,19 +188,27 @@ jobs:
   accessibility:
     name: Accessibility Tests
     runs-on: self-hosted
+    needs: prepare
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Restore prebuilt src
+        uses: actions/download-artifact@v4
+        with:
+          name: prebuilt-src
+          path: .
+
+      - name: Restore pub-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            $HOME/.pub-cache
+          key: ${{ runner.os }}-pub-cache-${{ hashFiles('src/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-cache-
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-
-      - name: Get dependencies
-        run: |
-          cd src
-          flutter pub get
 
       - name: Run accessibility tests (if they exist)
         run: |
@@ -146,18 +220,25 @@ jobs:
     runs-on: self-hosted
     needs: [test]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Restore prebuilt src
+        uses: actions/download-artifact@v4
+        with:
+          name: prebuilt-src
+          path: .
+
+      - name: Restore pub-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            $HOME/.pub-cache
+          key: ${{ runner.os }}-pub-cache-${{ hashFiles('src/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-cache-
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-
-      - name: Get dependencies
-        run: |
-          cd src
-          flutter pub get
 
       - name: Generate mocks 
         run: |
@@ -186,19 +267,27 @@ jobs:
   security:
     name: Security Check
     runs-on: self-hosted
+    needs: prepare
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Restore prebuilt src
+        uses: actions/download-artifact@v4
+        with:
+          name: prebuilt-src
+          path: .
+
+      - name: Restore pub-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            $HOME/.pub-cache
+          key: ${{ runner.os }}-pub-cache-${{ hashFiles('src/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-cache-
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-
-      - name: Get dependencies
-        run: |
-          cd src
-          flutter pub get
 
       - name: Run security audit
         run: |

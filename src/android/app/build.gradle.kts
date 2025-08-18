@@ -96,8 +96,22 @@ tasks.register("copyFlutterApks") {
     }
 }
 
+tasks.register("copyFlutterBundles") {
+    doLast {
+        val fromDir = file("$buildDir/outputs/bundle")
+        val destDir = project.projectDir.parentFile.parentFile.resolve("build/app/outputs/bundle")
+        if (fromDir.exists()) {
+            copy { from(fromDir); into(destDir) }
+            logger.quiet("Copied AABs from $fromDir to $destDir")
+        } else {
+            logger.warn("No bundle dir at $fromDir; nothing to copy.")
+        }
+    }
+}
+
 gradle.projectsEvaluated {
     listOf("assembleDebug", "assembleRelease").forEach { name ->
         tasks.findByName(name)?.finalizedBy("copyFlutterApks")
+        tasks.findByName("bundleRelease")?.finalizedBy("copyFlutterBundles")
     }
 }

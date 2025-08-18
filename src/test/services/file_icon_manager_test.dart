@@ -31,12 +31,9 @@ void main() {
           type: FileType.symlink,
           displayName: 'link@',
         );
-        expect(
-            FileIconManager.getIconForFile(directory), Icons.folder);
-        expect(FileIconManager.getIconForFile(executable),
-            Icons.terminal);
-        expect(FileIconManager.getIconForFile(regular),
-            Icons.description);
+        expect(FileIconManager.getIconForFile(directory), Icons.folder);
+        expect(FileIconManager.getIconForFile(executable), Icons.terminal);
+        expect(FileIconManager.getIconForFile(regular), Icons.description);
         expect(FileIconManager.getIconForFile(symlink), Icons.link);
       });
       test('should return specific icons for file extensions', () {

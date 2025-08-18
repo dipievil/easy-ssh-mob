@@ -95,6 +95,7 @@ class MockAudioPlayer extends AudioPlayer {
   @override
   PlayerState get state => PlayerState.stopped;
   bool get isDisposed => _isDisposed;
+  @override
   double get volume => _volume;
   String? get lastPlayedSource => _lastPlayedSource;
 }

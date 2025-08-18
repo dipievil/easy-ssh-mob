@@ -114,7 +114,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
         children: [
           Expanded(
             child: DropdownButtonFormField<CommandType?>(
-              value: _filterType,
+              initialValue: _filterType,
               decoration: const InputDecoration(
                 labelText: 'Tipo',
                 isDense: true,
@@ -145,7 +145,7 @@ class _SessionLogScreenState extends State<SessionLogScreen> {
           const SizedBox(width: 8),
           Expanded(
             child: DropdownButtonFormField<CommandStatus?>(
-              value: _filterStatus,
+              initialValue: _filterStatus,
               decoration: const InputDecoration(
                 labelText: 'Status',
                 isDense: true,

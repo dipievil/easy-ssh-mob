@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:easy_ssh_mob_new/l10n/app_localizations.dart';
 import '../services/notification_service.dart';
 import '../widgets/error_widgets.dart';
 
@@ -53,6 +54,7 @@ class _NotificationSettingsScreenState
   }
 
   Future<void> _showTestNotifications() async {
+    final l10n = AppLocalizations.of(context)!;
     final types = [
       NotificationType.info,
       NotificationType.success,
@@ -64,46 +66,48 @@ class _NotificationSettingsScreenState
     for (int i = 0; i < types.length; i++) {
       final type = types[i];
       await _notificationService.showNotification(
-        message: _getTestMessage(type),
+        message: _getTestMessage(type, l10n),
         type: type,
       );
 
       // Show visual notification
       if (mounted) {
-        CustomSnackBar.show(context, _getTestMessage(type), type);
+        CustomSnackBar.show(context, _getTestMessage(type, l10n), type);
       }
 
       await Future.delayed(const Duration(milliseconds: 1500));
     }
   }
 
-  String _getTestMessage(NotificationType type) {
+  String _getTestMessage(NotificationType type, AppLocalizations l10n) {
     switch (type) {
       case NotificationType.info:
-        return 'Esta é uma notificação informativa';
+        return l10n.testMessageInfo;
       case NotificationType.success:
-        return 'Operação realizada com sucesso!';
+        return l10n.testMessageSuccess;
       case NotificationType.warning:
-        return 'Atenção: isto é um aviso';
+        return l10n.testMessageWarning;
       case NotificationType.error:
-        return 'Ocorreu um erro na operação';
+        return l10n.testMessageError;
       case NotificationType.critical:
-        return 'CRÍTICO: Falha grave do sistema';
+        return l10n.testMessageCritical;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Configurações de Notificação')),
+        appBar: AppBar(title: Text(l10n.notificationSettings)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Configurações de Notificação'),
+        title: Text(l10n.notificationSettings),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: ListView(
@@ -256,7 +260,7 @@ class _NotificationSettingsScreenState
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Tipos de Notificação',
+                        l10n.notificationTypes,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: Colors.blue.shade800,
@@ -266,32 +270,32 @@ class _NotificationSettingsScreenState
                   ),
                   const SizedBox(height: 12),
                   _buildNotificationTypeInfo(
-                    'Info',
-                    'Informações gerais',
+                    l10n.info,
+                    l10n.infoDescription,
                     Colors.blue,
                     FontAwesomeIcons.circleInfo,
                   ),
                   _buildNotificationTypeInfo(
-                    'Sucesso',
-                    'Operações bem-sucedidas',
+                    l10n.success,
+                    l10n.successDescription,
                     Colors.green,
                     FontAwesomeIcons.circleCheck,
                   ),
                   _buildNotificationTypeInfo(
-                    'Aviso',
-                    'Situações que requerem atenção',
+                    l10n.warning,
+                    l10n.warningDescription,
                     Colors.orange,
                     FontAwesomeIcons.triangleExclamation,
                   ),
                   _buildNotificationTypeInfo(
-                    'Erro',
-                    'Problemas durante operações',
+                    l10n.error,
+                    l10n.errorDescription,
                     Colors.red,
                     FontAwesomeIcons.circleXmark,
                   ),
                   _buildNotificationTypeInfo(
-                    'Crítico',
-                    'Falhas graves do sistema',
+                    l10n.critical,
+                    l10n.criticalDescription,
                     Colors.red.shade900,
                     FontAwesomeIcons.exclamation,
                   ),
