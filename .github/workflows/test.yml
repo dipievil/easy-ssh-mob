@@ -8,7 +8,6 @@ on:
   pull_request:
     branches: [ main ]
  
-
 jobs:
   prepare:
     name: Prepare workspace
@@ -46,8 +45,6 @@ jobs:
           name: prebuilt-src
           path: src
 
-  # pub-cache is cached via actions/cache; no tarball upload needed
-
   analyze:
     name: Code Analysis
     runs-on: self-hosted
@@ -82,13 +79,10 @@ jobs:
         working-directory: ./src
         run: flutter clean
 
-  # dependencies restored from prepare; no need to run `flutter pub get` here
-
       - name: Verify formatting
         run: |
           cd src
           flutter pub get
-          # Run dart format on tracked Dart files but exclude generated l10n files
           cd lib
           git ls-files '*.dart' | grep -v '^lib/l10n/' | xargs dart format --output=none --set-exit-if-changed
 
@@ -250,19 +244,19 @@ jobs:
           cd src
           flutter test test/providers/ test/models/ --coverage --reporter=compact
 
-      # - name: Generate coverage HTML report
-      #   run: |
-      #     cd src
-      #     mkdir -p coverage/html
-      #     sudo apt-get update
-      #     sudo apt-get install -y lcov
-      #     genhtml coverage/lcov.info -o coverage/html
+      - name: Generate coverage HTML report
+        run: |
+          cd src
+          mkdir -p coverage/html
+          sudo apt-get update
+          sudo apt-get install -y lcov
+          genhtml coverage/lcov.info -o coverage/html
 
-      # - name: Upload coverage report
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: coverage-report
-      #     path: src/coverage/html/
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: src/coverage/html/
 
   security:
     name: Security Check
