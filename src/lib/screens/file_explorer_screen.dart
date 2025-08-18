@@ -12,6 +12,7 @@ import '../utils/custom_animations.dart';
 import '../utils/responsive_breakpoints.dart';
 import 'terminal_screen.dart';
 import 'file_viewer_screen.dart';
+import 'login_screen.dart';
 
 class FileExplorerScreen extends StatefulWidget {
   const FileExplorerScreen({super.key});
@@ -202,8 +203,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
           trailing: Icon(
             Icons.arrow_forward_ios,
             size: 16,
-            color:
-                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
           ),
           onTap: () => _navigateToParent(),
           dense: true,
@@ -301,6 +301,42 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
         ),
       );
     }
+  }
+
+  /// Show logout confirmation dialog
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Logout'),
+        content: const Text(
+          'Deseja desconectar do servidor SSH? '
+          'Você retornará à tela de login.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final sshProvider =
+                  Provider.of<SshProvider>(context, listen: false);
+              await sshProvider.logout();
+              if (context.mounted) {
+                Navigator.of(context).pop(); // Close dialog
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  (route) => false,
+                );
+              }
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.orange),
+            child: const Text('Logout'),
+          ),
+        ],
+      ),
+    );
   }
 
   /// Build breadcrumb navigation widget
@@ -595,224 +631,240 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
   Widget build(BuildContext context) {
     return Consumer<SshProvider>(
       builder: (context, sshProvider, child) {
-        return Scaffold(
-          key: _scaffoldKey,
-          appBar: GradientAppBar(
-            title: _buildBreadcrumbText(sshProvider.currentPath),
-            actions: [
-              // Back navigation button
-              if (sshProvider.navigationHistory.isNotEmpty)
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) {
+            if (!didPop) {
+              _showLogoutDialog();
+            }
+          },
+          child: Scaffold(
+            key: _scaffoldKey,
+            appBar: GradientAppBar(
+              title: _buildBreadcrumbText(sshProvider.currentPath),
+              actions: [
+                // Back navigation button
+                if (sshProvider.navigationHistory.isNotEmpty)
+                  IconButton(
+                    onPressed: () async {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      await sshProvider.navigateBack();
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    },
+                    icon: const Icon(FontAwesomeIcons.arrowLeft),
+                    tooltip: 'Voltar',
+                  ),
+
+                // Home button
+                if (!_isAtHome())
+                  IconButton(
+                    onPressed: _isLoading ? null : () => _goHome(),
+                    icon: const Icon(FontAwesomeIcons.house),
+                    tooltip: 'Ir para Home',
+                  ),
+
+                // Refresh button
                 IconButton(
-                  onPressed: () async {
-                    setState(() {
-                      _isLoading = true;
-                    });
-                    await sshProvider.navigateBack();
-                    setState(() {
-                      _isLoading = false;
-                    });
+                  onPressed: _isLoading
+                      ? null
+                      : () async {
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          await sshProvider.refreshCurrentDirectory();
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        },
+                  icon: _isLoading
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(FontAwesomeIcons.arrowsRotate),
+                  tooltip: 'Atualizar',
+                ),
+
+                // Terminal button
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      SlideRoute(
+                        page: const TerminalScreen(),
+                        direction: AxisDirection.left,
+                      ),
+                    );
                   },
-                  icon: const Icon(FontAwesomeIcons.arrowLeft),
-                  tooltip: 'Voltar',
+                  icon: const Icon(FontAwesomeIcons.terminal),
+                  tooltip: 'Terminal',
                 ),
 
-              // Home button
-              if (!_isAtHome())
+                // Logout button
                 IconButton(
-                  onPressed: _isLoading ? null : () => _goHome(),
-                  icon: const Icon(FontAwesomeIcons.house),
-                  tooltip: 'Ir para Home',
+                  onPressed: () => _showLogoutDialog(),
+                  icon: const Icon(FontAwesomeIcons.rightFromBracket),
+                  tooltip: 'Logout',
                 ),
 
-              // Refresh button
-              IconButton(
-                onPressed: _isLoading
-                    ? null
-                    : () async {
-                        setState(() {
-                          _isLoading = true;
-                        });
-                        await sshProvider.refreshCurrentDirectory();
-                        setState(() {
-                          _isLoading = false;
-                        });
-                      },
-                icon: _isLoading
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
+                // Tools button
+                IconButton(
+                  onPressed: () => _showTools(),
+                  icon: const Icon(FontAwesomeIcons.gear),
+                  tooltip: 'Ferramentas',
+                ),
+              ],
+            ),
+            endDrawer: const ToolsDrawer(),
+            body: Consumer<SshProvider>(
+              builder: (context, sshProvider, child) {
+                // Handle connection errors
+                if (sshProvider.errorMessage != null) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          size: 64,
+                          color: Colors.red,
                         ),
-                      )
-                    : const Icon(FontAwesomeIcons.arrowsRotate),
-                tooltip: 'Atualizar',
-              ),
-
-              // Terminal button
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    SlideRoute(
-                      page: const TerminalScreen(),
-                      direction: AxisDirection.left,
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Erro de Conexão',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          sshProvider.errorMessage!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            sshProvider.clearError();
+                            _loadInitialDirectory();
+                          },
+                          child: const Text('Tentar Novamente'),
+                        ),
+                      ],
                     ),
                   );
-                },
-                icon: const Icon(FontAwesomeIcons.terminal),
-                tooltip: 'Terminal',
-              ),
+                }
 
-              // Tools button
-              IconButton(
-                onPressed: () => _showTools(),
-                icon: const Icon(FontAwesomeIcons.gear),
-                tooltip: 'Ferramentas',
-              ),
-            ],
-          ),
-          endDrawer: const ToolsDrawer(),
-          body: Consumer<SshProvider>(
-            builder: (context, sshProvider, child) {
-              // Handle connection errors
-              if (sshProvider.errorMessage != null) {
+                // Handle disconnection
+                if (!sshProvider.isConnected && !sshProvider.isConnecting) {
+                  return const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.wifi_off, size: 64, color: Colors.grey),
+                        SizedBox(height: 16),
+                        Text(
+                          'Desconectado',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'A conexão SSH foi perdida.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                // Loading state
+                if (_isLoading) {
+                  return const ResponsiveContainer(
+                    child: SshLoadingIndicator(
+                      message: 'Carregando diretório...',
+                    ),
+                  );
+                }
+
+                if (sshProvider.currentFiles.isNotEmpty) {
+                  return _buildFileList();
+                }
+
+                // Empty directory
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.error_outline,
-                        size: 64,
-                        color: Colors.red,
-                      ),
+                      const Icon(Icons.folder_open,
+                          size: 64, color: Colors.grey),
                       const SizedBox(height: 16),
-                      const Text(
-                        'Erro de Conexão',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Consumer<SshProvider>(
+                        builder: (context, sshProvider, child) {
+                          return _buildBreadcrumb(sshProvider.currentPath);
+                        },
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        sshProvider.errorMessage!,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          sshProvider.clearError();
-                          _loadInitialDirectory();
-                        },
-                        child: const Text('Tentar Novamente'),
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              // Handle disconnection
-              if (!sshProvider.isConnected && !sshProvider.isConnecting) {
-                return const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.wifi_off, size: 64, color: Colors.grey),
-                      SizedBox(height: 16),
-                      Text(
-                        'Desconectado',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'A conexão SSH foi perdida.',
+                      const Text(
+                        'Diretório vazio',
                         textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.grey),
                       ),
+                      const SizedBox(height: 16),
+                      Consumer<SshProvider>(
+                        builder: (context, sshProvider, child) {
+                          if (sshProvider.navigationHistory.isNotEmpty) {
+                            return ElevatedButton.icon(
+                              onPressed: () async {
+                                setState(() {
+                                  _isLoading = true;
+                                });
+                                await sshProvider.navigateBack();
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              },
+                              icon: const Icon(Icons.arrow_back),
+                              label: const Text('Voltar'),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
                     ],
                   ),
                 );
-              }
-
-              // Loading state
-              if (_isLoading) {
-                return const ResponsiveContainer(
-                  child: SshLoadingIndicator(
-                    message: 'Carregando diretório...',
-                  ),
+              },
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () async {
+                setState(() {
+                  _isLoading = true;
+                });
+                final sshProvider = Provider.of<SshProvider>(
+                  context,
+                  listen: false,
                 );
-              }
-
-              if (sshProvider.currentFiles.isNotEmpty) {
-                return _buildFileList();
-              }
-
-              // Empty directory
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.folder_open, size: 64, color: Colors.grey),
-                    const SizedBox(height: 16),
-                    Consumer<SshProvider>(
-                      builder: (context, sshProvider, child) {
-                        return _buildBreadcrumb(sshProvider.currentPath);
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Diretório vazio',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    const SizedBox(height: 16),
-                    Consumer<SshProvider>(
-                      builder: (context, sshProvider, child) {
-                        if (sshProvider.navigationHistory.isNotEmpty) {
-                          return ElevatedButton.icon(
-                            onPressed: () async {
-                              setState(() {
-                                _isLoading = true;
-                              });
-                              await sshProvider.navigateBack();
-                              setState(() {
-                                _isLoading = false;
-                              });
-                            },
-                            icon: const Icon(Icons.arrow_back),
-                            label: const Text('Voltar'),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              setState(() {
-                _isLoading = true;
-              });
-              final sshProvider = Provider.of<SshProvider>(
-                context,
-                listen: false,
-              );
-              await sshProvider.refreshCurrentDirectory();
-              setState(() {
-                _isLoading = false;
-              });
-            },
-            tooltip: 'Atualizar',
-            child: const Icon(Icons.refresh),
+                await sshProvider.refreshCurrentDirectory();
+                setState(() {
+                  _isLoading = false;
+                });
+              },
+              tooltip: 'Atualizar',
+              child: const Icon(Icons.refresh),
+            ),
           ),
         );
       },
