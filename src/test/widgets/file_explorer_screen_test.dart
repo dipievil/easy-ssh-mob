@@ -53,8 +53,10 @@ void main() {
 
       // Verify logout dialog is shown
       expect(find.text('Logout'), findsWidgets);
-      expect(find.text('Deseja desconectar do servidor SSH? '
-          'Você retornará à tela de login.'), findsOneWidget);
+      expect(
+          find.text('Deseja desconectar do servidor SSH? '
+              'Você retornará à tela de login.'),
+          findsOneWidget);
       expect(find.text('Cancelar'), findsOneWidget);
     });
 
@@ -89,8 +91,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Dialog should be closed
-      expect(find.text('Deseja desconectar do servidor SSH? '
-          'Você retornará à tela de login.'), findsNothing);
+      expect(
+          find.text('Deseja desconectar do servidor SSH? '
+              'Você retornará à tela de login.'),
+          findsNothing);
     });
   });
 }
