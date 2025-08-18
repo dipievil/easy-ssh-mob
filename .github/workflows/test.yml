@@ -89,7 +89,7 @@ jobs:
           cd src
           flutter pub get
           # Run dart format on tracked Dart files but exclude generated l10n files
-          cd src/lib
+          cd lib
           git ls-files '*.dart' | grep -v '^lib/l10n/' | xargs dart format --output=none --set-exit-if-changed
 
       - name: Analyze project source
