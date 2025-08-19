@@ -203,7 +203,8 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
           trailing: Icon(
             Icons.arrow_forward_ios,
             size: 16,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+            color:
+                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
           ),
           onTap: () => _navigateToParent(),
           dense: true,
