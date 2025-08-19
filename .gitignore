@@ -131,3 +131,4 @@ flutter/
 .idea/
 
 src/.env
+src/dart.deb

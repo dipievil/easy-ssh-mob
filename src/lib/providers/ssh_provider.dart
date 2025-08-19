@@ -38,6 +38,12 @@ class SshProvider extends ChangeNotifier {
   int _maxLogEntries = 1000;
   DateTime? _sessionStartTime;
 
+  // Reconnection properties
+  bool _isReconnecting = false;
+  int _reconnectAttempts = 0;
+  static const int _maxReconnectAttempts = 3;
+  static const Duration _reconnectDelay = Duration(seconds: 2);
+
   SshConnectionState get connectionState => _connectionState;
   String? get errorMessage => _errorMessage;
   SSHCredentials? get currentCredentials => _currentCredentials;
@@ -54,6 +60,8 @@ class SshProvider extends ChangeNotifier {
 
   bool get isConnecting => _connectionState.isConnecting;
   bool get isConnected => _connectionState.isConnected;
+  bool get isReconnecting => _isReconnecting;
+  int get reconnectAttempts => _reconnectAttempts;
 
   Future<void> initialize() async {
     try {
@@ -571,7 +579,6 @@ class SshProvider extends ChangeNotifier {
     }
   }
 
-  /// Handle SSH errors with notification and sound
   void _handleSshError(SshError error) {
     _lastError = error;
     _errorMessage = error.userFriendlyMessage;
@@ -579,6 +586,18 @@ class SshProvider extends ChangeNotifier {
     notifyListeners();
 
     debugPrint('SSH Error: ${error.type} - ${error.originalMessage}');
+
+    // Try automatic reconnection for connection lost errors
+    if (error.type == ErrorType.connectionLost && !_isReconnecting) {
+      _attemptAutoReconnection();
+      return; // Don't show notification yet, let reconnection handle it
+    }
+
+    // Try automatic reconnection for connection lost errors
+    if (error.type == ErrorType.connectionLost && !_isReconnecting) {
+      _attemptAutoReconnection();
+      return; // Don't show notification yet, let reconnection handle it
+    }
 
     _notificationService.showNotification(
       message: error.userFriendlyMessage,
@@ -590,6 +609,113 @@ class SshProvider extends ChangeNotifier {
     if (_shouldPlayErrorSound && _shouldPlaySoundForSeverity(error.severity)) {
       _playErrorSound();
     }
+  }
+
+  /// Attempt automatic reconnection when connection is lost
+  Future<void> _attemptAutoReconnection() async {
+    if (_isReconnecting || _currentCredentials == null) {
+      return;
+    }
+
+    _isReconnecting = true;
+    _reconnectAttempts = 0;
+    _connectionState = SshConnectionState.connecting;
+    notifyListeners();
+
+    debugPrint('Attempting automatic reconnection...');
+
+    while (_reconnectAttempts < _maxReconnectAttempts) {
+      _reconnectAttempts++;
+
+      try {
+        debugPrint(
+            'Reconnection attempt $_reconnectAttempts/$_maxReconnectAttempts');
+
+        // Clean up current connection
+        await _cleanup();
+
+        // Wait before retry
+        await Future.delayed(_reconnectDelay);
+
+        // Try to reconnect using saved credentials
+        final success = await connect(
+          host: _currentCredentials!.host,
+          port: _currentCredentials!.port,
+          username: _currentCredentials!.username,
+          password: _currentCredentials!.password,
+          saveCredentials: false, // Don't save again
+        );
+
+        if (success) {
+          _isReconnecting = false;
+          _reconnectAttempts = 0;
+
+          // Show success notification
+          _notificationService.showNotification(
+            message: 'Reconectado com sucesso',
+            type: NotificationType.success,
+            title: 'SSH Reconectado',
+          );
+
+          debugPrint('Automatic reconnection successful');
+          return;
+        }
+      } catch (e) {
+        debugPrint('Reconnection attempt $_reconnectAttempts failed: $e');
+      }
+    }
+
+    // All reconnection attempts failed
+    _isReconnecting = false;
+    _connectionState = SshConnectionState.error;
+    _errorMessage = 'Falha na reconexão automática';
+    notifyListeners();
+
+    debugPrint('All reconnection attempts failed');
+
+    // Show reconnection options dialog
+    _showReconnectionDialog();
+  }
+
+  /// Show dialog with reconnection options
+  void _showReconnectionDialog() {
+    // This will be handled by the UI layer through a callback
+    // The UI will listen to connection state and show dialog when needed
+    _notificationService.showNotification(
+      message: 'Conexão perdida. Toque para ver opções.',
+      type: NotificationType.critical,
+      title: 'Conexão SSH Perdida',
+      details:
+          'Falha na reconexão automática após $_maxReconnectAttempts tentativas.',
+    );
+  }
+
+  /// Manual reconnection attempt triggered by user
+  Future<bool> attemptManualReconnection() async {
+    if (_currentCredentials == null) {
+      return false;
+    }
+
+    try {
+      await _cleanup();
+      return await connect(
+        host: _currentCredentials!.host,
+        port: _currentCredentials!.port,
+        username: _currentCredentials!.username,
+        password: _currentCredentials!.password,
+        saveCredentials: false,
+      );
+    } catch (e) {
+      debugPrint('Manual reconnection failed: $e');
+      return false;
+    }
+  }
+
+  /// Reset reconnection state (used when user chooses to go to login)
+  void resetReconnectionState() {
+    _isReconnecting = false;
+    _reconnectAttempts = 0;
+    notifyListeners();
   }
 
   /// Map error severity to notification type

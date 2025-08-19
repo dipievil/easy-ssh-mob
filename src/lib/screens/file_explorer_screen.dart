@@ -3,11 +3,14 @@ import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../providers/ssh_provider.dart';
 import '../models/ssh_file.dart';
+import '../models/ssh_connection_state.dart';
+import '../services/error_handler.dart';
 import '../widgets/execution_result_dialog.dart';
 import '../widgets/file_type_indicator.dart';
 import '../widgets/error_widgets.dart';
 import '../widgets/tools_drawer.dart';
 import '../widgets/custom_components.dart';
+import '../widgets/reconnection_dialog.dart';
 import '../utils/custom_animations.dart';
 import '../utils/responsive_breakpoints.dart';
 import 'terminal_screen.dart';
@@ -26,6 +29,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final Map<String, bool> _executingFiles = {};
   SshProvider? _lastSshProvider;
+  bool _reconnectionDialogShown = false;
 
   @override
   void initState() {
@@ -50,9 +54,36 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
 
   void _handleProviderChange() {
     final sshProvider = _lastSshProvider;
-    if (sshProvider?.lastError != null && mounted) {
-      // Show error notification
-      ErrorSnackBar.show(context, sshProvider!.lastError!);
+    if (sshProvider == null || !mounted) return;
+
+    // Check if we need to show reconnection dialog
+    if (sshProvider.connectionState.hasError && 
+        sshProvider.lastError?.type == ErrorType.connectionLost &&
+        !sshProvider.isReconnecting &&
+        !_reconnectionDialogShown) {
+      
+      _reconnectionDialogShown = true;
+      
+      // Show reconnection dialog after a short delay to let the error state settle
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          ReconnectionDialog.show(context).then((_) {
+            _reconnectionDialogShown = false;
+          });
+        }
+      });
+      return;
+    }
+
+    // Reset dialog flag when connection is restored
+    if (sshProvider.isConnected) {
+      _reconnectionDialogShown = false;
+    }
+
+    // Show general error notifications (but not for connection lost errors)
+    if (sshProvider.lastError != null && 
+        sshProvider.lastError?.type != ErrorType.connectionLost) {
+      ErrorSnackBar.show(context, sshProvider.lastError!);
     }
   }
 
@@ -204,7 +235,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
             Icons.arrow_forward_ios,
             size: 16,
             color:
-                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
           ),
           onTap: () => _navigateToParent(),
           dense: true,
