@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_ssh_mob_new/l10n/app_localizations.dart';
-import '../providers/ssh_provider.dart';
+import 'package:easy_ssh_mob_new/providers/ssh_provider.dart';
+import 'package:easy_ssh_mob_new/utils/app_version.dart';
 import 'notification_settings_screen.dart';
+import 'notification_test_screen.dart';
 import 'session_log_screen.dart';
 
 /// Settings screen for app configuration
@@ -23,7 +25,6 @@ class SettingsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Connection Info Card
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -80,14 +81,10 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
-
-            // Settings Options
             Expanded(
               child: ListView(
                 children: [
-                  // Notification Settings
                   ListTile(
                     leading: const Icon(FontAwesomeIcons.bell),
                     title: Text(l10n.notifications),
@@ -103,10 +100,7 @@ class SettingsScreen extends StatelessWidget {
                       );
                     },
                   ),
-
                   const Divider(),
-
-                  // Session Log
                   ListTile(
                     leading: const Icon(FontAwesomeIcons.clockRotateLeft),
                     title: Text(l10n.sessionLog),
@@ -121,10 +115,7 @@ class SettingsScreen extends StatelessWidget {
                       );
                     },
                   ),
-
                   const Divider(),
-
-                  // App Info
                   ListTile(
                     leading: const Icon(FontAwesomeIcons.circleInfo),
                     title: Text(l10n.aboutApp),
@@ -132,10 +123,25 @@ class SettingsScreen extends StatelessWidget {
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () => _showAboutDialog(context),
                   ),
-
                   const Divider(),
-
-                  // Clear Credentials
+                  if (true)
+                    ListTile(
+                      leading: const Icon(FontAwesomeIcons.flask),
+                      title: const Text('Teste de Notificações'),
+                      subtitle: const Text(
+                          'Testar sistema de notificações melhorado'),
+                      trailing: const Icon(Icons.arrow_forward_ios),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const NotificationTestScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  const Divider(),
                   Consumer<SshProvider>(
                     builder: (context, sshProvider, child) {
                       return ListTile(
@@ -153,10 +159,7 @@ class SettingsScreen extends StatelessWidget {
                       );
                     },
                   ),
-
                   const Divider(),
-
-                  // Logout
                   ListTile(
                     leading: const Icon(
                       FontAwesomeIcons.rightFromBracket,
@@ -178,22 +181,45 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  void _showAboutDialog(BuildContext context) {
-    showAboutDialog(
-      context: context,
-      applicationName: 'EasySSH',
-      applicationVersion: '1.0.1',
-      applicationIcon: const Icon(
-        FontAwesomeIcons.terminal,
-        size: 48,
-        color: Colors.deepPurple,
-      ),
-      children: [
-        const Text('Cliente SSH simples e intuitivo para dispositivos móveis.'),
-        const SizedBox(height: 16),
-        const Text('Desenvolvido com Flutter 💙'),
-      ],
-    );
+  void _showAboutDialog(BuildContext context) async {
+    final appName = await AppVersion.getAppName();
+    final versionString = await AppVersion.getVersionString();
+    final buildNumber = await AppVersion.getBuildNumber();
+    final packageName = await AppVersion.getPackageName();
+
+    if (context.mounted) {
+      showAboutDialog(
+        context: context,
+        applicationName: appName,
+        applicationVersion: versionString,
+        applicationIcon: const Icon(
+          FontAwesomeIcons.terminal,
+          size: 48,
+          color: Colors.deepPurple,
+        ),
+        children: [
+          const Text(
+              'Cliente SSH simples e intuitivo para dispositivos móveis.'),
+          const SizedBox(height: 16),
+          const Text('Desenvolvido com Flutter 💙'),
+          const SizedBox(height: 12),
+          Text(
+            'Build: $buildNumber',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          Text(
+            'Package: $packageName',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade600,
+            ),
+          ),
+        ],
+      );
+    }
   }
 
   void _showClearCredentialsDialog(
