@@ -33,14 +33,10 @@ class FileTypeIndicator extends StatelessWidget {
       ],
     );
   }
-
-  // Removed _getIconColor method as it's now handled by FileIconManager
-  // Removed _getRegularFileColor method as it's now handled by FileIconManager
 }
 
 /// Extension methods for SshFile to check if it might be executable
 extension SshFileExecutable on SshFile {
-  /// Check if file might be executable based on extension or name
   bool get mightBeExecutable {
     if (isExecutable) return true;
 
@@ -54,7 +50,6 @@ extension SshFileExecutable on SshFile {
         name.endsWith('.cmd');
   }
 
-  /// Get execution hint text
   String get executionHint {
     if (isExecutable) return 'Clique para executar';
     if (mightBeExecutable) return 'Pode ser executável';

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'notification_service.dart';
 import 'audio_factory.dart';
@@ -28,39 +29,34 @@ class SoundManager {
       }
     } catch (e) {
       debugPrint('Error playing notification sound: $e');
-      // Fallback to system beep or default notification sound
       await _playFallbackSound();
     }
   }
 
-  /// Play fallback sound when asset sounds fail
   static Future<void> _playFallbackSound() async {
     try {
-      // Try to play a simple beep using system sounds
-      final player = _getOrCreatePlayer();
-      await player.setVolume(0.5);
-      await player.play(AssetSource('sounds/error_beep.mp3'));
+      await HapticFeedback.mediumImpact();
     } catch (e) {
       debugPrint('Fallback sound also failed: $e');
-      // At this point, we just fail silently
     }
   }
 
-  /// Test all notification sounds
   static Future<void> testAllSounds(double volume) async {
+    debugPrint('Testing all notification sounds...');
+
     for (final type in NotificationType.values) {
       await playNotificationSound(type, volume);
       await Future.delayed(const Duration(milliseconds: 800));
     }
+
+    debugPrint('Sound test completed');
   }
 
-  /// Return or create a lazy AudioPlayer for reuse.
   static AudioPlayer _getOrCreatePlayer() {
     _lazyPlayer ??= audioPlayerFactory.create();
     return _lazyPlayer!;
   }
 
-  /// Dispose shared player when app shuts down (optional)
   static Future<void> disposePlayer() async {
     try {
       await _lazyPlayer?.dispose();
@@ -68,12 +64,10 @@ class SoundManager {
     _lazyPlayer = null;
   }
 
-  /// Check if sound file exists for the given type
   static bool hasSoundForType(NotificationType type) {
     return _soundFiles.containsKey(type);
   }
 
-  /// Get sound file path for the given type
   static String? getSoundPath(NotificationType type) {
     return _soundFiles[type];
   }

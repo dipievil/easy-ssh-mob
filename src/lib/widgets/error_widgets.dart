@@ -2,36 +2,80 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../services/error_handler.dart';
 import '../services/notification_service.dart';
+import '../services/sound_manager.dart';
 
 /// Customized SnackBar for displaying SSH errors
 class ErrorSnackBar {
-  /// Show error SnackBar with appropriate styling and actions
   static void show(BuildContext context, SshError error) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(_getErrorIcon(error.type), color: Colors.white),
-            const SizedBox(width: 8),
-            Expanded(child: Text(error.userFriendlyMessage)),
-          ],
-        ),
-        backgroundColor: _getErrorColor(error.severity),
-        duration: Duration(
-          seconds: error.severity == ErrorSeverity.critical ? 10 : 4,
-        ),
-        action: error.suggestion != null
-            ? SnackBarAction(
-                label: 'AJUDA',
-                textColor: Colors.white,
-                onPressed: () => _showErrorDialog(context, error),
-              )
-            : null,
+    ScaffoldMessenger.of(context).clearSnackBars();
+
+    final snackBar = SnackBar(
+      content: Row(
+        children: [
+          Icon(_getErrorIcon(error.type), color: Colors.white),
+          const SizedBox(width: 8),
+          Expanded(child: Text(error.userFriendlyMessage)),
+          InkWell(
+            onTap: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              child: const Icon(
+                Icons.close,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
+          ),
+        ],
       ),
+      backgroundColor: _getErrorColor(error.severity),
+      duration: Duration(
+        seconds: error.severity == ErrorSeverity.critical ? 10 : 4,
+      ),
+      action: error.suggestion != null
+          ? SnackBarAction(
+              label: 'AJUDA',
+              textColor: Colors.white,
+              onPressed: () => _showErrorDialog(context, error),
+            )
+          : null,
     );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+    _playErrorSound(error.severity);
   }
 
-  /// Show detailed error dialog
+  static Future<void> _playErrorSound(ErrorSeverity severity) async {
+    try {
+      final notificationService = NotificationService();
+      if (notificationService.soundEnabled) {
+        NotificationType soundType;
+        switch (severity) {
+          case ErrorSeverity.info:
+            soundType = NotificationType.info;
+            break;
+          case ErrorSeverity.warning:
+            soundType = NotificationType.warning;
+            break;
+          case ErrorSeverity.error:
+            soundType = NotificationType.error;
+            break;
+          case ErrorSeverity.critical:
+            soundType = NotificationType.critical;
+            break;
+        }
+
+        await SoundManager.playNotificationSound(
+          soundType,
+          notificationService.soundVolume,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error playing error sound: $e');
+    }
+  }
+
   static void _showErrorDialog(BuildContext context, SshError error) {
     showDialog(
       context: context,
@@ -39,7 +83,6 @@ class ErrorSnackBar {
     );
   }
 
-  /// Get appropriate icon for error type
   static IconData _getErrorIcon(ErrorType type) {
     switch (type) {
       case ErrorType.permissionDenied:
@@ -62,7 +105,6 @@ class ErrorSnackBar {
     }
   }
 
-  /// Get appropriate color for error severity
   static Color _getErrorColor(ErrorSeverity severity) {
     switch (severity) {
       case ErrorSeverity.info:
@@ -77,7 +119,6 @@ class ErrorSnackBar {
   }
 }
 
-/// Detailed error dialog with technical information and suggestions
 class ErrorDialog extends StatelessWidget {
   final SshError error;
 
@@ -136,7 +177,6 @@ class ErrorDialog extends StatelessWidget {
   }
 }
 
-/// Enhanced CustomSnackBar for all notification types
 class CustomSnackBar {
   static void show(
     BuildContext context,
@@ -145,32 +185,82 @@ class CustomSnackBar {
     VoidCallback? action,
     String? actionLabel,
     Duration? duration,
+    bool playSound = true,
   }) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(_getTypeIcon(type), color: Colors.white),
-            const SizedBox(width: 12),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: _getTypeColor(type),
-        duration: duration ?? const Duration(seconds: 4),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        action: action != null && actionLabel != null
-            ? SnackBarAction(
-                label: actionLabel,
-                textColor: Colors.white,
-                onPressed: action,
-              )
-            : null,
+    ScaffoldMessenger.of(context).clearSnackBars();
+
+    final snackBar = SnackBar(
+      content: Row(
+        children: [
+          Icon(_getTypeIcon(type), color: Colors.white),
+          const SizedBox(width: 12),
+          Expanded(child: Text(message)),
+          InkWell(
+            onTap: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              child: const Icon(
+                Icons.close,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
+          ),
+        ],
       ),
+      backgroundColor: _getTypeColor(type),
+      duration: duration ?? const Duration(seconds: 4),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      action: action != null && actionLabel != null
+          ? SnackBarAction(
+              label: actionLabel,
+              textColor: Colors.white,
+              onPressed: action,
+            )
+          : null,
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+    if (playSound) {
+      _playNotificationSound(type);
+    }
+  }
+
+  static void showWithClear(
+    BuildContext context,
+    String message,
+    NotificationType type, {
+    VoidCallback? action,
+    String? actionLabel,
+    Duration? duration,
+  }) {
+    show(
+      context,
+      message,
+      type,
+      action: action,
+      actionLabel: actionLabel,
+      duration: duration,
+      playSound: true,
     );
   }
 
-  /// Get appropriate icon for notification type
+  static Future<void> _playNotificationSound(NotificationType type) async {
+    try {
+      final notificationService = NotificationService();
+      if (notificationService.soundEnabled) {
+        await SoundManager.playNotificationSound(
+          type,
+          notificationService.soundVolume,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error playing notification sound: $e');
+    }
+  }
+
   static IconData _getTypeIcon(NotificationType type) {
     switch (type) {
       case NotificationType.info:
@@ -186,7 +276,6 @@ class CustomSnackBar {
     }
   }
 
-  /// Get appropriate color for notification type
   static Color _getTypeColor(NotificationType type) {
     switch (type) {
       case NotificationType.info:
@@ -349,7 +438,6 @@ class _ToastNotificationState extends State<ToastNotification>
 
     _controller.forward();
 
-    // Auto-dismiss
     Future.delayed(widget.duration - const Duration(milliseconds: 300), () {
       if (mounted) {
         _controller.reverse();

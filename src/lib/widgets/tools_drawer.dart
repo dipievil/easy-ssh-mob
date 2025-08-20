@@ -109,7 +109,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
                   vertical: 4,
                 ),
                 onTap: () {
-                  Navigator.of(context).pop(); // Close drawer
+                  Navigator.of(context).pop();
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const SessionLogScreen(),
@@ -319,13 +319,11 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
             ],
           ),
           const SizedBox(height: 8),
-
-          // Settings button
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: () {
-                Navigator.of(context).pop(); // Close drawer
+                Navigator.of(context).pop();
                 Navigator.of(context).pushNamed('/settings');
               },
               icon: const Icon(FontAwesomeIcons.gear, size: 16),
@@ -345,7 +343,7 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
   }
 
   Future<void> _executeCommand(CommandItem command) async {
-    Navigator.of(context).pop(); // Close drawer
+    Navigator.of(context).pop();
 
     final sshProvider = Provider.of<SshProvider>(context, listen: false);
 
@@ -359,7 +357,6 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
       return;
     }
 
-    // Show loading feedback
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -427,7 +424,6 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
         actions: [
           TextButton.icon(
             onPressed: () {
-              // Copy to clipboard functionality would go here
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -517,11 +513,10 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
   }
 
   Future<void> _exportCommands() async {
-    Navigator.of(context).pop(); // Close drawer
+    Navigator.of(context).pop();
 
     try {
       final exported = await CustomCommandsService.exportCustomCommands();
-      // In a real app, you would use a file picker or share dialog
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -568,9 +563,8 @@ class _ToolsDrawerState extends State<ToolsDrawer> {
   }
 
   Future<void> _importCommands() async {
-    Navigator.of(context).pop(); // Close drawer
+    Navigator.of(context).pop();
 
-    // In a real app, you would use a file picker
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text(

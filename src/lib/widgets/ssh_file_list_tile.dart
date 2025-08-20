@@ -29,12 +29,10 @@ class _SshFileListTileState extends State<SshFileListTile> {
     super.initState();
   }
 
-  /// Get appropriate subtitle text
   String _getSubtitle() {
     return widget.file.typeDescription;
   }
 
-  /// Get trailing icon based on file type
   IconData? _getTrailingIcon() {
     if (widget.file.isDirectory) {
       return Icons.arrow_forward_ios;
@@ -46,7 +44,6 @@ class _SshFileListTileState extends State<SshFileListTile> {
     return null;
   }
 
-  /// Check if this file is a script based on common script extensions
   bool _isScript() {
     final scriptExtensions = ['.sh', '.py', '.js', '.rb', '.pl', '.php'];
     return scriptExtensions.any(
@@ -54,12 +51,10 @@ class _SshFileListTileState extends State<SshFileListTile> {
     );
   }
 
-  /// Get enhanced icon for file type with improved detection
   IconData _getEnhancedIcon() {
     return FileIconManager.getIconForFile(widget.file);
   }
 
-  /// Get enhanced icon color with improved detection
   Color _getEnhancedIconColor(BuildContext context) {
     return FileIconManager.getColorForFile(widget.file, context);
   }

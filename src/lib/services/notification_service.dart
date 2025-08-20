@@ -2,7 +2,6 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'sound_manager.dart';
 
 /// Types of notifications
 enum NotificationType { info, warning, error, success, critical }
@@ -124,6 +123,7 @@ class NotificationService {
     VoidCallback? action,
     String? actionLabel,
     NotificationConfig? config,
+    bool clearPrevious = true,
   }) async {
     final item = NotificationItem(
       message: message,
@@ -135,6 +135,11 @@ class NotificationService {
       config: config,
     );
 
+    // Clear previous notifications if requested
+    if (clearPrevious) {
+      _notificationQueue.clear();
+    }
+
     _notificationQueue.add(item);
     _processQueue();
   }
@@ -144,6 +149,13 @@ class NotificationService {
     if (_isShowingNotification || _notificationQueue.isEmpty) return;
 
     _isShowingNotification = true;
+
+    // Remove any pending notifications except the latest one to avoid accumulation
+    while (_notificationQueue.length > 1) {
+      _notificationQueue.removeFirst();
+    }
+
+    // Get the latest notification
     final item = _notificationQueue.removeFirst();
 
     await _displayNotification(item);
@@ -152,25 +164,23 @@ class NotificationService {
 
     // Process next notification with a small delay
     if (_notificationQueue.isNotEmpty) {
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 300));
       _processQueue();
     }
   }
 
   /// Display a single notification
   Future<void> _displayNotification(NotificationItem item) async {
-    // Play sound if enabled
-    if (item.config.playSound && soundEnabled) {
-      await SoundManager.playNotificationSound(item.type, soundVolume);
-    }
+    // Do NOT play sound here - let the UI widgets handle it
+    // This prevents sound playing before visual notification appears
 
-    // Vibrate if enabled
+    // Only vibrate if enabled (immediate feedback)
     if (item.config.vibrate && vibrateEnabled) {
       await _vibrate();
     }
 
-    // Show visual notification - this will be handled by the UI layer
-    // The actual display logic will be in the widgets
+    // Visual notification handling is now in the UI layer
+    // Sound will be played when the visual notification appears
   }
 
   /// Trigger device vibration
