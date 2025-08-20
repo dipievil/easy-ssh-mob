@@ -9,8 +9,42 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-green.svg)](https://flutter.dev/docs/deployment)
 [![Flutter Tests and Quality Checks](https://github.com/dipievil/easy-ssh-mob/actions/workflows/test.yml/badge.svg)](https://github.com/dipievil/easy-ssh-mob/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/dipievil/easy-ssh-mob/graph/badge.svg?token=QIAPBSO1YX)](https://codecov.io/gh/dipievil/easy-ssh-mob)
 
 </div>
+
+## Sumário
+
+- [EasySSH - Mobile SSH File Manager](#easyssh---mobile-ssh-file-manager)
+  - [Sumário](#sumário)
+  - [📱 Sobre o Projeto](#-sobre-o-projeto)
+    - [✨ Funcionalidades Principais](#-funcionalidades-principais)
+  - [🛠️ Stack Tecnológico](#️-stack-tecnológico)
+    - [**Frontend**](#frontend)
+    - [**Dependências Principais**](#dependências-principais)
+    - [**Ferramentas de Desenvolvimento**](#ferramentas-de-desenvolvimento)
+  - [🚀 Instalação e Configuração](#-instalação-e-configuração)
+    - [Pré-requisitos](#pré-requisitos)
+    - [Clone e Configuração](#clone-e-configuração)
+    - [Configuração para Android](#configuração-para-android)
+    - [Configuração para iOS](#configuração-para-ios)
+  - [📖 Como Usar](#-como-usar)
+    - [1. **Primeira Conexão**](#1-primeira-conexão)
+    - [2. **Navegação de Arquivos**](#2-navegação-de-arquivos)
+    - [3. **Visualização de Arquivos**](#3-visualização-de-arquivos)
+    - [4. **Execução de Scripts**](#4-execução-de-scripts)
+  - [📂 Estrutura do Projeto](#-estrutura-do-projeto)
+  - [🧪 Testes](#-testes)
+    - [Executar Testes Unitários](#executar-testes-unitários)
+    - [Executar Testes de Integração](#executar-testes-de-integração)
+    - [Executar Análise de Código](#executar-análise-de-código)
+  - [🤝 Contribuindo](#-contribuindo)
+    - [Padrões de Commit](#padrões-de-commit)
+  - [📄 Licença](#-licença)
+  - [📞 Contato e Suporte](#-contato-e-suporte)
+  - [📚 Documentação Adicional](#-documentação-adicional)
+  - [English version](#english-version)
+- [EasySSH — Mobile SSH File Manager](#easyssh--mobile-ssh-file-manager)
 
 ## 📱 Sobre o Projeto
 
@@ -198,3 +232,68 @@ Este projeto está sob a licença Apache 2.0. Veja o arquivo [LICENSE](LICENSE) 
 ⭐ **Se este projeto foi útil para você, considere dar uma estrela!**
 
 </div>
+
+
+
+## English version
+
+# EasySSH — Mobile SSH File Manager
+
+A cross-platform mobile application (Android & iOS) to manage files on remote machines over SSH using a compact, button-driven user interface.
+
+Core features
+
+- Secure SSH connections (password and key-based authentication)
+- Remote file browser for navigating directories and inspecting file metadata
+- Text file viewer with search and copy functionality
+- Execute scripts and commands with an easy confirmation flow and real-time output
+- Persistent, secure credential storage on-device
+- Light and dark themes
+- Optional sound feedback for UI interactions
+
+Tech stack
+
+- Flutter (Dart)
+- dartssh2, provider, flutter_secure_storage, font_awesome_flutter, audioplayers
+
+Quick start
+
+```bash
+# Clone the repository
+git clone https://github.com/dipievil/easy-ssh-mob.git
+
+# Enter the project and install dependencies
+cd easy-ssh-mob
+flutter pub get
+
+# Run the app
+flutter run
+```
+
+Build
+
+- Android: `flutter build apk --release`
+- iOS: open `ios/Runner.xcworkspace` and run `flutter build ios --release`
+
+Project structure (high level)
+
+- `lib/`: application source (models, providers, screens, services, widgets, themes, utils)
+- `test/`: unit and widget tests
+- `integration_test/`: integration tests
+- `assets/`: static resources
+- `docs/`: additional documentation
+- `scripts/`: utility scripts
+
+Contributing
+
+- Fork the repo and create a branch with a descriptive name (e.g., `feature/new-feature`).
+- Follow conventional commits: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `test:`, `chore:`.
+- Run analysis and format before submitting: `flutter analyze` and `dart format .`
+
+License
+
+Apache 2.0 — see the `LICENSE` file for details.
+
+Contact
+
+GitHub: https://github.com/dipievil/easy-ssh-mob
