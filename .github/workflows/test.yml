@@ -248,8 +248,6 @@ jobs:
         run: |
           cd src
           mkdir -p coverage/html
-          apt-get update
-          apt-get install -y lcov
           genhtml coverage/lcov.info -o coverage/html
 
       - name: Upload coverage report
