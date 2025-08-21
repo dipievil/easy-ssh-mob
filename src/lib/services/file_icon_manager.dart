@@ -1,6 +1,24 @@
 import 'package:flutter/material.dart';
 import '../models/ssh_file.dart';
-import '../themes/app_theme.dart';
+// import '../themes/app_theme.dart'; // Temporarily commented for tests
+
+/// Temporary color definitions for testing
+class FileTypeColors {
+  static const Color directory = Colors.blue;
+  static const Color executable = Colors.green;
+  static const Color symlink = Colors.cyan;
+  static const Color code = Colors.orange;
+  static const Color document = Colors.red;
+  static const Color spreadsheet = Colors.green;
+  static const Color presentation = Colors.blue;
+  static const Color image = Colors.purple;
+  static const Color video = Colors.deepPurple;
+  static const Color audio = Colors.pink;
+  static const Color archive = Colors.brown;
+  static const Color config = Colors.grey;
+  static const Color log = Colors.amber;
+  static const Color unknown = Colors.black54;
+}
 
 /// Advanced file icon management system with comprehensive file type support
 class FileIconManager {
