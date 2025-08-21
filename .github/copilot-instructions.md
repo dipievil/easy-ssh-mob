@@ -11,6 +11,7 @@ Avoid unnecessary change comments.
 Always follow projects's architecture and flutter's best practices and guidelines.
 Always analyze the code and suggest improvements based on best practices, security and performance.
 Always run `dart analyze` and `dart format` after any code change.
+Use `l10n` for all localization strings.
 
 # style
 
