@@ -1,53 +1,46 @@
-import 'dart:async' as _i9;
-import 'dart:ui' as _i10;
-import 'package:easy_ssh_mob_new/models/execution_result.dart' as _i2;
-import 'package:easy_ssh_mob_new/models/file_content.dart' as _i3;
-import 'package:easy_ssh_mob_new/models/log_entry.dart' as _i8;
-import 'package:easy_ssh_mob_new/models/ssh_connection_state.dart' as _i5;
-import 'package:easy_ssh_mob_new/models/ssh_file.dart' as _i6;
-import 'package:easy_ssh_mob_new/providers/ssh_provider.dart' as _i4;
-import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i7;
+import 'dart:async' as i9;
+import 'dart:ui' as i10;
+import 'package:easy_ssh_mob_new/models/execution_result.dart' as i2;
+import 'package:easy_ssh_mob_new/models/file_content.dart' as i3;
+import 'package:easy_ssh_mob_new/models/log_entry.dart' as i8;
+import 'package:easy_ssh_mob_new/models/ssh_connection_state.dart' as i5;
+import 'package:easy_ssh_mob_new/models/ssh_file.dart' as i6;
+import 'package:easy_ssh_mob_new/providers/ssh_provider.dart' as i4;
+import 'package:mockito/mockito.dart' as i1;
+import 'package:mockito/src/dummies.dart' as i7;
 
-class _FakeExecutionResult_0 extends _i1.SmartFake
-    implements _i2.ExecutionResult {
-  _FakeExecutionResult_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+class FakeExecutionResult0 extends i1.SmartFake implements i2.ExecutionResult {
+  FakeExecutionResult0(
+    super.parent,
+    super.parentInvocation,
+  );
 }
 
-class _FakeFileContent_1 extends _i1.SmartFake implements _i3.FileContent {
-  _FakeFileContent_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+class FakeFileContent1 extends i1.SmartFake implements i3.FileContent {
+  FakeFileContent1(
+    super.parent,
+    super.parentInvocation,
+  );
 }
 
-class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
+class MockSshProvider extends i1.Mock implements i4.SshProvider {
   MockSshProvider() {
-    _i1.throwOnMissingStub(this);
+    i1.throwOnMissingStub(this);
   }
   @override
-  _i5.SshConnectionState get connectionState => (super.noSuchMethod(
+  i5.SshConnectionState get connectionState => (super.noSuchMethod(
         Invocation.getter(#connectionState),
-        returnValue: _i5.SshConnectionState.disconnected,
-      ) as _i5.SshConnectionState);
+        returnValue: i5.SshConnectionState.disconnected,
+      ) as i5.SshConnectionState);
   @override
-  List<_i6.SshFile> get currentFiles => (super.noSuchMethod(
+  List<i6.SshFile> get currentFiles => (super.noSuchMethod(
         Invocation.getter(#currentFiles),
-        returnValue: <_i6.SshFile>[],
-      ) as List<_i6.SshFile>);
+        returnValue: <i6.SshFile>[],
+      ) as List<i6.SshFile>);
   @override
   String get currentPath => (super.noSuchMethod(
         Invocation.getter(#currentPath),
-        returnValue: _i7.dummyValue<String>(
+        returnValue: i7.dummyValue<String>(
           this,
           Invocation.getter(#currentPath),
         ),
@@ -63,10 +56,10 @@ class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
         returnValue: false,
       ) as bool);
   @override
-  List<_i8.LogEntry> get sessionLog => (super.noSuchMethod(
+  List<i8.LogEntry> get sessionLog => (super.noSuchMethod(
         Invocation.getter(#sessionLog),
-        returnValue: <_i8.LogEntry>[],
-      ) as List<_i8.LogEntry>);
+        returnValue: <i8.LogEntry>[],
+      ) as List<i8.LogEntry>);
   @override
   bool get loggingEnabled => (super.noSuchMethod(
         Invocation.getter(#loggingEnabled),
@@ -93,16 +86,16 @@ class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
         returnValue: false,
       ) as bool);
   @override
-  _i9.Future<void> initialize() => (super.noSuchMethod(
+  i9.Future<void> initialize() => (super.noSuchMethod(
         Invocation.method(
           #initialize,
           [],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: i9.Future<void>.value(),
+        returnValueForMissingStub: i9.Future<void>.value(),
+      ) as i9.Future<void>);
   @override
-  _i9.Future<bool> connect({
+  i9.Future<bool> connect({
     required String? host,
     required int? port,
     required String? username,
@@ -121,65 +114,65 @@ class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
             #saveCredentials: saveCredentials,
           },
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: i9.Future<bool>.value(false),
+      ) as i9.Future<bool>);
   @override
-  _i9.Future<void> listDirectory(String? path) => (super.noSuchMethod(
+  i9.Future<void> listDirectory(String? path) => (super.noSuchMethod(
         Invocation.method(
           #listDirectory,
           [path],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: i9.Future<void>.value(),
+        returnValueForMissingStub: i9.Future<void>.value(),
+      ) as i9.Future<void>);
   @override
-  _i9.Future<void> navigateToDirectory(String? path) => (super.noSuchMethod(
+  i9.Future<void> navigateToDirectory(String? path) => (super.noSuchMethod(
         Invocation.method(
           #navigateToDirectory,
           [path],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: i9.Future<void>.value(),
+        returnValueForMissingStub: i9.Future<void>.value(),
+      ) as i9.Future<void>);
   @override
-  _i9.Future<void> navigateBack() => (super.noSuchMethod(
+  i9.Future<void> navigateBack() => (super.noSuchMethod(
         Invocation.method(
           #navigateBack,
           [],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: i9.Future<void>.value(),
+        returnValueForMissingStub: i9.Future<void>.value(),
+      ) as i9.Future<void>);
   @override
-  _i9.Future<void> navigateToParent() => (super.noSuchMethod(
+  i9.Future<void> navigateToParent() => (super.noSuchMethod(
         Invocation.method(
           #navigateToParent,
           [],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: i9.Future<void>.value(),
+        returnValueForMissingStub: i9.Future<void>.value(),
+      ) as i9.Future<void>);
   @override
-  _i9.Future<void> navigateToHome() => (super.noSuchMethod(
+  i9.Future<void> navigateToHome() => (super.noSuchMethod(
         Invocation.method(
           #navigateToHome,
           [],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: i9.Future<void>.value(),
+        returnValueForMissingStub: i9.Future<void>.value(),
+      ) as i9.Future<void>);
   @override
-  _i9.Future<void> refreshCurrentDirectory() => (super.noSuchMethod(
+  i9.Future<void> refreshCurrentDirectory() => (super.noSuchMethod(
         Invocation.method(
           #refreshCurrentDirectory,
           [],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: i9.Future<void>.value(),
+        returnValueForMissingStub: i9.Future<void>.value(),
+      ) as i9.Future<void>);
   @override
-  _i9.Future<_i2.ExecutionResult> executeFile(
-    _i6.SshFile? file, {
+  i9.Future<i2.ExecutionResult> executeFile(
+    i6.SshFile? file, {
     Duration? timeout = const Duration(seconds: 30),
   }) =>
       (super.noSuchMethod(
@@ -188,8 +181,7 @@ class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
           [file],
           {#timeout: timeout},
         ),
-        returnValue:
-            _i9.Future<_i2.ExecutionResult>.value(_FakeExecutionResult_0(
+        returnValue: i9.Future<i2.ExecutionResult>.value(FakeExecutionResult0(
           this,
           Invocation.method(
             #executeFile,
@@ -197,15 +189,15 @@ class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
             {#timeout: timeout},
           ),
         )),
-      ) as _i9.Future<_i2.ExecutionResult>);
+      ) as i9.Future<i2.ExecutionResult>);
   @override
-  _i9.Future<String?> executeCommand(String? command) => (super.noSuchMethod(
+  i9.Future<String?> executeCommand(String? command) => (super.noSuchMethod(
         Invocation.method(
           #executeCommand,
           [command],
         ),
-        returnValue: _i9.Future<String?>.value(),
-      ) as _i9.Future<String?>);
+        returnValue: i9.Future<String?>.value(),
+      ) as i9.Future<String?>);
   @override
   void setErrorSoundEnabled(bool? enabled) => super.noSuchMethod(
         Invocation.method(
@@ -223,33 +215,32 @@ class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
         returnValueForMissingStub: null,
       );
   @override
-  _i9.Future<String?> executeCommandWithResult(String? command) =>
+  i9.Future<String?> executeCommandWithResult(String? command) =>
       (super.noSuchMethod(
         Invocation.method(
           #executeCommandWithResult,
           [command],
         ),
-        returnValue: _i9.Future<String?>.value(),
-      ) as _i9.Future<String?>);
+        returnValue: i9.Future<String?>.value(),
+      ) as i9.Future<String?>);
   @override
-  _i9.Future<_i3.FileContent> readFile(_i6.SshFile? file) =>
-      (super.noSuchMethod(
+  i9.Future<i3.FileContent> readFile(i6.SshFile? file) => (super.noSuchMethod(
         Invocation.method(
           #readFile,
           [file],
         ),
-        returnValue: _i9.Future<_i3.FileContent>.value(_FakeFileContent_1(
+        returnValue: i9.Future<i3.FileContent>.value(FakeFileContent1(
           this,
           Invocation.method(
             #readFile,
             [file],
           ),
         )),
-      ) as _i9.Future<_i3.FileContent>);
+      ) as i9.Future<i3.FileContent>);
   @override
-  _i9.Future<_i3.FileContent> readFileWithMode(
-    _i6.SshFile? file,
-    _i3.FileViewMode? mode,
+  i9.Future<i3.FileContent> readFileWithMode(
+    i6.SshFile? file,
+    i3.FileViewMode? mode,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -259,7 +250,7 @@ class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
             mode,
           ],
         ),
-        returnValue: _i9.Future<_i3.FileContent>.value(_FakeFileContent_1(
+        returnValue: i9.Future<i3.FileContent>.value(FakeFileContent1(
           this,
           Invocation.method(
             #readFileWithMode,
@@ -269,27 +260,27 @@ class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
             ],
           ),
         )),
-      ) as _i9.Future<_i3.FileContent>);
+      ) as i9.Future<i3.FileContent>);
   @override
-  _i9.Future<void> disconnect() => (super.noSuchMethod(
+  i9.Future<void> disconnect() => (super.noSuchMethod(
         Invocation.method(
           #disconnect,
           [],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: i9.Future<void>.value(),
+        returnValueForMissingStub: i9.Future<void>.value(),
+      ) as i9.Future<void>);
   @override
-  _i9.Future<void> logout({bool? forgetCredentials = false}) =>
+  i9.Future<void> logout({bool? forgetCredentials = false}) =>
       (super.noSuchMethod(
         Invocation.method(
           #logout,
           [],
           {#forgetCredentials: forgetCredentials},
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: i9.Future<void>.value(),
+        returnValueForMissingStub: i9.Future<void>.value(),
+      ) as i9.Future<void>);
   @override
   void clearError() => super.noSuchMethod(
         Invocation.method(
@@ -299,22 +290,22 @@ class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
         returnValueForMissingStub: null,
       );
   @override
-  _i9.Future<bool> hasSavedCredentials() => (super.noSuchMethod(
+  i9.Future<bool> hasSavedCredentials() => (super.noSuchMethod(
         Invocation.method(
           #hasSavedCredentials,
           [],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: i9.Future<bool>.value(false),
+      ) as i9.Future<bool>);
   @override
-  _i9.Future<void> clearSavedCredentials() => (super.noSuchMethod(
+  i9.Future<void> clearSavedCredentials() => (super.noSuchMethod(
         Invocation.method(
           #clearSavedCredentials,
           [],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: i9.Future<void>.value(),
+        returnValueForMissingStub: i9.Future<void>.value(),
+      ) as i9.Future<void>);
   @override
   Map<String, dynamic> getSessionStats() => (super.noSuchMethod(
         Invocation.method(
@@ -324,9 +315,9 @@ class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
         returnValue: <String, dynamic>{},
       ) as Map<String, dynamic>);
   @override
-  List<_i8.LogEntry> filterSessionLog({
-    _i8.CommandType? type,
-    _i8.CommandStatus? status,
+  List<i8.LogEntry> filterSessionLog({
+    i8.CommandType? type,
+    i8.CommandStatus? status,
     String? searchTerm,
     DateTime? startDate,
     DateTime? endDate,
@@ -343,8 +334,8 @@ class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
             #endDate: endDate,
           },
         ),
-        returnValue: <_i8.LogEntry>[],
-      ) as List<_i8.LogEntry>);
+        returnValue: <i8.LogEntry>[],
+      ) as List<i8.LogEntry>);
   @override
   void clearSessionLog() => super.noSuchMethod(
         Invocation.method(
@@ -372,7 +363,7 @@ class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
   @override
   String exportSessionLog({
     required String? format,
-    List<_i8.LogEntry>? entries,
+    List<i8.LogEntry>? entries,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -383,7 +374,7 @@ class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
             #entries: entries,
           },
         ),
-        returnValue: _i7.dummyValue<String>(
+        returnValue: i7.dummyValue<String>(
           this,
           Invocation.method(
             #exportSessionLog,
@@ -404,7 +395,7 @@ class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
         returnValueForMissingStub: null,
       );
   @override
-  void addListener(_i10.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(i10.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -412,7 +403,7 @@ class MockSshProvider extends _i1.Mock implements _i4.SshProvider {
         returnValueForMissingStub: null,
       );
   @override
-  void removeListener(_i10.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(i10.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],

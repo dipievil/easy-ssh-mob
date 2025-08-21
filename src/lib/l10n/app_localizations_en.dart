@@ -115,4 +115,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get testMessageCritical => 'CRITICAL: Serious system failure';
+
+  @override
+  String get notificationTest => 'Notification Test';
+
+  @override
+  String get notificationTestSubtitle => 'Test improved notification system';
+
+  @override
+  String get disconnectFromServer => 'Disconnect from server';
+
+  @override
+  String get appDescription =>
+      'Simple and intuitive SSH client for mobile devices.';
+
+  @override
+  String get developedWithFlutter => 'Developed with Flutter 💙';
+
+  @override
+  String get buildLabel => 'Build';
+
+  @override
+  String get packageLabel => 'Package';
+
+  @override
+  String get clearCredentialsDialogTitle => 'Clear Credentials';
+
+  @override
+  String get clearCredentialsDialogContent =>
+      'Are you sure you want to forget all saved credentials? You will need to enter login data again.';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get credentialsRemovedSuccess => 'Credentials removed successfully';
+
+  @override
+  String get logoutDialogTitle => 'Logout';
+
+  @override
+  String get logoutDialogContent =>
+      'Do you want to disconnect from the SSH server? You will return to the login screen.';
+
+  @override
+  String get notAvailable => 'N/A';
 }

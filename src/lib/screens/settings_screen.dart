@@ -1,9 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_ssh_mob_new/l10n/app_localizations.dart';
-import '../providers/ssh_provider.dart';
+import 'package:easy_ssh_mob_new/providers/ssh_provider.dart';
+import 'package:easy_ssh_mob_new/utils/app_version.dart';
 import 'notification_settings_screen.dart';
+import 'notification_test_screen.dart';
 import 'session_log_screen.dart';
 
 /// Settings screen for app configuration
@@ -23,7 +26,6 @@ class SettingsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Connection Info Card
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -52,15 +54,15 @@ class SettingsScreen extends StatelessWidget {
                         ListTile(
                           leading: const Icon(FontAwesomeIcons.desktop),
                           title: Text(
-                              '${l10n.host}: ${sshProvider.currentCredentials?.host ?? 'N/A'}'),
+                              '${l10n.host}: ${sshProvider.currentCredentials?.host ?? l10n.notAvailable}'),
                           subtitle: Text(
-                              '${l10n.port}: ${sshProvider.currentCredentials?.port ?? 'N/A'}'),
+                              '${l10n.port}: ${sshProvider.currentCredentials?.port ?? l10n.notAvailable}'),
                           contentPadding: EdgeInsets.zero,
                         ),
                         ListTile(
                           leading: const Icon(FontAwesomeIcons.user),
                           title: Text(
-                              '${l10n.user}: ${sshProvider.currentCredentials?.username ?? 'N/A'}'),
+                              '${l10n.user}: ${sshProvider.currentCredentials?.username ?? l10n.notAvailable}'),
                           subtitle: Text(
                             '${l10n.status}: ${sshProvider.isConnected ? l10n.connected : l10n.disconnected}',
                           ),
@@ -80,14 +82,10 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
-
-            // Settings Options
             Expanded(
               child: ListView(
                 children: [
-                  // Notification Settings
                   ListTile(
                     leading: const Icon(FontAwesomeIcons.bell),
                     title: Text(l10n.notifications),
@@ -103,10 +101,7 @@ class SettingsScreen extends StatelessWidget {
                       );
                     },
                   ),
-
                   const Divider(),
-
-                  // Session Log
                   ListTile(
                     leading: const Icon(FontAwesomeIcons.clockRotateLeft),
                     title: Text(l10n.sessionLog),
@@ -121,10 +116,7 @@ class SettingsScreen extends StatelessWidget {
                       );
                     },
                   ),
-
                   const Divider(),
-
-                  // App Info
                   ListTile(
                     leading: const Icon(FontAwesomeIcons.circleInfo),
                     title: Text(l10n.aboutApp),
@@ -132,10 +124,22 @@ class SettingsScreen extends StatelessWidget {
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () => _showAboutDialog(context),
                   ),
-
                   const Divider(),
-
-                  // Clear Credentials
+                  ListTile(
+                    leading: const Icon(FontAwesomeIcons.flask),
+                    title: Text(l10n.notificationTest),
+                    subtitle: Text(l10n.notificationTestSubtitle),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NotificationTestScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(),
                   Consumer<SshProvider>(
                     builder: (context, sshProvider, child) {
                       return ListTile(
@@ -153,10 +157,7 @@ class SettingsScreen extends StatelessWidget {
                       );
                     },
                   ),
-
                   const Divider(),
-
-                  // Logout
                   ListTile(
                     leading: const Icon(
                       FontAwesomeIcons.rightFromBracket,
@@ -166,7 +167,7 @@ class SettingsScreen extends StatelessWidget {
                       l10n.logout,
                       style: const TextStyle(color: Colors.orange),
                     ),
-                    subtitle: const Text('Desconectar do servidor'),
+                    subtitle: Text(l10n.disconnectFromServer),
                     onTap: () => _showLogoutDialog(context),
                   ),
                 ],
@@ -178,38 +179,63 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  void _showAboutDialog(BuildContext context) {
-    showAboutDialog(
-      context: context,
-      applicationName: 'EasySSH',
-      applicationVersion: '1.0.1',
-      applicationIcon: const Icon(
-        FontAwesomeIcons.terminal,
-        size: 48,
-        color: Colors.deepPurple,
-      ),
-      children: [
-        const Text('Cliente SSH simples e intuitivo para dispositivos móveis.'),
-        const SizedBox(height: 16),
-        const Text('Desenvolvido com Flutter 💙'),
-      ],
-    );
+  void _showAboutDialog(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    await AppVersion.initialize();
+
+    final appName = AppVersion.appName;
+    final versionString = AppVersion.versionString;
+    final buildNumber = AppVersion.buildNumber;
+    final packageName = AppVersion.packageName;
+
+    if (context.mounted) {
+      showAboutDialog(
+        context: context,
+        applicationName: appName,
+        applicationVersion: versionString,
+        applicationIcon: const Icon(
+          FontAwesomeIcons.terminal,
+          size: 48,
+          color: Colors.deepPurple,
+        ),
+        children: [
+          Text(l10n.appDescription),
+          const SizedBox(height: 16),
+          Text(l10n.developedWithFlutter),
+          const SizedBox(height: 12),
+          Text(
+            '${l10n.buildLabel}: $buildNumber',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          Text(
+            '${l10n.packageLabel}: $packageName',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade600,
+            ),
+          ),
+        ],
+      );
+    }
   }
 
   void _showClearCredentialsDialog(
       BuildContext context, SshProvider sshProvider) {
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Limpar Credenciais'),
-        content: const Text(
-          'Tem certeza de que deseja esquecer todas as credenciais salvas? '
-          'Você precisará inserir os dados de login novamente.',
-        ),
+        title: Text(l10n.clearCredentialsDialogTitle),
+        content: Text(l10n.clearCredentialsDialogContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -217,15 +243,15 @@ class SettingsScreen extends StatelessWidget {
               if (context.mounted) {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Credenciais removidas com sucesso'),
+                  SnackBar(
+                    content: Text(l10n.credentialsRemovedSuccess),
                     backgroundColor: Colors.green,
                   ),
                 );
               }
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Limpar'),
+            child: Text(l10n.clear),
           ),
         ],
       ),
@@ -233,18 +259,17 @@ class SettingsScreen extends StatelessWidget {
   }
 
   void _showLogoutDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text(
-          'Deseja desconectar do servidor SSH? '
-          'Você retornará à tela de login.',
-        ),
+        title: Text(l10n.logoutDialogTitle),
+        content: Text(l10n.logoutDialogContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -254,7 +279,7 @@ class SettingsScreen extends StatelessWidget {
               Navigator.of(context).popUntil((route) => route.isFirst);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.orange),
-            child: const Text('Logout'),
+            child: Text(l10n.logout),
           ),
         ],
       ),
