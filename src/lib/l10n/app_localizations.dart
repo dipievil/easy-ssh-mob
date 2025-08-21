@@ -313,6 +313,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'CRITICAL: Serious system failure'**
   String get testMessageCritical;
+
+  /// Notification test menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Test'**
+  String get notificationTest;
+
+  /// Subtitle for notification test
+  ///
+  /// In en, this message translates to:
+  /// **'Test improved notification system'**
+  String get notificationTestSubtitle;
+
+  /// Disconnect from server subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect from server'**
+  String get disconnectFromServer;
+
+  /// App description in about dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Simple and intuitive SSH client for mobile devices.'**
+  String get appDescription;
+
+  /// Developed with Flutter text
+  ///
+  /// In en, this message translates to:
+  /// **'Developed with Flutter 💙'**
+  String get developedWithFlutter;
+
+  /// Build label in about dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Build'**
+  String get buildLabel;
+
+  /// Package label in about dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Package'**
+  String get packageLabel;
+
+  /// Clear credentials dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Credentials'**
+  String get clearCredentialsDialogTitle;
+
+  /// Clear credentials dialog content
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to forget all saved credentials? You will need to enter login data again.'**
+  String get clearCredentialsDialogContent;
+
+  /// Cancel button text
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// Clear button text
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// Credentials removed success message
+  ///
+  /// In en, this message translates to:
+  /// **'Credentials removed successfully'**
+  String get credentialsRemovedSuccess;
+
+  /// Logout dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logoutDialogTitle;
+
+  /// Logout dialog content
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to disconnect from the SSH server? You will return to the login screen.'**
+  String get logoutDialogContent;
+
+  /// Not available text
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get notAvailable;
 }
 
 class _AppLocalizationsDelegate

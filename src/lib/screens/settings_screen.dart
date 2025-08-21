@@ -53,15 +53,15 @@ class SettingsScreen extends StatelessWidget {
                         ListTile(
                           leading: const Icon(FontAwesomeIcons.desktop),
                           title: Text(
-                              '${l10n.host}: ${sshProvider.currentCredentials?.host ?? 'N/A'}'),
+                              '${l10n.host}: ${sshProvider.currentCredentials?.host ?? l10n.notAvailable}'),
                           subtitle: Text(
-                              '${l10n.port}: ${sshProvider.currentCredentials?.port ?? 'N/A'}'),
+                              '${l10n.port}: ${sshProvider.currentCredentials?.port ?? l10n.notAvailable}'),
                           contentPadding: EdgeInsets.zero,
                         ),
                         ListTile(
                           leading: const Icon(FontAwesomeIcons.user),
                           title: Text(
-                              '${l10n.user}: ${sshProvider.currentCredentials?.username ?? 'N/A'}'),
+                              '${l10n.user}: ${sshProvider.currentCredentials?.username ?? l10n.notAvailable}'),
                           subtitle: Text(
                             '${l10n.status}: ${sshProvider.isConnected ? l10n.connected : l10n.disconnected}',
                           ),
@@ -127,9 +127,8 @@ class SettingsScreen extends StatelessWidget {
                   if (true)
                     ListTile(
                       leading: const Icon(FontAwesomeIcons.flask),
-                      title: const Text('Teste de Notificações'),
-                      subtitle: const Text(
-                          'Testar sistema de notificações melhorado'),
+                      title: Text(l10n.notificationTest),
+                      subtitle: Text(l10n.notificationTestSubtitle),
                       trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         Navigator.push(
@@ -169,7 +168,7 @@ class SettingsScreen extends StatelessWidget {
                       l10n.logout,
                       style: const TextStyle(color: Colors.orange),
                     ),
-                    subtitle: const Text('Desconectar do servidor'),
+                    subtitle: Text(l10n.disconnectFromServer),
                     onTap: () => _showLogoutDialog(context),
                   ),
                 ],
@@ -182,6 +181,7 @@ class SettingsScreen extends StatelessWidget {
   }
 
   void _showAboutDialog(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final appName = await AppVersion.getAppName();
     final versionString = await AppVersion.getVersionString();
     final buildNumber = await AppVersion.getBuildNumber();
@@ -198,20 +198,19 @@ class SettingsScreen extends StatelessWidget {
           color: Colors.deepPurple,
         ),
         children: [
-          const Text(
-              'Cliente SSH simples e intuitivo para dispositivos móveis.'),
+          Text(l10n.appDescription),
           const SizedBox(height: 16),
-          const Text('Desenvolvido com Flutter 💙'),
+          Text(l10n.developedWithFlutter),
           const SizedBox(height: 12),
           Text(
-            'Build: $buildNumber',
+            '${l10n.buildLabel}: $buildNumber',
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey.shade600,
             ),
           ),
           Text(
-            'Package: $packageName',
+            '${l10n.packageLabel}: $packageName',
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey.shade600,
@@ -224,18 +223,17 @@ class SettingsScreen extends StatelessWidget {
 
   void _showClearCredentialsDialog(
       BuildContext context, SshProvider sshProvider) {
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Limpar Credenciais'),
-        content: const Text(
-          'Tem certeza de que deseja esquecer todas as credenciais salvas? '
-          'Você precisará inserir os dados de login novamente.',
-        ),
+        title: Text(l10n.clearCredentialsDialogTitle),
+        content: Text(l10n.clearCredentialsDialogContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -243,15 +241,15 @@ class SettingsScreen extends StatelessWidget {
               if (context.mounted) {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Credenciais removidas com sucesso'),
+                  SnackBar(
+                    content: Text(l10n.credentialsRemovedSuccess),
                     backgroundColor: Colors.green,
                   ),
                 );
               }
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Limpar'),
+            child: Text(l10n.clear),
           ),
         ],
       ),
@@ -259,18 +257,17 @@ class SettingsScreen extends StatelessWidget {
   }
 
   void _showLogoutDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text(
-          'Deseja desconectar do servidor SSH? '
-          'Você retornará à tela de login.',
-        ),
+        title: Text(l10n.logoutDialogTitle),
+        content: Text(l10n.logoutDialogContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -280,7 +277,7 @@ class SettingsScreen extends StatelessWidget {
               Navigator.of(context).popUntil((route) => route.isFirst);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.orange),
-            child: const Text('Logout'),
+            child: Text(l10n.logout),
           ),
         ],
       ),

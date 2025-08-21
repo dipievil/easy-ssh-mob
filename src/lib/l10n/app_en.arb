@@ -177,5 +177,80 @@
   "testMessageCritical": "CRITICAL: Serious system failure",
   "@testMessageCritical": {
     "description": "Test critical notification message"
+  },
+
+  "notificationTest": "Notification Test",
+  "@notificationTest": {
+    "description": "Notification test menu item"
+  },
+
+  "notificationTestSubtitle": "Test improved notification system",
+  "@notificationTestSubtitle": {
+    "description": "Subtitle for notification test"
+  },
+
+  "disconnectFromServer": "Disconnect from server",
+  "@disconnectFromServer": {
+    "description": "Disconnect from server subtitle"
+  },
+
+  "appDescription": "Simple and intuitive SSH client for mobile devices.",
+  "@appDescription": {
+    "description": "App description in about dialog"
+  },
+
+  "developedWithFlutter": "Developed with Flutter 💙",
+  "@developedWithFlutter": {
+    "description": "Developed with Flutter text"
+  },
+
+  "buildLabel": "Build",
+  "@buildLabel": {
+    "description": "Build label in about dialog"
+  },
+
+  "packageLabel": "Package",
+  "@packageLabel": {
+    "description": "Package label in about dialog"
+  },
+
+  "clearCredentialsDialogTitle": "Clear Credentials",
+  "@clearCredentialsDialogTitle": {
+    "description": "Clear credentials dialog title"
+  },
+
+  "clearCredentialsDialogContent": "Are you sure you want to forget all saved credentials? You will need to enter login data again.",
+  "@clearCredentialsDialogContent": {
+    "description": "Clear credentials dialog content"
+  },
+
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+
+  "clear": "Clear",
+  "@clear": {
+    "description": "Clear button text"
+  },
+
+  "credentialsRemovedSuccess": "Credentials removed successfully",
+  "@credentialsRemovedSuccess": {
+    "description": "Credentials removed success message"
+  },
+
+  "logoutDialogTitle": "Logout",
+  "@logoutDialogTitle": {
+    "description": "Logout dialog title"
+  },
+
+  "logoutDialogContent": "Do you want to disconnect from the SSH server? You will return to the login screen.",
+  "@logoutDialogContent": {
+    "description": "Logout dialog content"
+  },
+
+  "notAvailable": "N/A",
+  "@notAvailable": {
+    "description": "Not available text"
   }
 }
