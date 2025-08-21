@@ -762,8 +762,10 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
                 // Handle connection errors
                 if (sshProvider.errorMessage != null) {
                   final l10n = AppLocalizations.of(context)!;
-                  final errorMessage = ErrorMessageHelper.getProviderErrorMessage(l10n, sshProvider);
-                  
+                  final errorMessage =
+                      ErrorMessageHelper.getProviderErrorMessage(
+                          l10n, sshProvider);
+
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

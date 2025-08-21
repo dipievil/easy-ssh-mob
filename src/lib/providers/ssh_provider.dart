@@ -65,7 +65,6 @@ class SshProvider extends ChangeNotifier {
   int _maxLogEntries = 1000;
   DateTime? _sessionStartTime;
 
-  // Reconnection properties
   bool _isReconnecting = false;
   int _reconnectAttempts = 0;
   static const int _maxReconnectAttempts = 3;
@@ -78,12 +77,14 @@ class SshProvider extends ChangeNotifier {
   SSHCredentials? get currentCredentials => _currentCredentials;
 
   /// Set error with code and optional details
-  void _setError(ErrorMessageCode code, {String? details, String? fallbackMessage}) {
+  void _setError(ErrorMessageCode code,
+      {String? details, String? fallbackMessage}) {
     _errorCode = code;
     _errorDetails = details;
     _errorMessage = fallbackMessage ?? details ?? code.toString();
     notifyListeners();
   }
+
   List<SshFile> get currentFiles => _currentFiles;
   String get currentPath => _currentPath;
   List<String> get navigationHistory => List.unmodifiable(_navigationHistory);
@@ -260,8 +261,8 @@ class SshProvider extends ChangeNotifier {
 
   Future<void> navigateToDirectory(String path) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      _setError(ErrorMessageCode.notConnectedToSshServer, 
-                fallbackMessage: 'Not connected to SSH server');
+      _setError(ErrorMessageCode.notConnectedToSshServer,
+          fallbackMessage: 'Not connected to SSH server');
       _connectionState = SshConnectionState.error;
       notifyListeners();
       return;
@@ -276,9 +277,9 @@ class SshProvider extends ChangeNotifier {
       final testResult = await utf8.decoder.bind(testSession.stdout).join();
 
       if (testResult.trim() != 'OK') {
-        _setError(ErrorMessageCode.directoryNotAccessible, 
-                 details: normalizedPath,
-                 fallbackMessage: 'Directory not accessible: $normalizedPath');
+        _setError(ErrorMessageCode.directoryNotAccessible,
+            details: normalizedPath,
+            fallbackMessage: 'Directory not accessible: $normalizedPath');
         _connectionState = SshConnectionState.error;
         notifyListeners();
         return;
@@ -626,16 +627,14 @@ class SshProvider extends ChangeNotifier {
 
     debugPrint('SSH Error: ${error.type} - ${error.originalMessage}');
 
-    // Try automatic reconnection for connection lost errors
     if (error.type == ErrorType.connectionLost && !_isReconnecting) {
       _attemptAutoReconnection();
-      return; // Don't show notification yet, let reconnection handle it
+      return;
     }
 
-    // Try automatic reconnection for connection lost errors
     if (error.type == ErrorType.connectionLost && !_isReconnecting) {
       _attemptAutoReconnection();
-      return; // Don't show notification yet, let reconnection handle it
+      return;
     }
 
     _notificationService.showNotification(
@@ -670,26 +669,22 @@ class SshProvider extends ChangeNotifier {
         debugPrint(
             'Reconnection attempt $_reconnectAttempts/$_maxReconnectAttempts');
 
-        // Clean up current connection
         await _cleanup();
 
-        // Wait before retry
         await Future.delayed(_reconnectDelay);
 
-        // Try to reconnect using saved credentials
         final success = await connect(
           host: _currentCredentials!.host,
           port: _currentCredentials!.port,
           username: _currentCredentials!.username,
           password: _currentCredentials!.password,
-          saveCredentials: false, // Don't save again
+          saveCredentials: false,
         );
 
         if (success) {
           _isReconnecting = false;
           _reconnectAttempts = 0;
 
-          // Show success notification
           _notificationService.showNotification(
             message: 'Reconectado com sucesso',
             type: NotificationType.success,
@@ -704,7 +699,6 @@ class SshProvider extends ChangeNotifier {
       }
     }
 
-    // All reconnection attempts failed
     _isReconnecting = false;
     _connectionState = SshConnectionState.error;
     _errorMessage = 'Falha na reconexão automática';
@@ -712,14 +706,11 @@ class SshProvider extends ChangeNotifier {
 
     debugPrint('All reconnection attempts failed');
 
-    // Show reconnection options dialog
     _showReconnectionDialog();
   }
 
   /// Show dialog with reconnection options
   void _showReconnectionDialog() {
-    // This will be handled by the UI layer through a callback
-    // The UI will listen to connection state and show dialog when needed
     _notificationService.showNotification(
       message: 'Conexão perdida. Toque para ver opções.',
       type: NotificationType.critical,
@@ -965,7 +956,8 @@ class SshProvider extends ChangeNotifier {
           throw Exception('read_mode_not_supported: ${mode.toString()}');
       }
     } catch (e) {
-      throw Exception('error_reading_file_with_mode: ${mode.toString()}, ${e.toString()}');
+      throw Exception(
+          'error_reading_file_with_mode: ${mode.toString()}, ${e.toString()}');
     }
   }
 
@@ -1033,7 +1025,6 @@ class SshProvider extends ChangeNotifier {
   String _formatError(dynamic error) {
     final errorString = error.toString().toLowerCase();
 
-    // Check for specific error types and return appropriate error codes
     if (errorString.contains('connection refused') ||
         errorString.contains('connection denied')) {
       return 'connection_refused';

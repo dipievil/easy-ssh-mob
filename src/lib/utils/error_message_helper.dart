@@ -5,10 +5,8 @@ import '../providers/ssh_provider.dart';
 class ErrorMessageHelper {
   /// Convert ErrorMessageCode to localized string
   static String getLocalizedErrorMessage(
-    AppLocalizations l10n,
-    ErrorMessageCode code,
-    {String? details}
-  ) {
+      AppLocalizations l10n, ErrorMessageCode code,
+      {String? details}) {
     switch (code) {
       case ErrorMessageCode.notConnectedToSshServer:
         return l10n.notConnectedToSshServer;
@@ -17,7 +15,7 @@ class ErrorMessageHelper {
       case ErrorMessageCode.checkPermissionsAndConnection:
         return l10n.checkPermissionsAndConnection;
       case ErrorMessageCode.directoryNotAccessible:
-        return details != null 
+        return details != null
             ? l10n.directoryNotAccessible(details)
             : l10n.directoryNotAccessible('');
       case ErrorMessageCode.permissionDeniedDirectory:
