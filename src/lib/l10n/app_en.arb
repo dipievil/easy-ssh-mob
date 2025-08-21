@@ -187,6 +187,263 @@
   "notificationTestSubtitle": "Test improved notification system",
   "@notificationTestSubtitle": {
     "description": "Subtitle for notification test"
+  "notConnectedToSshServer": "Not connected to SSH server",
+  "@notConnectedToSshServer": {
+    "description": "Error message when not connected to SSH server"
+  },
+
+  "permissionDeniedDirectory": "Permission denied. You do not have access to this directory.",
+  "@permissionDeniedDirectory": {
+    "description": "Error message for permission denied to directory"
+  },
+
+  "directoryNotFound": "Directory not found or does not exist.",
+  "@directoryNotFound": {
+    "description": "Error message when directory is not found"
+  },
+
+  "notADirectory": "The specified path is not a directory.",
+  "@notADirectory": {
+    "description": "Error message when path is not a directory"
+  },
+
+  "directoryTimeout": "Directory listing timeout. The server may be slow or unresponsive.",
+  "@directoryTimeout": {
+    "description": "Error message for directory listing timeout"
+  },
+
+  "errorAccessingDirectory": "Error accessing directory: {error}",
+  "@errorAccessingDirectory": {
+    "description": "Generic error message for directory access",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "description": "The error details"
+      }
+    }
+  },
+
+  "connectionRefused": "Connection refused. Check if SSH service is running on the server.",
+  "@connectionRefused": {
+    "description": "Error message for connection refused"
+  },
+
+  "hostUnreachable": "Host unreachable. Check the server address and network connection.",
+  "@hostUnreachable": {
+    "description": "Error message for unreachable host"
+  },
+
+  "authenticationFailed": "Authentication failed. Check your username and password.",
+  "@authenticationFailed": {
+    "description": "Error message for authentication failure"
+  },
+
+  "connectionTimeout": "Connection timeout. The server may be down or unreachable.",
+  "@connectionTimeout": {
+    "description": "Error message for connection timeout"
+  },
+
+  "keyExchangeFailed": "Key exchange failed. The server may not support this client.",
+  "@keyExchangeFailed": {
+    "description": "Error message for key exchange failure"
+  },
+
+  "hostKeyVerificationFailed": "Host key verification failed. The server identity could not be verified.",
+  "@hostKeyVerificationFailed": {
+    "description": "Error message for host key verification failure"
+  },
+
+  "automaticReconnectionFailed": "Automatic reconnection failed",
+  "@automaticReconnectionFailed": {
+    "description": "Error message for failed automatic reconnection"
+  },
+
+  "automaticReconnectionFailedAttempts": "Automatic reconnection failed after {attempts} attempts.",
+  "@automaticReconnectionFailedAttempts": {
+    "description": "Error message for failed reconnection with attempt count",
+    "placeholders": {
+      "attempts": {
+        "type": "int",
+        "description": "Number of reconnection attempts"
+      }
+    }
+  },
+
+  "connectionLost": "Connection lost",
+  "@connectionLost": {
+    "description": "Message when SSH connection is lost"
+  },
+
+  "reconnectQuestion": "Do you want to try reconnecting?",
+  "@reconnectQuestion": {
+    "description": "Question asking user if they want to reconnect"
+  },
+
+  "reconnect": "Reconnect",
+  "@reconnect": {
+    "description": "Button text to reconnect"
+  },
+
+  "goToLogin": "Go to Login",
+  "@goToLogin": {
+    "description": "Button text to go to login screen"
+  },
+
+  "errorListingDirectory": "Error listing directory",
+  "@errorListingDirectory": {
+    "description": "Error message for directory listing failure"
+  },
+
+  "checkPermissionsAndConnection": "Check permissions and connection",
+  "@checkPermissionsAndConnection": {
+    "description": "Suggestion message for directory access issues"
+  },
+
+  "directoryNotAccessible": "Directory does not exist or is not accessible: {path}",
+  "@directoryNotAccessible": {
+    "description": "Error message when directory is not accessible",
+    "placeholders": {
+      "path": {
+        "type": "String",
+        "description": "The directory path"
+      }
+    }
+  },
+
+  "commandTimeout": "Command took too long to execute",
+  "@commandTimeout": {
+    "description": "Error message for command timeout"
+  },
+
+  "commandTimeoutSuggestion": "Try using a longer timeout or simplifying the command",
+  "@commandTimeoutSuggestion": {
+    "description": "Suggestion for command timeout"
+  },
+
+  "sshConnectionError": "SSH connection error",
+  "@sshConnectionError": {
+    "description": "Generic SSH connection error message"
+  },
+
+  "commandExecutionError": "Command execution error",
+  "@commandExecutionError": {
+    "description": "Error message for command execution failure"
+  },
+
+  "reconnectedSuccessfully": "Reconnected successfully",
+  "@reconnectedSuccessfully": {
+    "description": "Success message for automatic reconnection"
+  },
+
+  "sshReconnected": "SSH Reconnected",
+  "@sshReconnected": {
+    "description": "Title for successful reconnection notification"
+  },
+
+  "connectionLostTouch": "Connection lost. Touch to see options.",
+  "@connectionLostTouch": {
+    "description": "Notification message when connection is lost"
+  },
+
+  "sshConnectionLost": "SSH Connection Lost",
+  "@sshConnectionLost": {
+    "description": "Title for connection lost notification"
+  },
+
+  "automaticReconnectionFailedDetails": "Automatic reconnection failed after {attempts} attempts.",
+  "@automaticReconnectionFailedDetails": {
+    "description": "Details for failed automatic reconnection",
+    "placeholders": {
+      "attempts": {
+        "type": "int",
+        "description": "Number of reconnection attempts"
+      }
+    }
+  },
+
+  "errorSsh": "SSH Error",
+  "@errorSsh": {
+    "description": "Title for SSH error notifications"
+  },
+
+  "executionError": "Execution error: {error}",
+  "@executionError": {
+    "description": "Error message for file execution failure",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "description": "The error details"
+      }
+    }
+  },
+
+  "fileNotTextFile": "File is not a text file",
+  "@fileNotTextFile": {
+    "description": "Error message when trying to read non-text file"
+  },
+
+  "errorReadingFile": "Error reading file: {error}",
+  "@errorReadingFile": {
+    "description": "Error message for file reading failure",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "description": "The error details"
+      }
+    }
+  },
+
+  "invalidModePartialRead": "Invalid mode for partial read: {mode}",
+  "@invalidModePartialRead": {
+    "description": "Error message for invalid file read mode",
+    "placeholders": {
+      "mode": {
+        "type": "String",
+        "description": "The invalid mode"
+      }
+    }
+  },
+
+  "readModeNotSupported": "Read mode not supported: {mode}",
+  "@readModeNotSupported": {
+    "description": "Error message for unsupported read mode",
+    "placeholders": {
+      "mode": {
+        "type": "String",
+        "description": "The unsupported mode"
+      }
+    }
+  },
+
+  "errorReadingFileWithMode": "Error reading file with mode {mode}: {error}",
+  "@errorReadingFileWithMode": {
+    "description": "Error message for file reading with specific mode",
+    "placeholders": {
+      "mode": {
+        "type": "String",
+        "description": "The read mode"
+      },
+      "error": {
+        "type": "String",
+        "description": "The error details"
+      }
+    }
+  },
+
+  "connectionErrorGeneric": "Connection error: {error}",
+  "@connectionErrorGeneric": {
+    "description": "Generic connection error message",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "description": "The error details"
+      }
+    }
+  },
+
+  "networkError": "Network error. Check your internet connection.",
+  "@networkError": {
+    "description": "Error message for network issues"
   },
 
   "disconnectFromServer": "Disconnect from server",
@@ -197,6 +454,12 @@
   "appDescription": "Simple and intuitive SSH client for mobile devices.",
   "@appDescription": {
     "description": "App description in about dialog"
+    "description": "Subtitle for logout option"
+  },
+
+  "sshSimpleClient": "Simple and intuitive SSH client for mobile devices.",
+  "@sshSimpleClient": {
+    "description": "Description of the app in about dialog"
   },
 
   "developedWithFlutter": "Developed with Flutter 💙",
@@ -222,6 +485,17 @@
   "clearCredentialsDialogContent": "Are you sure you want to forget all saved credentials? You will need to enter login data again.",
   "@clearCredentialsDialogContent": {
     "description": "Clear credentials dialog content"
+    "description": "Footer text in about dialog"
+  },
+
+  "clearCredentialsTitle": "Clear Credentials",
+  "@clearCredentialsTitle": {
+    "description": "Title for clear credentials dialog"
+  },
+
+  "clearCredentialsContent": "Are you sure you want to forget all saved credentials? You will need to enter login data again.",
+  "@clearCredentialsContent": {
+    "description": "Content text for clear credentials dialog"
   },
 
   "cancel": "Cancel",
@@ -252,5 +526,16 @@
   "notAvailable": "N/A",
   "@notAvailable": {
     "description": "Not available text"
+    "description": "Success message when credentials are removed"
+  },
+
+  "logoutTitle": "Logout",
+  "@logoutTitle": {
+    "description": "Title for logout dialog"
+  },
+
+  "logoutContent": "Do you want to disconnect from SSH server? You will return to the login screen.",
+  "@logoutContent": {
+    "description": "Content text for logout dialog"
   }
 }

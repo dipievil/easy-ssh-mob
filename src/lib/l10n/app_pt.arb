@@ -69,35 +69,5 @@
 
   "testMessageError": "Ocorreu um erro na operação",
 
-  "testMessageCritical": "CRÍTICO: Falha grave do sistema",
-
-  "notificationTest": "Teste de Notificações",
-
-  "notificationTestSubtitle": "Testar sistema de notificações melhorado",
-
-  "disconnectFromServer": "Desconectar do servidor",
-
-  "appDescription": "Cliente SSH simples e intuitivo para dispositivos móveis.",
-
-  "developedWithFlutter": "Desenvolvido com Flutter 💙",
-
-  "buildLabel": "Build",
-
-  "packageLabel": "Package",
-
-  "clearCredentialsDialogTitle": "Limpar Credenciais",
-
-  "clearCredentialsDialogContent": "Tem certeza de que deseja esquecer todas as credenciais salvas? Você precisará inserir os dados de login novamente.",
-
-  "cancel": "Cancelar",
-
-  "clear": "Limpar",
-
-  "credentialsRemovedSuccess": "Credenciais removidas com sucesso",
-
-  "logoutDialogTitle": "Logout",
-
-  "logoutDialogContent": "Deseja desconectar do servidor SSH? Você retornará à tela de login.",
-
-  "notAvailable": "N/D"
+  "testMessageCritical": "CRÍTICO: Falha grave do sistema"
 }
