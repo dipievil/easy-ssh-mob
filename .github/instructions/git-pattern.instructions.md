@@ -3,55 +3,55 @@ applyTo: '**'
 ---
 
 # Commits
-- Use mensagens de commit claras e descritivas
-- Use o padrão `tipo: descrição` (ex: `feat: adicionar nova funcionalidade')
-- Use `fix:` para correções de bugs
-- Use `docs:` para alterações na documentação
-- Use `style:` para formatação e estilo (sem mudanças de lógica)
-- Use `refactor:` para refatoração de código
-- Use `test:` para adição ou modificação de testes
-- Use `chore:` para tarefas de manutenção (ex: atualização de dependências)
-- Use `ci:` para alterações em configurações de CI/CD
-- Use `perf:` para melhorias de performance
-- Use `build:` para alterações no sistema de build
-- Use `revert:` para reverter commits anteriores
-- Use `WIP:` para indicar que o commit é um trabalho em progresso
-- Use `TODO:` para indicar tarefas pendentes
-- Use `changelog:` para indicar alterações que devem ser refletidas no changelog
+- Use clear and descriptive commit messages
+- Use the pattern `type: description` (e.g., `feat: add new feature`)
+- Use `fix:` for bug fixes
+- Use `docs:` for documentation changes
+- Use `style:` for formatting and style (no logic changes)
+- Use `refactor:` for code refactoring
+- Use `test:` for adding or modifying tests
+- Use `chore:` for maintenance tasks (e.g., dependency updates)
+- Use `ci:` for CI/CD configuration changes
+- Use `perf:` for performance improvements
+- Use `build:` for build system changes
+- Use `revert:` to revert previous commits
+- Use `WIP:` to indicate work in progress
+- Use `TODO:` to indicate pending tasks
+- Use `changelog:` to indicate changes that should be reflected in the changelog
 
 # Branches
-- Use nomes descritivos para branches
-- Use o padrão `tipo/nome-descritivo` (ex: `feature/nova-funcionalidade`)
-- Use `bugfix/` para correções de bugs
-- Use `hotfix/` para correções urgentes
-- Use `release/` para branches de release
-- Use `experiment/` para branches experimentais
-- Use `chore/` para tarefas de manutenção
-- Use `docs/` para alterações na documentação
-- Use `test/` para branches de testes
+- Use descriptive names for branches
+- Use the pattern `type/descriptive-name` (e.g., `feature/new-functionality`)
+- Use `bugfix/` for bug fixes
+- Use `hotfix/` for urgent fixes
+- Use `release/` for release branches
+- Use `experiment/` for experimental branches
+- Use `chore/` for maintenance tasks
+- Use `docs/` for documentation changes
+- Use `test/` for test branches
 
 # Pull Requests
-- Use títulos claros e descritivos
-- Use descrições detalhadas explicando as mudanças
-- Use rótulos (labels) para categorizar PRs (ex: `feature`, `bugfix`, `documentation`)
-- Use revisores (reviewers) para garantir a qualidade do código
-- Use comentários para explicar decisões de design ou lógica complexa
-- Use `WIP` para indicar que o PR ainda está em progresso
+- Use clear and descriptive titles
+- Use detailed descriptions explaining the changes
+- Use labels to categorize PRs (e.g., `feature`, `bugfix`, `documentation`)
+- Use reviewers to ensure code quality
+- Use comments to explain design decisions or complex logic
+- Use `WIP` to indicate the PR is still in progress
 
 # Issues
-- Use títulos claros e descritivos
-- Use descrições detalhadas explicando o problema
-- Use rótulos (labels) para categorizar issues (ex: `bug`, `feature`, `documentation`)
-- Use atribuições (assignees) para indicar responsáveis
-- Use marcos (milestones) para agrupar issues relacionadas
-- Use comentários para discutir soluções ou esclarecer dúvidas
-- Use `TODO` para indicar tarefas pendentes
+- Use clear and descriptive titles
+- Use detailed descriptions explaining the problem
+- Use labels to categorize issues (e.g., `bug`, `feature`, `documentation`)
+- Use assignees to indicate responsible parties
+- Use milestones to group related issues
+- Use comments to discuss solutions or clarify doubts
+- Use `TODO` to indicate pending tasks
 
 # Tags
-- Use tags para marcar versões importantes do código
-- Use o padrão `vX.Y.Z` (ex: `v1.0.0`)
-- Use `latest` para a versão mais recente
-- Use `stable` para versões estáveis
-- Use `beta` para versões beta
-- Use `alpha` para versões alfa
-- Use `rc` para versões candidatas (release candidates)
+- Use tags to mark important code versions
+- Use the pattern `vX.Y.Z` (e.g., `v1.0.0`)
+- Use `latest` for the most recent version
+- Use `stable` for stable versions
+- Use `beta` for beta versions
+- Use `alpha` for alpha versions
+- Use `rc` for release candidates
