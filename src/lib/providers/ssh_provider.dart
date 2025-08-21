@@ -12,12 +12,10 @@ import '../models/log_entry.dart';
 import '../services/secure_storage_service.dart';
 import '../services/error_handler.dart';
 import '../services/notification_service.dart';
-import '../services/audio_factory.dart';
 import '../l10n/app_localizations.dart';
+import '../services/sound_manager.dart';
 
 class SshProvider extends ChangeNotifier {
-  static const String _errorSoundPath = 'sounds/error_beep.wav';
-
   // Localization
   AppLocalizations? _localizations;
 
@@ -750,10 +748,10 @@ class SshProvider extends ChangeNotifier {
   /// Play error sound
   void _playErrorSound() {
     try {
-      final player = _getOrCreateAudioPlayer();
-      player.play(AssetSource(_errorSoundPath)).catchError((e) {
-        debugPrint('Error sound notification (no audio file): $e');
-      });
+      SoundManager.playNotificationSound(
+        NotificationType.error,
+        50,
+      );
     } catch (e) {
       debugPrint('Could not play error sound: $e');
     }
@@ -763,11 +761,6 @@ class SshProvider extends ChangeNotifier {
   void setErrorSoundEnabled(bool enabled) {
     _shouldPlayErrorSound = enabled;
     notifyListeners();
-  }
-
-  /// Test error sound (for debugging)
-  void testErrorSound() {
-    _playErrorSound();
   }
 
   /// Execute a command and return the result as a stream
@@ -1242,11 +1235,5 @@ class SshProvider extends ChangeNotifier {
       _lazyAudioPlayer?.dispose();
     } catch (_) {}
     super.dispose();
-  }
-
-  /// Return existing AudioPlayer or create it lazily via factory.
-  AudioPlayer _getOrCreateAudioPlayer() {
-    _lazyAudioPlayer ??= audioPlayerFactory.create();
-    return _lazyAudioPlayer!;
   }
 }
