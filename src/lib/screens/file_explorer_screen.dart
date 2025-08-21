@@ -57,13 +57,12 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     if (sshProvider == null || !mounted) return;
 
     // Check if we need to show reconnection dialog
-    if (sshProvider.connectionState.hasError && 
+    if (sshProvider.connectionState.hasError &&
         sshProvider.lastError?.type == ErrorType.connectionLost &&
         !sshProvider.isReconnecting &&
         !_reconnectionDialogShown) {
-      
       _reconnectionDialogShown = true;
-      
+
       // Show reconnection dialog after a short delay to let the error state settle
       Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) {
@@ -81,7 +80,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
     }
 
     // Show general error notifications (but not for connection lost errors)
-    if (sshProvider.lastError != null && 
+    if (sshProvider.lastError != null &&
         sshProvider.lastError?.type != ErrorType.connectionLost) {
       ErrorSnackBar.show(context, sshProvider.lastError!);
     }
@@ -235,7 +234,7 @@ class _FileExplorerScreenState extends State<FileExplorerScreen> {
             Icons.arrow_forward_ios,
             size: 16,
             color:
-                Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
           ),
           onTap: () => _navigateToParent(),
           dense: true,
