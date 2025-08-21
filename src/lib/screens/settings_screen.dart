@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -124,7 +125,7 @@ class SettingsScreen extends StatelessWidget {
                     onTap: () => _showAboutDialog(context),
                   ),
                   const Divider(),
-                  if (true)
+                  if (kDebugMode)
                     ListTile(
                       leading: const Icon(FontAwesomeIcons.flask),
                       title: Text(l10n.notificationTest),
