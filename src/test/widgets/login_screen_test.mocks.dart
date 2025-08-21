@@ -206,14 +206,7 @@ class MockSshProvider extends i1.Mock implements i4.SshProvider {
         ),
         returnValueForMissingStub: null,
       );
-  @override
-  void testErrorSound() => super.noSuchMethod(
-        Invocation.method(
-          #testErrorSound,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+
   @override
   i9.Future<String?> executeCommandWithResult(String? command) =>
       (super.noSuchMethod(
