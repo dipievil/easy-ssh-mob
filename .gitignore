@@ -45,6 +45,10 @@ linked_*.ds
 unlinked.ds
 unlinked_spec.ds
 
+# Generated l10n files
+**/lib/l10n/app_localizations.dart
+**/lib/l10n/app_localizations_*.dart
+
 # Android related
 **/android/**/gradle-wrapper.jar
 .gradle/
