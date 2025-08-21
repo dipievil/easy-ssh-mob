@@ -71,23 +71,107 @@
 
   "testMessageCritical": "CRÍTICO: Falha grave do sistema",
 
-  "notificationTest": "Teste de Notificações",
+  "notificationTest": "Teste de Notificação",
 
-  "notificationTestSubtitle": "Testar sistema de notificações melhorado",
+  "notificationTestSubtitle": "Testar sistema de notificação melhorado",
+
+  "notConnectedToSshServer": "Não conectado ao servidor SSH",
+
+  "permissionDeniedDirectory": "Permissão negada. Você não tem acesso a este diretório.",
+
+  "directoryNotFound": "Diretório não encontrado ou não existe.",
+
+  "notADirectory": "O caminho especificado não é um diretório.",
+
+  "directoryTimeout": "Timeout na listagem do diretório. O servidor pode estar lento ou sem resposta.",
+
+  "errorAccessingDirectory": "Erro ao acessar diretório: {error}",
+
+  "connectionRefused": "Conexão recusada. Verifique se o serviço SSH está rodando no servidor.",
+
+  "hostUnreachable": "Host inacessível. Verifique o endereço do servidor e conexão de rede.",
+
+  "authenticationFailed": "Falha na autenticação. Verifique seu usuário e senha.",
+
+  "connectionTimeout": "Timeout de conexão. O servidor pode estar fora do ar ou inacessível.",
+
+  "keyExchangeFailed": "Falha na troca de chaves. O servidor pode não suportar este cliente.",
+
+  "hostKeyVerificationFailed": "Falha na verificação da chave do host. A identidade do servidor não pôde ser verificada.",
+
+  "automaticReconnectionFailed": "Falha na reconexão automática",
+
+  "automaticReconnectionFailedAttempts": "Falha na reconexão automática após {attempts} tentativas.",
+
+  "connectionLost": "Conexão perdida",
+
+  "reconnectQuestion": "Deseja tentar reconectar?",
+
+  "reconnect": "Reconectar",
+
+  "goToLogin": "Ir para Login",
+
+  "errorListingDirectory": "Erro ao listar diretório",
+
+  "checkPermissionsAndConnection": "Verifique as permissões e conexão",
+
+  "directoryNotAccessible": "Diretório não existe ou não é acessível: {path}",
+
+  "commandTimeout": "Comando demorou muito tempo para executar",
+
+  "commandTimeoutSuggestion": "Tente usar um timeout maior ou simplificar o comando",
+
+  "sshConnectionError": "Erro de conexão SSH",
+
+  "commandExecutionError": "Erro de execução de comando",
+
+  "reconnectedSuccessfully": "Reconectado com sucesso",
+
+  "sshReconnected": "SSH Reconectado",
+
+  "connectionLostTouch": "Conexão perdida. Toque para ver opções.",
+
+  "sshConnectionLost": "Conexão SSH Perdida",
+
+  "automaticReconnectionFailedDetails": "Falha na reconexão automática após {attempts} tentativas.",
+
+  "errorSsh": "Erro SSH",
+
+  "executionError": "Erro de execução: {error}",
+
+  "fileNotTextFile": "Arquivo não é um arquivo de texto",
+
+  "errorReadingFile": "Erro ao ler arquivo: {error}",
+
+  "invalidModePartialRead": "Modo inválido para leitura parcial: {mode}",
+
+  "readModeNotSupported": "Modo de leitura não suportado: {mode}",
+
+  "errorReadingFileWithMode": "Erro ao ler arquivo com modo {mode}: {error}",
+
+  "connectionErrorGeneric": "Erro de conexão: {error}",
+
+  "networkError": "Erro de rede. Verifique sua conexão com a internet.",
 
   "disconnectFromServer": "Desconectar do servidor",
 
   "appDescription": "Cliente SSH simples e intuitivo para dispositivos móveis.",
 
+  "sshSimpleClient": "Cliente SSH simples e intuitivo para dispositivos móveis.",
+
   "developedWithFlutter": "Desenvolvido com Flutter 💙",
 
   "buildLabel": "Build",
 
-  "packageLabel": "Package",
+  "packageLabel": "Pacote",
 
   "clearCredentialsDialogTitle": "Limpar Credenciais",
 
   "clearCredentialsDialogContent": "Tem certeza de que deseja esquecer todas as credenciais salvas? Você precisará inserir os dados de login novamente.",
+
+  "clearCredentialsTitle": "Limpar Credenciais",
+
+  "clearCredentialsContent": "Tem certeza de que deseja esquecer todas as credenciais salvas? Você precisará inserir os dados de login novamente.",
 
   "cancel": "Cancelar",
 
@@ -99,5 +183,9 @@
 
   "logoutDialogContent": "Deseja desconectar do servidor SSH? Você retornará à tela de login.",
 
-  "notAvailable": "N/D"
+  "notAvailable": "N/A",
+
+  "logoutTitle": "Logout",
+
+  "logoutContent": "Deseja desconectar do servidor SSH? Você retornará à tela de login."
 }

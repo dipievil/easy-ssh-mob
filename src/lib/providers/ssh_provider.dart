@@ -12,13 +12,40 @@ import '../models/log_entry.dart';
 import '../services/secure_storage_service.dart';
 import '../services/error_handler.dart';
 import '../services/notification_service.dart';
-import '../services/audio_factory.dart';
+import '../services/sound_manager.dart';
+
+/// Error message codes for localization in UI
+enum ErrorMessageCode {
+  notConnectedToSshServer,
+  errorListingDirectory,
+  checkPermissionsAndConnection,
+  directoryNotAccessible,
+  permissionDeniedDirectory,
+  directoryNotFound,
+  notADirectory,
+  directoryTimeout,
+  errorAccessingDirectory,
+  executionError,
+  commandTimeout,
+  commandTimeoutSuggestion,
+  sshConnectionError,
+  errorSsh,
+  commandExecutionError,
+  connectionRefused,
+  hostUnreachable,
+  authenticationFailed,
+  connectionTimeout,
+  keyExchangeFailed,
+  hostKeyVerificationFailed,
+  networkError,
+  connectionErrorGeneric,
+}
 
 class SshProvider extends ChangeNotifier {
-  static const String _errorSoundPath = 'sounds/error_beep.wav';
-
   SshConnectionState _connectionState = SshConnectionState.disconnected;
   String? _errorMessage;
+  ErrorMessageCode? _errorCode;
+  String? _errorDetails;
   SSHCredentials? _currentCredentials;
   SSHClient? _sshClient;
 
@@ -38,9 +65,26 @@ class SshProvider extends ChangeNotifier {
   int _maxLogEntries = 1000;
   DateTime? _sessionStartTime;
 
+  bool _isReconnecting = false;
+  int _reconnectAttempts = 0;
+  static const int _maxReconnectAttempts = 3;
+  static const Duration _reconnectDelay = Duration(seconds: 2);
+
   SshConnectionState get connectionState => _connectionState;
   String? get errorMessage => _errorMessage;
+  ErrorMessageCode? get errorCode => _errorCode;
+  String? get errorDetails => _errorDetails;
   SSHCredentials? get currentCredentials => _currentCredentials;
+
+  /// Set error with code and optional details
+  void _setError(ErrorMessageCode code,
+      {String? details, String? fallbackMessage}) {
+    _errorCode = code;
+    _errorDetails = details;
+    _errorMessage = fallbackMessage ?? details ?? code.toString();
+    notifyListeners();
+  }
+
   List<SshFile> get currentFiles => _currentFiles;
   String get currentPath => _currentPath;
   List<String> get navigationHistory => List.unmodifiable(_navigationHistory);
@@ -54,6 +98,8 @@ class SshProvider extends ChangeNotifier {
 
   bool get isConnecting => _connectionState.isConnecting;
   bool get isConnected => _connectionState.isConnected;
+  bool get isReconnecting => _isReconnecting;
+  int get reconnectAttempts => _reconnectAttempts;
 
   Future<void> initialize() async {
     try {
@@ -129,10 +175,10 @@ class SshProvider extends ChangeNotifier {
 
   Future<void> listDirectory(String path) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      const error = SshError(
+      final error = SshError(
         type: ErrorType.connectionLost,
         originalMessage: 'Not connected to SSH server',
-        userFriendlyMessage: 'Não conectado ao servidor SSH',
+        userFriendlyMessage: 'not_connected_to_ssh_server',
         severity: ErrorSeverity.critical,
       );
       _handleSshError(error);
@@ -205,8 +251,8 @@ class SshProvider extends ChangeNotifier {
       final error = SshError(
         type: ErrorType.unknown,
         originalMessage: e.toString(),
-        userFriendlyMessage: 'Erro ao listar diretório',
-        suggestion: 'Verifique as permissões e conexão',
+        userFriendlyMessage: 'error_listing_directory',
+        suggestion: 'check_permissions_and_connection',
         severity: ErrorSeverity.error,
       );
       _handleSshError(error);
@@ -215,7 +261,8 @@ class SshProvider extends ChangeNotifier {
 
   Future<void> navigateToDirectory(String path) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      _errorMessage = 'Não conectado ao servidor SSH';
+      _setError(ErrorMessageCode.notConnectedToSshServer,
+          fallbackMessage: 'Not connected to SSH server');
       _connectionState = SshConnectionState.error;
       notifyListeners();
       return;
@@ -230,8 +277,9 @@ class SshProvider extends ChangeNotifier {
       final testResult = await utf8.decoder.bind(testSession.stdout).join();
 
       if (testResult.trim() != 'OK') {
-        _errorMessage =
-            'Directory does not exist or is not accessible: $normalizedPath';
+        _setError(ErrorMessageCode.directoryNotAccessible,
+            details: normalizedPath,
+            fallbackMessage: 'Directory not accessible: $normalizedPath');
         _connectionState = SshConnectionState.error;
         notifyListeners();
         return;
@@ -329,18 +377,18 @@ class SshProvider extends ChangeNotifier {
 
     if (errorString.contains('permission denied') ||
         errorString.contains('access denied')) {
-      return 'Permission denied. You do not have access to this directory.';
+      return 'permission_denied_directory';
     } else if (errorString.contains('no such file or directory') ||
         errorString.contains('not found')) {
-      return 'Directory not found or does not exist.';
+      return 'directory_not_found';
     } else if (errorString.contains('not a directory')) {
-      return 'The specified path is not a directory.';
+      return 'not_a_directory';
     } else if (errorString.contains('timeout') ||
         errorString.contains('timed out')) {
-      return 'Directory listing timeout. The server may be slow or unresponsive.';
+      return 'directory_timeout';
     }
 
-    return 'Error accessing directory: ${error.toString()}';
+    return 'error_accessing_directory:${error.toString()}';
   }
 
   /// Execute a file on the SSH server
@@ -353,7 +401,7 @@ class SshProvider extends ChangeNotifier {
     if (!_connectionState.isConnected || _sshClient == null) {
       return ExecutionResult(
         stdout: '',
-        stderr: 'Não conectado ao servidor SSH',
+        stderr: 'not_connected_to_ssh_server',
         exitCode: -1,
         duration: DateTime.now().difference(startTime),
         timestamp: startTime,
@@ -383,7 +431,7 @@ class SshProvider extends ChangeNotifier {
     } catch (e) {
       return ExecutionResult(
         stdout: '',
-        stderr: 'Execution error: ${e.toString()}',
+        stderr: 'error_code',
         exitCode: -1,
         duration: DateTime.now().difference(startTime),
         timestamp: startTime,
@@ -457,8 +505,8 @@ class SshProvider extends ChangeNotifier {
           type: ErrorType.timeout,
           originalMessage:
               'Command timed out after ${timeout.inSeconds} seconds',
-          userFriendlyMessage: 'Comando demorou muito tempo para executar',
-          suggestion: 'Tente usar um timeout maior ou simplificar o comando',
+          userFriendlyMessage: 'error_code',
+          suggestion: 'error_code',
           severity: ErrorSeverity.warning,
         );
         _handleSshError(timeoutError);
@@ -487,7 +535,7 @@ class SshProvider extends ChangeNotifier {
           type: _detectCommandType(command),
           workingDirectory: _currentPath,
           stdout: '',
-          stderr: 'Não conectado ao servidor SSH',
+          stderr: 'error_code',
           exitCode: -1,
           duration: DateTime.now().difference(startTime),
           status: CommandStatus.error,
@@ -495,7 +543,7 @@ class SshProvider extends ChangeNotifier {
         _addLogEntry(errorEntry);
       }
 
-      _errorMessage = 'Não conectado ao servidor SSH';
+      _errorMessage = 'not_connected_to_ssh_server';
       _connectionState = SshConnectionState.error;
       notifyListeners();
       return null;
@@ -563,7 +611,7 @@ class SshProvider extends ChangeNotifier {
       final error = SshError(
         type: ErrorType.unknown,
         originalMessage: e.toString(),
-        userFriendlyMessage: 'Erro de conexão SSH',
+        userFriendlyMessage: 'error_code',
         severity: ErrorSeverity.critical,
       );
       _handleSshError(error);
@@ -571,7 +619,6 @@ class SshProvider extends ChangeNotifier {
     }
   }
 
-  /// Handle SSH errors with notification and sound
   void _handleSshError(SshError error) {
     _lastError = error;
     _errorMessage = error.userFriendlyMessage;
@@ -580,16 +627,125 @@ class SshProvider extends ChangeNotifier {
 
     debugPrint('SSH Error: ${error.type} - ${error.originalMessage}');
 
+    if (error.type == ErrorType.connectionLost && !_isReconnecting) {
+      _attemptAutoReconnection();
+      return;
+    }
+
+    if (error.type == ErrorType.connectionLost && !_isReconnecting) {
+      _attemptAutoReconnection();
+      return;
+    }
+
     _notificationService.showNotification(
       message: error.userFriendlyMessage,
       type: _mapErrorToNotificationType(error.severity),
-      title: 'Erro SSH',
+      title: 'error_code',
       details: error.originalMessage,
     );
 
     if (_shouldPlayErrorSound && _shouldPlaySoundForSeverity(error.severity)) {
       _playErrorSound();
     }
+  }
+
+  /// Attempt automatic reconnection when connection is lost
+  Future<void> _attemptAutoReconnection() async {
+    if (_isReconnecting || _currentCredentials == null) {
+      return;
+    }
+
+    _isReconnecting = true;
+    _reconnectAttempts = 0;
+    _connectionState = SshConnectionState.connecting;
+    notifyListeners();
+
+    debugPrint('Attempting automatic reconnection...');
+
+    while (_reconnectAttempts < _maxReconnectAttempts) {
+      _reconnectAttempts++;
+
+      try {
+        debugPrint(
+            'Reconnection attempt $_reconnectAttempts/$_maxReconnectAttempts');
+
+        await _cleanup();
+
+        await Future.delayed(_reconnectDelay);
+
+        final success = await connect(
+          host: _currentCredentials!.host,
+          port: _currentCredentials!.port,
+          username: _currentCredentials!.username,
+          password: _currentCredentials!.password,
+          saveCredentials: false,
+        );
+
+        if (success) {
+          _isReconnecting = false;
+          _reconnectAttempts = 0;
+
+          _notificationService.showNotification(
+            message: 'Reconectado com sucesso',
+            type: NotificationType.success,
+            title: 'SSH Reconectado',
+          );
+
+          debugPrint('Automatic reconnection successful');
+          return;
+        }
+      } catch (e) {
+        debugPrint('Reconnection attempt $_reconnectAttempts failed: $e');
+      }
+    }
+
+    _isReconnecting = false;
+    _connectionState = SshConnectionState.error;
+    _errorMessage = 'Falha na reconexão automática';
+    notifyListeners();
+
+    debugPrint('All reconnection attempts failed');
+
+    _showReconnectionDialog();
+  }
+
+  /// Show dialog with reconnection options
+  void _showReconnectionDialog() {
+    _notificationService.showNotification(
+      message: 'Conexão perdida. Toque para ver opções.',
+      type: NotificationType.critical,
+      title: 'Conexão SSH Perdida',
+      details:
+          'Falha na reconexão automática após $_maxReconnectAttempts tentativas.',
+    );
+  }
+
+  /// Manual reconnection attempt triggered by user
+  Future<bool> attemptManualReconnection() async {
+    if (_currentCredentials == null) {
+      return false;
+    }
+
+    try {
+      await _cleanup();
+      return await connect(
+        host: _currentCredentials!.host,
+        port: _currentCredentials!.port,
+        username: _currentCredentials!.username,
+        password: _currentCredentials!.password,
+        saveCredentials: false,
+      );
+    } catch (e) {
+      debugPrint('Manual reconnection failed: $e');
+      return false;
+    }
+  }
+
+  /// Reset reconnection state (used when user chooses to go to login)
+  void resetReconnectionState() {
+    _isReconnecting = false;
+    _reconnectAttempts = 0;
+    notifyListeners();
   }
 
   /// Map error severity to notification type
@@ -621,10 +777,10 @@ class SshProvider extends ChangeNotifier {
   /// Play error sound
   void _playErrorSound() {
     try {
-      final player = _getOrCreateAudioPlayer();
-      player.play(AssetSource(_errorSoundPath)).catchError((e) {
-        debugPrint('Error sound notification (no audio file): $e');
-      });
+      SoundManager.playNotificationSound(
+        NotificationType.error,
+        50,
+      );
     } catch (e) {
       debugPrint('Could not play error sound: $e');
     }
@@ -636,18 +792,13 @@ class SshProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Test error sound (for debugging)
-  void testErrorSound() {
-    _playErrorSound();
-  }
-
   /// Execute a command and return the result as a stream
   Future<String?> executeCommandWithResult(String command) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      const error = SshError(
+      final error = SshError(
         type: ErrorType.connectionLost,
         originalMessage: 'Not connected to SSH server',
-        userFriendlyMessage: 'Não conectado ao servidor SSH',
+        userFriendlyMessage: 'error_code',
         severity: ErrorSeverity.critical,
       );
       _handleSshError(error);
@@ -678,7 +829,7 @@ class SshProvider extends ChangeNotifier {
       final error = SshError(
         type: ErrorType.unknown,
         originalMessage: e.toString(),
-        userFriendlyMessage: 'Erro de execução de comando',
+        userFriendlyMessage: 'error_code',
         severity: ErrorSeverity.error,
       );
       _handleSshError(error);
@@ -707,11 +858,11 @@ class SshProvider extends ChangeNotifier {
   /// Read content of a text file
   Future<FileContent> readFile(SshFile file) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      throw Exception('Não conectado ao servidor SSH');
+      throw Exception('not_connected_to_ssh_server');
     }
 
     if (!file.isTextFile && file.type != FileType.regular) {
-      throw Exception('Arquivo não é um arquivo de texto');
+      throw Exception('file_not_text_file');
     }
 
     try {
@@ -739,7 +890,7 @@ class SshProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      throw Exception('Erro ao ler arquivo: $e');
+      throw Exception('error_reading_file: ${e.toString()}');
     }
   }
 
@@ -749,7 +900,7 @@ class SshProvider extends ChangeNotifier {
     FileViewMode mode,
     int fileSize,
   ) async {
-    const linesCount = 100; // Read 100 lines by default
+    const linesCount = 100;
 
     String command;
     switch (mode) {
@@ -760,7 +911,7 @@ class SshProvider extends ChangeNotifier {
         command = 'tail -$linesCount "${file.fullPath}"';
         break;
       default:
-        throw Exception('Modo inválido para leitura parcial: $mode');
+        throw Exception('invalid_mode_partial_read: ${mode.toString()}');
     }
 
     final contentSession = await _sshClient!.execute(command);
@@ -789,7 +940,7 @@ class SshProvider extends ChangeNotifier {
   /// Read file with specific mode
   Future<FileContent> readFileWithMode(SshFile file, FileViewMode mode) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      throw Exception('Não conectado ao servidor SSH');
+      throw Exception('error_message');
     }
 
     try {
@@ -802,10 +953,11 @@ class SshProvider extends ChangeNotifier {
         case FileViewMode.tail:
           return _readFilePart(file, mode, fileSize);
         default:
-          throw Exception('Modo de leitura não suportado: $mode');
+          throw Exception('read_mode_not_supported: ${mode.toString()}');
       }
     } catch (e) {
-      throw Exception('Erro ao ler arquivo com modo $mode: $e');
+      throw Exception(
+          'error_reading_file_with_mode: ${mode.toString()}, ${e.toString()}');
     }
   }
 
@@ -875,26 +1027,26 @@ class SshProvider extends ChangeNotifier {
 
     if (errorString.contains('connection refused') ||
         errorString.contains('connection denied')) {
-      return 'Connection refused. Check if SSH service is running on the server.';
+      return 'connection_refused';
     } else if (errorString.contains('no route to host') ||
         errorString.contains('unreachable')) {
-      return 'Host unreachable. Check the server address and network connection.';
+      return 'host_unreachable';
     } else if (errorString.contains('authentication failed') ||
         errorString.contains('access denied')) {
-      return 'Authentication failed. Check your username and password.';
+      return 'authentication_failed';
     } else if (errorString.contains('timeout') ||
         errorString.contains('timed out')) {
-      return 'Connection timeout. The server may be down or unreachable.';
+      return 'connection_timeout';
     } else if (errorString.contains('key exchange') ||
         errorString.contains('handshake')) {
-      return 'Key exchange failed. The server may not support this client.';
+      return 'key_exchange_failed';
     } else if (errorString.contains('host key verification')) {
-      return 'Host key verification failed. The server identity could not be verified.';
+      return 'host_key_verification_failed';
     } else if (errorString.contains('network')) {
-      return 'Network error. Check your internet connection.';
+      return 'network_error';
     }
 
-    return 'Connection error: ${error.toString()}';
+    return 'connection_error_generic:${error.toString()}';
   }
 
   /// Generate unique log ID
@@ -1110,11 +1262,5 @@ class SshProvider extends ChangeNotifier {
       _lazyAudioPlayer?.dispose();
     } catch (_) {}
     super.dispose();
-  }
-
-  /// Return existing AudioPlayer or create it lazily via factory.
-  AudioPlayer _getOrCreateAudioPlayer() {
-    _lazyAudioPlayer ??= audioPlayerFactory.create();
-    return _lazyAudioPlayer!;
   }
 }

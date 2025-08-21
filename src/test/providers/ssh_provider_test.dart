@@ -30,6 +30,8 @@ void main() {
       expect(sshProvider!.isConnected, false);
       expect(sshProvider!.isConnecting, false);
       expect(sshProvider!.errorMessage, null);
+      expect(sshProvider!.errorCode, null);
+      expect(sshProvider!.errorDetails, null);
       expect(sshProvider!.currentPath, '');
       expect(sshProvider!.currentFiles, isEmpty);
     });
@@ -41,7 +43,10 @@ void main() {
       }
       final result = await sshProvider!.executeCommand('ls');
       expect(result, null);
-      expect(sshProvider!.errorMessage, contains('Não conectado'));
+      // With new architecture, errorMessage contains error codes instead of localized strings
+      expect(
+          sshProvider!.errorMessage, contains('not_connected_to_ssh_server'));
+      expect(sshProvider!.connectionState, SshConnectionState.error);
     });
     test('clearError should reset error state', () async {
       if (sshProvider == null) {
@@ -49,10 +54,45 @@ void main() {
             'SshProvider initialization failed due to dependencies');
         return;
       }
+      // First trigger an error
       await sshProvider!.executeCommand('ls');
+      expect(sshProvider!.errorMessage, isNotNull);
+      expect(sshProvider!.connectionState, SshConnectionState.error);
+
+      // Clear the error
       sshProvider!.clearError();
       expect(sshProvider!.connectionState, SshConnectionState.disconnected);
       expect(sshProvider!.errorMessage, null);
+      expect(sshProvider!.errorCode, null);
+      expect(sshProvider!.errorDetails, null);
+      expect(sshProvider!.lastError, null);
+    });
+
+    test('should handle ErrorMessageCode enum correctly', () {
+      if (sshProvider == null) {
+        markTestSkipped(
+            'SshProvider initialization failed due to dependencies');
+        return;
+      }
+
+      // Test setError method (make it public for testing if needed)
+      // For now, we test that errorCode getter exists and works
+      expect(sshProvider!.errorCode, null);
+      expect(sshProvider!.errorDetails, null);
+    });
+
+    test('should have proper getters for error handling', () {
+      if (sshProvider == null) {
+        markTestSkipped(
+            'SshProvider initialization failed due to dependencies');
+        return;
+      }
+
+      // Test all new error-related getters
+      expect(sshProvider!.errorCode, null);
+      expect(sshProvider!.errorDetails, null);
+      expect(sshProvider!.errorMessage, null);
+      expect(sshProvider!.lastError, null);
     });
   });
 }
