@@ -125,22 +125,20 @@ class SettingsScreen extends StatelessWidget {
                     onTap: () => _showAboutDialog(context),
                   ),
                   const Divider(),
-                  if (kDebugMode)
-                    ListTile(
-                      leading: const Icon(FontAwesomeIcons.flask),
-                      title: Text(l10n.notificationTest),
-                      subtitle: Text(l10n.notificationTestSubtitle),
-                      trailing: const Icon(Icons.arrow_forward_ios),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const NotificationTestScreen(),
-                          ),
-                        );
-                      },
-                    ),
+                  ListTile(
+                    leading: const Icon(FontAwesomeIcons.flask),
+                    title: Text(l10n.notificationTest),
+                    subtitle: Text(l10n.notificationTestSubtitle),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NotificationTestScreen(),
+                        ),
+                      );
+                    },
+                  ),
                   const Divider(),
                   Consumer<SshProvider>(
                     builder: (context, sshProvider, child) {
@@ -183,10 +181,13 @@ class SettingsScreen extends StatelessWidget {
 
   void _showAboutDialog(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
-    final appName = await AppVersion.getAppName();
-    final versionString = await AppVersion.getVersionString();
-    final buildNumber = await AppVersion.getBuildNumber();
-    final packageName = await AppVersion.getPackageName();
+
+    await AppVersion.initialize();
+
+    final appName = AppVersion.appName;
+    final versionString = AppVersion.versionString;
+    final buildNumber = AppVersion.buildNumber;
+    final packageName = AppVersion.packageName;
 
     if (context.mounted) {
       showAboutDialog(

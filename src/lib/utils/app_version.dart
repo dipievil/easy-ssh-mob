@@ -1,58 +1,61 @@
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:easy_ssh_mob_new/l10n/app_localizations.dart';
 
 /// Helper class to manage app version information
 class AppVersion {
   static PackageInfo? _packageInfo;
+  static late AppLocalizations l10n;
+  static bool _isInitialized = false;
 
-  /// Get cached package info or load it
-  static Future<PackageInfo> getPackageInfo() async {
-    _packageInfo ??= await PackageInfo.fromPlatform();
+  /// Initialize the app version info (call this once at app startup)
+  static Future<void> initialize() async {
+    if (!_isInitialized) {
+      _packageInfo = await PackageInfo.fromPlatform();
+      _isInitialized = true;
+    }
+  }
+
+  /// Get cached package info (ensure initialize() was called first)
+  static PackageInfo get packageInfo {
+    if (!_isInitialized || _packageInfo == null) {
+      throw StateError(
+          'AppVersion not initialized. Call AppVersion.initialize() first.');
+    }
     return _packageInfo!;
   }
 
   /// Get formatted version string (e.g., "1.1.0+6")
-  static Future<String> getVersionString() async {
-    final info = await getPackageInfo();
-    return '${info.version}+${info.buildNumber}';
+  static String get versionString {
+    return '${packageInfo.version}+${packageInfo.buildNumber}';
   }
 
   /// Get version only (e.g., "1.1.0")
-  static Future<String> getVersion() async {
-    final info = await getPackageInfo();
-    return info.version;
+  static String get version {
+    return packageInfo.version;
   }
 
   /// Get build number only (e.g., "6")
-  static Future<String> getBuildNumber() async {
-    final info = await getPackageInfo();
-    return info.buildNumber;
+  static String get buildNumber {
+    return packageInfo.buildNumber;
   }
 
   /// Get app name (e.g., "EasySSH")
-  static Future<String> getAppName() async {
-    final info = await getPackageInfo();
-    return info.appName.isEmpty ? 'EasySSH' : info.appName;
+  static String get appName {
+    return _getAppNameWithFallback(packageInfo.appName);
   }
 
   /// Get package name (e.g., "com.example.app")
-  static Future<String> getPackageName() async {
-    final info = await getPackageInfo();
-    return info.packageName;
-  }
-
-  /// Get all version info as a formatted string for debugging
-  static Future<String> getFullVersionInfo() async {
-    final info = await getPackageInfo();
-    return '''
-App: ${info.appName.isEmpty ? 'EasySSH' : info.appName}
-Version: ${info.version}
-Build: ${info.buildNumber}
-Package: ${info.packageName}
-''';
+  static String get packageName {
+    return packageInfo.packageName;
   }
 
   /// Clear cached package info (useful for testing)
   static void clearCache() {
     _packageInfo = null;
+    _isInitialized = false;
+  }
+
+  static String _getAppNameWithFallback(String appName) {
+    return appName.isEmpty ? l10n.appTitle : appName;
   }
 }
