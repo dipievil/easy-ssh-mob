@@ -187,6 +187,8 @@
   "notificationTestSubtitle": "Test improved notification system",
   "@notificationTestSubtitle": {
     "description": "Subtitle for notification test"
+  },
+
   "notConnectedToSshServer": "Not connected to SSH server",
   "@notConnectedToSshServer": {
     "description": "Error message when not connected to SSH server"
@@ -454,7 +456,6 @@
   "appDescription": "Simple and intuitive SSH client for mobile devices.",
   "@appDescription": {
     "description": "App description in about dialog"
-    "description": "Subtitle for logout option"
   },
 
   "sshSimpleClient": "Simple and intuitive SSH client for mobile devices.",
@@ -485,7 +486,6 @@
   "clearCredentialsDialogContent": "Are you sure you want to forget all saved credentials? You will need to enter login data again.",
   "@clearCredentialsDialogContent": {
     "description": "Clear credentials dialog content"
-    "description": "Footer text in about dialog"
   },
 
   "clearCredentialsTitle": "Clear Credentials",
@@ -526,7 +526,6 @@
   "notAvailable": "N/A",
   "@notAvailable": {
     "description": "Not available text"
-    "description": "Success message when credentials are removed"
   },
 
   "logoutTitle": "Logout",
