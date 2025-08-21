@@ -37,7 +37,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) {
             final provider = SshProvider();
-
             provider.initialize();
             return provider;
           },

@@ -12,15 +12,40 @@ import '../models/log_entry.dart';
 import '../services/secure_storage_service.dart';
 import '../services/error_handler.dart';
 import '../services/notification_service.dart';
-import '../l10n/app_localizations.dart';
 import '../services/sound_manager.dart';
 
-class SshProvider extends ChangeNotifier {
-  // Localization
-  AppLocalizations? _localizations;
+/// Error message codes for localization in UI
+enum ErrorMessageCode {
+  notConnectedToSshServer,
+  errorListingDirectory,
+  checkPermissionsAndConnection,
+  directoryNotAccessible,
+  permissionDeniedDirectory,
+  directoryNotFound,
+  notADirectory,
+  directoryTimeout,
+  errorAccessingDirectory,
+  executionError,
+  commandTimeout,
+  commandTimeoutSuggestion,
+  sshConnectionError,
+  errorSsh,
+  commandExecutionError,
+  connectionRefused,
+  hostUnreachable,
+  authenticationFailed,
+  connectionTimeout,
+  keyExchangeFailed,
+  hostKeyVerificationFailed,
+  networkError,
+  connectionErrorGeneric,
+}
 
+class SshProvider extends ChangeNotifier {
   SshConnectionState _connectionState = SshConnectionState.disconnected;
   String? _errorMessage;
+  ErrorMessageCode? _errorCode;
+  String? _errorDetails;
   SSHCredentials? _currentCredentials;
   SSHClient? _sshClient;
 
@@ -48,7 +73,17 @@ class SshProvider extends ChangeNotifier {
 
   SshConnectionState get connectionState => _connectionState;
   String? get errorMessage => _errorMessage;
+  ErrorMessageCode? get errorCode => _errorCode;
+  String? get errorDetails => _errorDetails;
   SSHCredentials? get currentCredentials => _currentCredentials;
+
+  /// Set error with code and optional details
+  void _setError(ErrorMessageCode code, {String? details, String? fallbackMessage}) {
+    _errorCode = code;
+    _errorDetails = details;
+    _errorMessage = fallbackMessage ?? details ?? code.toString();
+    notifyListeners();
+  }
   List<SshFile> get currentFiles => _currentFiles;
   String get currentPath => _currentPath;
   List<String> get navigationHistory => List.unmodifiable(_navigationHistory);
@@ -142,7 +177,7 @@ class SshProvider extends ChangeNotifier {
       final error = SshError(
         type: ErrorType.connectionLost,
         originalMessage: 'Not connected to SSH server',
-        userFriendlyMessage: _localizations!.notConnectedToSshServer,
+        userFriendlyMessage: 'not_connected_to_ssh_server',
         severity: ErrorSeverity.critical,
       );
       _handleSshError(error);
@@ -215,8 +250,8 @@ class SshProvider extends ChangeNotifier {
       final error = SshError(
         type: ErrorType.unknown,
         originalMessage: e.toString(),
-        userFriendlyMessage: _localizations!.errorListingDirectory,
-        suggestion: _localizations!.checkPermissionsAndConnection,
+        userFriendlyMessage: 'error_listing_directory',
+        suggestion: 'check_permissions_and_connection',
         severity: ErrorSeverity.error,
       );
       _handleSshError(error);
@@ -225,7 +260,8 @@ class SshProvider extends ChangeNotifier {
 
   Future<void> navigateToDirectory(String path) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      _errorMessage = _localizations!.notConnectedToSshServer;
+      _setError(ErrorMessageCode.notConnectedToSshServer, 
+                fallbackMessage: 'Not connected to SSH server');
       _connectionState = SshConnectionState.error;
       notifyListeners();
       return;
@@ -240,7 +276,9 @@ class SshProvider extends ChangeNotifier {
       final testResult = await utf8.decoder.bind(testSession.stdout).join();
 
       if (testResult.trim() != 'OK') {
-        _errorMessage = _localizations!.directoryNotAccessible(normalizedPath);
+        _setError(ErrorMessageCode.directoryNotAccessible, 
+                 details: normalizedPath,
+                 fallbackMessage: 'Directory not accessible: $normalizedPath');
         _connectionState = SshConnectionState.error;
         notifyListeners();
         return;
@@ -338,18 +376,18 @@ class SshProvider extends ChangeNotifier {
 
     if (errorString.contains('permission denied') ||
         errorString.contains('access denied')) {
-      return _localizations!.permissionDeniedDirectory;
+      return 'permission_denied_directory';
     } else if (errorString.contains('no such file or directory') ||
         errorString.contains('not found')) {
-      return _localizations!.directoryNotFound;
+      return 'directory_not_found';
     } else if (errorString.contains('not a directory')) {
-      return _localizations!.notADirectory;
+      return 'not_a_directory';
     } else if (errorString.contains('timeout') ||
         errorString.contains('timed out')) {
-      return _localizations!.directoryTimeout;
+      return 'directory_timeout';
     }
 
-    return _localizations!.errorAccessingDirectory(error.toString());
+    return 'error_accessing_directory:${error.toString()}';
   }
 
   /// Execute a file on the SSH server
@@ -362,7 +400,7 @@ class SshProvider extends ChangeNotifier {
     if (!_connectionState.isConnected || _sshClient == null) {
       return ExecutionResult(
         stdout: '',
-        stderr: _localizations!.notConnectedToSshServer,
+        stderr: 'not_connected_to_ssh_server',
         exitCode: -1,
         duration: DateTime.now().difference(startTime),
         timestamp: startTime,
@@ -392,7 +430,7 @@ class SshProvider extends ChangeNotifier {
     } catch (e) {
       return ExecutionResult(
         stdout: '',
-        stderr: _localizations!.executionError(e.toString()),
+        stderr: 'error_code',
         exitCode: -1,
         duration: DateTime.now().difference(startTime),
         timestamp: startTime,
@@ -466,8 +504,8 @@ class SshProvider extends ChangeNotifier {
           type: ErrorType.timeout,
           originalMessage:
               'Command timed out after ${timeout.inSeconds} seconds',
-          userFriendlyMessage: _localizations!.commandTimeout,
-          suggestion: _localizations!.commandTimeoutSuggestion,
+          userFriendlyMessage: 'error_code',
+          suggestion: 'error_code',
           severity: ErrorSeverity.warning,
         );
         _handleSshError(timeoutError);
@@ -496,7 +534,7 @@ class SshProvider extends ChangeNotifier {
           type: _detectCommandType(command),
           workingDirectory: _currentPath,
           stdout: '',
-          stderr: _localizations!.notConnectedToSshServer,
+          stderr: 'error_code',
           exitCode: -1,
           duration: DateTime.now().difference(startTime),
           status: CommandStatus.error,
@@ -504,7 +542,7 @@ class SshProvider extends ChangeNotifier {
         _addLogEntry(errorEntry);
       }
 
-      _errorMessage = _localizations!.notConnectedToSshServer;
+      _errorMessage = 'not_connected_to_ssh_server';
       _connectionState = SshConnectionState.error;
       notifyListeners();
       return null;
@@ -572,7 +610,7 @@ class SshProvider extends ChangeNotifier {
       final error = SshError(
         type: ErrorType.unknown,
         originalMessage: e.toString(),
-        userFriendlyMessage: _localizations!.sshConnectionError,
+        userFriendlyMessage: 'error_code',
         severity: ErrorSeverity.critical,
       );
       _handleSshError(error);
@@ -603,7 +641,7 @@ class SshProvider extends ChangeNotifier {
     _notificationService.showNotification(
       message: error.userFriendlyMessage,
       type: _mapErrorToNotificationType(error.severity),
-      title: _localizations!.errorSsh,
+      title: 'error_code',
       details: error.originalMessage,
     );
 
@@ -769,7 +807,7 @@ class SshProvider extends ChangeNotifier {
       final error = SshError(
         type: ErrorType.connectionLost,
         originalMessage: 'Not connected to SSH server',
-        userFriendlyMessage: _localizations!.notConnectedToSshServer,
+        userFriendlyMessage: 'error_code',
         severity: ErrorSeverity.critical,
       );
       _handleSshError(error);
@@ -800,7 +838,7 @@ class SshProvider extends ChangeNotifier {
       final error = SshError(
         type: ErrorType.unknown,
         originalMessage: e.toString(),
-        userFriendlyMessage: _localizations!.commandExecutionError,
+        userFriendlyMessage: 'error_code',
         severity: ErrorSeverity.error,
       );
       _handleSshError(error);
@@ -829,11 +867,11 @@ class SshProvider extends ChangeNotifier {
   /// Read content of a text file
   Future<FileContent> readFile(SshFile file) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      throw Exception(_localizations!.notConnectedToSshServer);
+      throw Exception('not_connected_to_ssh_server');
     }
 
     if (!file.isTextFile && file.type != FileType.regular) {
-      throw Exception(_localizations!.fileNotTextFile);
+      throw Exception('file_not_text_file');
     }
 
     try {
@@ -861,7 +899,7 @@ class SshProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      throw Exception(_localizations!.errorReadingFile(e.toString()));
+      throw Exception('error_reading_file: ${e.toString()}');
     }
   }
 
@@ -882,8 +920,7 @@ class SshProvider extends ChangeNotifier {
         command = 'tail -$linesCount "${file.fullPath}"';
         break;
       default:
-        throw Exception(
-            _localizations!.invalidModePartialRead(mode.toString()));
+        throw Exception('invalid_mode_partial_read: ${mode.toString()}');
     }
 
     final contentSession = await _sshClient!.execute(command);
@@ -912,7 +949,7 @@ class SshProvider extends ChangeNotifier {
   /// Read file with specific mode
   Future<FileContent> readFileWithMode(SshFile file, FileViewMode mode) async {
     if (!_connectionState.isConnected || _sshClient == null) {
-      throw Exception(_localizations!.notConnectedToSshServer);
+      throw Exception('error_message');
     }
 
     try {
@@ -925,12 +962,10 @@ class SshProvider extends ChangeNotifier {
         case FileViewMode.tail:
           return _readFilePart(file, mode, fileSize);
         default:
-          throw Exception(
-              _localizations!.readModeNotSupported(mode.toString()));
+          throw Exception('read_mode_not_supported: ${mode.toString()}');
       }
     } catch (e) {
-      throw Exception(_localizations!
-          .errorReadingFileWithMode(mode.toString(), e.toString()));
+      throw Exception('error_reading_file_with_mode: ${mode.toString()}, ${e.toString()}');
     }
   }
 
@@ -998,28 +1033,29 @@ class SshProvider extends ChangeNotifier {
   String _formatError(dynamic error) {
     final errorString = error.toString().toLowerCase();
 
+    // Check for specific error types and return appropriate error codes
     if (errorString.contains('connection refused') ||
         errorString.contains('connection denied')) {
-      return _localizations!.connectionRefused;
+      return 'connection_refused';
     } else if (errorString.contains('no route to host') ||
         errorString.contains('unreachable')) {
-      return _localizations!.hostUnreachable;
+      return 'host_unreachable';
     } else if (errorString.contains('authentication failed') ||
         errorString.contains('access denied')) {
-      return _localizations!.authenticationFailed;
+      return 'authentication_failed';
     } else if (errorString.contains('timeout') ||
         errorString.contains('timed out')) {
-      return _localizations!.connectionTimeout;
+      return 'connection_timeout';
     } else if (errorString.contains('key exchange') ||
         errorString.contains('handshake')) {
-      return _localizations!.keyExchangeFailed;
+      return 'key_exchange_failed';
     } else if (errorString.contains('host key verification')) {
-      return _localizations!.hostKeyVerificationFailed;
+      return 'host_key_verification_failed';
     } else if (errorString.contains('network')) {
-      return _localizations!.networkError;
+      return 'network_error';
     }
 
-    return _localizations!.connectionErrorGeneric(error.toString());
+    return 'connection_error_generic:${error.toString()}';
   }
 
   /// Generate unique log ID
