@@ -58,8 +58,8 @@ class ReconnectionDialog extends StatelessWidget {
           actions: [
             // Reconnect button
             TextButton.icon(
-              onPressed: sshProvider.isReconnecting 
-                  ? null 
+              onPressed: sshProvider.isReconnecting
+                  ? null
                   : () => _handleReconnect(context, sshProvider),
               icon: sshProvider.isReconnecting
                   ? const SizedBox(
@@ -68,16 +68,18 @@ class ReconnectionDialog extends StatelessWidget {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.refresh),
-              label: Text(sshProvider.isReconnecting ? 'Reconectando...' : 'Tentar Novamente'),
+              label: Text(sshProvider.isReconnecting
+                  ? 'Reconectando...'
+                  : 'Tentar Novamente'),
             ),
-            
+
             // Go to login button
             TextButton.icon(
               onPressed: () => _handleGoToLogin(context, sshProvider),
               icon: const Icon(Icons.login),
               label: const Text('Ir para Login'),
             ),
-            
+
             // Exit app button
             TextButton.icon(
               onPressed: () => _handleExitApp(context),
@@ -94,13 +96,14 @@ class ReconnectionDialog extends StatelessWidget {
   }
 
   /// Handle reconnection attempt
-  Future<void> _handleReconnect(BuildContext context, SshProvider sshProvider) async {
+  Future<void> _handleReconnect(
+      BuildContext context, SshProvider sshProvider) async {
     final navigator = Navigator.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    
+
     try {
       final success = await sshProvider.attemptManualReconnection();
-      
+
       if (success) {
         navigator.pop(); // Close dialog
         messenger.showSnackBar(
@@ -139,7 +142,7 @@ class ReconnectionDialog extends StatelessWidget {
   /// Handle app exit
   void _handleExitApp(BuildContext context) {
     final navigator = Navigator.of(context);
-    
+
     // Show confirmation dialog first
     showDialog<bool>(
       context: context,
